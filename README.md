@@ -34,20 +34,22 @@ erDiagram
     tweets {
         INTEGER id PK
         TIMESTAMP tweet_timestamp
-        BOOLEAN is_a_reply 
-        BOOLEAN has_text 
+        BOOLEAN is_a_reply
+        BOOLEAN has_text
         BOOLEAN has_images
         TEXT text
         TEXT[] images
         BOOLEAN has_quote
+        INTEGER quote_id FK
     }
     tweets ||--o| tweets_quotes : ""
     tweets_quotes {
+        INTEGER id PK
         BOOLEAN quote_is_a_reply
-        BOOLEAN quote_has_text 
-        BOOLEAN quote_has_images 
-        TEXT quote_text 
-        TEXT[] quote_images 
+        BOOLEAN quote_has_text
+        BOOLEAN quote_has_images
+        TEXT quote_text
+        TEXT[] quote_images
     }
     users {
         INTEGER id PK
