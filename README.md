@@ -27,4 +27,50 @@ The primary objective is to gather information from X (formerly Twitter) using [
 
 ### Database
 
-TODO: Explain database structure
+Tables: **Entity Relationship Diagram**
+
+```mermaid
+erDiagram
+    tweets {
+        INTEGER id PK
+        TIMESTAMP tweet_timestamp
+        BOOLEAN is_a_reply 
+        BOOLEAN has_text 
+        BOOLEAN has_images
+        TEXT text
+        TEXT[] images
+        BOOLEAN has_quote
+    }
+    tweets ||--o| tweets_quotes : ""
+    tweets_quotes {
+        BOOLEAN quote_is_a_reply
+        BOOLEAN quote_has_text 
+        BOOLEAN quote_has_images 
+        TEXT quote_text 
+        TEXT[] quote_images 
+    }
+    users {
+        INTEGER id PK
+        TEXT name
+    }
+    categorized_tweets ||--|{ tweets : ""
+    categorized_tweets ||--|{ users : ""
+    categorized_tweets {
+        INTEGER id PK
+        INTEGER tweet_id FK
+        INTEGER user_id FK
+        BOOLEAN adverse_behavior
+    }
+    search_criteria {
+        INTEGER id PK
+        TEXT name
+        TEXT[] all_of_these_words
+        TEXT this_exact_phrase
+        TEXT[] any_of_these_words
+        TEXT[] none_of_these_words
+        TEXT[] these_hashtags
+        TEXT language
+        DATE since_date
+        DATE until_date
+    }
+```
