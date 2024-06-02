@@ -1,0 +1,46 @@
+services:
+  migrations_executor:
+    build: .
+    container_name: migrations_executor
+    environment:
+      POSTGRES_DB_HOST: ${DB_HOST}
+      POSTGRES_DB_PORT: ${DB_PORT}
+      POSTGRES_DB_NAME: ${DB_NAME}
+      POSTGRES_DB_USER: ${DB_USER}
+      POSTGRES_DB_PASS: ${DB_PASS}
+    ports:
+      - 8000:8080
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    networks:
+      - network
+
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - '1234:5432'
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - network
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  database:
+
+networks:
+  network:
+    driver: bridge
