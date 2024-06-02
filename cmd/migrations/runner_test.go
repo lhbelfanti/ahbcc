@@ -51,7 +51,7 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T
 
 func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToExecuteSQLError(t *testing.T) {
 	invalidFile := filepath.Join(migrationsTestDir, "invalid.sql")
-	_ = os.WriteFile(invalidFile, []byte("CREATE TABLE test (id INT);"), 0000)
+	_ = os.WriteFile(invalidFile, []byte("CREATE TABLE test (id INT);"), 0644)
 	defer os.Remove(invalidFile)
 	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("EXECUTE", nil))
 	run := migrations.MakeRun(mockConn)
