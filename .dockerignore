@@ -1,0 +1,25 @@
+# Exclude version control directories
+.git
+.gitignore
+
+# Exclude media directory
+media
+
+# Dependency caches
+vendor
+
+# Exclude build directory
+build
+
+# Exclude temporary files and directories
+tmp
+*.log
+*.swp
+
+# Exclude documentation files
+*.md
+LICENSE
+
+# Exclude Dockerfile and docker-compose.yml
+Dockerfile
+docker-compose.yml
