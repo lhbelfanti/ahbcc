@@ -22,4 +22,4 @@ COMMENT ON COLUMN tweets.has_images IS 'Boolean indicating if the tweet contains
 COMMENT ON COLUMN tweets.text       IS 'Text content of the tweet, if any';
 COMMENT ON COLUMN tweets.images     IS 'Array of image URLs associated with the tweet, if any';
 COMMENT ON COLUMN tweets.has_quote  IS 'Boolean indicating if the tweet contains a quoted tweet';
-COMMENT ON COLUMN tweets.quote_id  IS 'Foreign key referencing the ID of the quoted tweet';
+COMMENT ON COLUMN tweets.quote_id   IS 'Foreign key referencing the ID of the quoted tweet';
