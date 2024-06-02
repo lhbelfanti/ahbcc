@@ -32,15 +32,21 @@ func TestRun_success(t *testing.T) {
 	migrationFile := filepath.Join(migrationsTestDir, "001_init.sql")
 	err := os.WriteFile(migrationFile, []byte("CREATE TABLE test (id INT);"), 0644)
 	assert.NoError(t, err)
-
+	defer os.Remove(migrationFile)
 	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("EXECUTE", nil))
 	run := migrations.MakeRun(mockConn)
-	err = run(context.Background(), migrationsTestDir)
-	assert.NoError(t, err)
+
+	got := run(context.Background(), migrationsTestDir)
+
+	assert.NoError(t, got)
 }
 
 func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T) {
-	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("", migrations.UnableToExecuteSQL))
+	invalidFile := filepath.Join(migrationsTestDir, "invalid.sql")
+	err := os.WriteFile(invalidFile, []byte("CREATE TABLE test (id INT);"), 0000)
+	assert.NoError(t, err)
+	defer os.Remove(invalidFile)
+	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("EXECUTE", nil))
 	run := migrations.MakeRun(mockConn)
 
 	want := migrations.FailedToExecuteMigration
@@ -50,10 +56,11 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T
 }
 
 func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToExecuteSQLError(t *testing.T) {
-	invalidFile := filepath.Join(migrationsTestDir, "invalid.sql")
-	_ = os.WriteFile(invalidFile, []byte("CREATE TABLE test (id INT);"), 0644)
-	defer os.Remove(invalidFile)
-	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("EXECUTE", nil))
+	migrationFile := filepath.Join(migrationsTestDir, "001_init.sql")
+	err := os.WriteFile(migrationFile, []byte("CREATE TABLE test (id INT);"), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(migrationFile)
+	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("", migrations.UnableToExecuteSQL))
 	run := migrations.MakeRun(mockConn)
 
 	want := migrations.FailedToExecuteMigration
