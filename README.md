@@ -22,9 +22,13 @@ There are four main categories:
 - Illicit drug use
 
 ## Application
-This application serves as the orchestrator, utilizing a docker-compose.yml file to **connect the other three applications among themselves and to the database it manages**.
+This application serves as the orchestrator, utilizing a docker-compose.yml file to **connect the other two applications with the database managed by [AHBCC](https://github.com/lhbelfanti/ahbcc)**.
 
-The primary objective is to gather information from X (formerly Twitter) using [GoXCrap](https://github.com/lhbelfanti/goxcrap). Subsequently, each tweet is manually evaluated to determine if it discusses an Adverse Human Behavior using [Binarizer](https://github.com/lhbelfanti/binarizer). Finally, a balanced corpus is created from this data using Corpus Creator.
+The primary objective is to gather information from X (formerly Twitter) using [GoXCrap](https://github.com/lhbelfanti/goxcrap). Subsequently, each tweet is manually evaluated to determine if it discusses an Adverse Human Behavior using [Binarizer](https://github.com/lhbelfanti/binarizer). Finally, [AHBCC](https://github.com/lhbelfanti/ahbcc) is in charge of creating a balanced corpus from the retrieved and categorized tweets.
+
+### Endpoints
+
+To allow [GoXCrap](https://github.com/lhbelfanti/goxcrap) to save the tweets into the database and then retrieve them using [Binarizer](https://github.com/lhbelfanti/binarizer), this application exposes different endpoints, encapsulating the access to the database in one place (this app).
 
 ### Database
 
@@ -32,37 +36,28 @@ Tables: **Entity Relationship Diagram**
 
 ```mermaid
 erDiagram
+    tweets ||--o| tweets_quotes : ""
+    tweets ||--|| search_criteria : ""
     tweets {
         INTEGER id PK
-        TIMESTAMP tweet_timestamp
+        TEXT hash
+        TIMESTAMP posted_at
         BOOLEAN is_a_reply
         BOOLEAN has_text
         BOOLEAN has_images
-        TEXT text
+        TEXT text_content
         TEXT[] images
         BOOLEAN has_quote
         INTEGER quote_id FK
+        INTEGER search_criteria_id FK
     }
-    tweets ||--o| tweets_quotes : ""
     tweets_quotes {
         INTEGER id PK
-        BOOLEAN quote_is_a_reply
-        BOOLEAN quote_has_text
-        BOOLEAN quote_has_images
-        TEXT quote_text
-        TEXT[] quote_images
-    }
-    users {
-        INTEGER id PK
-        TEXT name
-    }
-    categorized_tweets ||--|{ tweets : ""
-    categorized_tweets ||--|{ users : ""
-    categorized_tweets {
-        INTEGER id PK
-        INTEGER tweet_id FK
-        INTEGER user_id FK
-        BOOLEAN adverse_behavior
+        BOOLEAN is_a_reply
+        BOOLEAN has_text
+        BOOLEAN has_images
+        TEXT text_content
+        TEXT[] images
     }
     search_criteria {
         INTEGER id PK
@@ -75,5 +70,17 @@ erDiagram
         TEXT language
         DATE since_date
         DATE until_date
+    }
+    users {
+        INTEGER id PK
+        TEXT name
+    }
+    categorized_tweets ||--|{ tweets : ""
+    categorized_tweets ||--|{ users : ""
+    categorized_tweets {
+        INTEGER id PK
+        INTEGER tweet_id FK
+        INTEGER user_id FK
+        BOOLEAN adverse_behavior
     }
 ```
