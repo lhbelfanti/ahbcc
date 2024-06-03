@@ -30,8 +30,7 @@ func databaseURL() string {
 	dbUser := os.Getenv("POSTGRES_DB_USER")
 	dbPass := os.Getenv("POSTGRES_DB_PASS")
 	dbName := os.Getenv("POSTGRES_DB_NAME")
-	dbHost := os.Getenv("POSTGRES_DB_HOST")
 	dbPort := os.Getenv("POSTGRES_DB_PORT")
 
-	return fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", dbUser, dbPass, dbName, dbHost, dbPort)
+	return fmt.Sprintf("user=%s password=%s dbname=%s host=postgres_db port=%s sslmode=disable", dbUser, dbPass, dbName, dbPort)
 }
