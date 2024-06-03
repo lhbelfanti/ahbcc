@@ -3,7 +3,6 @@ services:
     build: .
     container_name: app
     environment:
-      POSTGRES_DB_HOST: ${DB_HOST}
       POSTGRES_DB_PORT: ${DB_PORT}
       POSTGRES_DB_NAME: ${DB_NAME}
       POSTGRES_DB_USER: ${DB_USER}
@@ -27,7 +26,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - '1234:5432'
+      - '1234:${DB_PORT}'
     volumes:
       - database:/var/lib/postgresql/data
     networks:
