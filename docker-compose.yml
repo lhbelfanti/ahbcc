@@ -1,7 +1,7 @@
 services:
-  migrations_executor:
+  app:
     build: .
-    container_name: migrations_executor
+    container_name: app
     environment:
       POSTGRES_DB_HOST: ${DB_HOST}
       POSTGRES_DB_PORT: ${DB_PORT}
