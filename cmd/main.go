@@ -6,20 +6,20 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
-
 	"ahbcc/cmd/migrations"
 	"ahbcc/internal/setup"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const migrationsDir string = "./migrations"
 
 func main() {
 	ctx := context.Background()
-	conn := setup.Init(pgx.Connect(ctx, databaseURL()))
-	defer conn.Close(ctx)
+	pool := setup.Init(pgxpool.New(ctx, databaseURL()))
+	defer pool.Close()
 
-	runMigrations := migrations.MakeRun(conn)
+	runMigrations := migrations.MakeRun(pool)
 	err := runMigrations(ctx, migrationsDir)
 	if err != nil {
 		log.Fatal(err)
