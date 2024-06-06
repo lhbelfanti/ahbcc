@@ -34,6 +34,7 @@ func TestRun_success(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(migrationFile)
 	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("EXECUTE", nil))
+
 	run := migrations.MakeRun(mockConn)
 
 	got := run(context.Background(), migrationsTestDir)
@@ -47,6 +48,7 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T
 	assert.NoError(t, err)
 	defer os.Remove(invalidFile)
 	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("EXECUTE", nil))
+
 	run := migrations.MakeRun(mockConn)
 
 	want := migrations.FailedToExecuteMigration
@@ -61,6 +63,7 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToExecuteSQLError(t *testing
 	assert.NoError(t, err)
 	defer os.Remove(migrationFile)
 	mockConn := migrations.MockPgxConnStruct(migrations.MockExecFunc("", migrations.UnableToExecuteSQL))
+
 	run := migrations.MakeRun(mockConn)
 
 	want := migrations.FailedToExecuteMigration
