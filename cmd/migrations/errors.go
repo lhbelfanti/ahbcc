@@ -7,3 +7,5 @@ var (
 	UnableToReadFile         = errors.New("unable to read file")
 	UnableToExecuteSQL       = errors.New("unable to execute SQL")
 )
+
+const FailedToRunMigrations string = "Failed to run migrations"

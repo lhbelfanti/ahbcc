@@ -4,33 +4,44 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
-	"ahbcc/cmd/migrations"
-	"ahbcc/internal/setup"
-
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"ahbcc/cmd/migrations"
+	"ahbcc/cmd/ping"
+	"ahbcc/internal/setup"
 )
 
-const migrationsDir string = "./migrations"
+const databaseURL string = "postgresql://%s:%s@postgres_db:5432/%s?sslmode=disable"
 
 func main() {
-	ctx := context.Background()
-	pool := setup.Init(pgxpool.New(ctx, databaseURL()))
+	/* --- Dependencies --- */
+	// Database
+	pool := setup.Init(pgxpool.New(context.Background(), resolveDatabaseURL()))
 	defer pool.Close()
 
+	// Services
 	runMigrations := migrations.MakeRun(pool)
-	err := runMigrations(ctx, migrationsDir)
+
+	/* --- Router --- */
+	router := http.NewServeMux()
+	router.HandleFunc("/ping/v1", ping.HandlerV1())
+	router.HandleFunc("/run-migrations/v1", migrations.RunHandlerV1(runMigrations))
+
+	/* --- Server --- */
+	log.Println("Starting server on :8090")
+	err := http.ListenAndServe(":8090", router)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Could not start server: %s\n", err.Error())
 	}
 }
 
-func databaseURL() string {
+func resolveDatabaseURL() string {
 	dbUser := os.Getenv("POSTGRES_DB_USER")
 	dbPass := os.Getenv("POSTGRES_DB_PASS")
 	dbName := os.Getenv("POSTGRES_DB_NAME")
-	dbPort := os.Getenv("POSTGRES_DB_PORT")
 
-	return fmt.Sprintf("user=%s password=%s dbname=%s host=postgres_db port=%s sslmode=disable", dbUser, dbPass, dbName, dbPort)
+	return fmt.Sprintf(databaseURL, dbUser, dbPass, dbName)
 }
