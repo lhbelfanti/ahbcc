@@ -3,7 +3,7 @@ FROM golang:1.22.3-alpine
 LABEL maintainer="Lucas Belfanti"
 
 # Install necessary dependencies
-RUN apk update && apk add --no-cache git bash build-base curl \
+RUN apk update && apk add --no-cache curl \
     && rm -rf /var/cache/apk/*
 
 # Create the application directory and set it as the working directory
