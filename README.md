@@ -90,7 +90,6 @@ erDiagram
 To connect to the database we need to define a `.env` file in the root of the project. It should contain the following environment variables
 
 ```
-DB_PORT=<Database port>
 DB_NAME=<Database name>
 DB_USER=<Database username>
 DB_PASS=<Database password>
