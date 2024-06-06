@@ -1,0 +1,11 @@
+FROM alpine:latest
+
+LABEL maintainer="Lucas Belfanti"
+
+# Install necessary dependencies
+RUN apk update && apk add --no-cache curl  \
+    && rm -rf /var/cache/apk/*
+
+# Make HTTP request to /run-migrations/v1 endpoint
+CMD ["sh", "-c", "curl -X POST http://app:8090/run-migrations/v1"]
+

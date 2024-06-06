@@ -1,19 +1,37 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile_app
     container_name: app
     environment:
-      POSTGRES_DB_PORT: ${DB_PORT}
       POSTGRES_DB_NAME: ${DB_NAME}
       POSTGRES_DB_USER: ${DB_USER}
       POSTGRES_DB_PASS: ${DB_PASS}
     ports:
-      - 8000:8080
+      - 8080:8090
     restart: on-failure
     volumes:
       - .:/app
     depends_on:
       postgres_db:
+        condition: service_healthy
+    networks:
+      - network
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'curl -sSf http://localhost:8090/ping/v1 || exit 1'"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  migrations:
+    image: alpine:latest
+    build:
+      context: .
+      dockerfile: Dockerfile_migrations
+    container_name: migrations
+    depends_on:
+      app:
         condition: service_healthy
     networks:
       - network
@@ -26,7 +44,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - '1234:${DB_PORT}'
+      - 1234:5432
     volumes:
       - database:/var/lib/postgresql/data
     networks:
