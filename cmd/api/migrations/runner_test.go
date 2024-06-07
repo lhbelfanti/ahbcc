@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/migrations"
+	"ahbcc/cmd/api/migrations"
 )
 
 const migrationsTestDir string = "./migrations_test"
