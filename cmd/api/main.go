@@ -9,8 +9,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"ahbcc/cmd/migrations"
-	"ahbcc/cmd/ping"
+	"ahbcc/cmd/api/migrations"
+	"ahbcc/cmd/api/ping"
 	"ahbcc/internal/setup"
 )
 
@@ -27,11 +27,11 @@ func main() {
 
 	/* --- Router --- */
 	router := http.NewServeMux()
-	router.HandleFunc("/ping/v1", ping.HandlerV1())
-	router.HandleFunc("/run-migrations/v1", migrations.RunHandlerV1(runMigrations))
+	router.HandleFunc("GET /ping/v1", ping.HandlerV1())
+	router.HandleFunc("POST /run-migrations/v1", migrations.RunHandlerV1(runMigrations))
 
 	/* --- Server --- */
-	log.Println("Starting server on :8090")
+	log.Println("Starting AHBCC server on :8090")
 	err := http.ListenAndServe(":8090", router)
 	if err != nil {
 		log.Fatalf("Could not start server: %s\n", err.Error())

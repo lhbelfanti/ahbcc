@@ -20,7 +20,7 @@ COPY migrations/ ./migrations
 COPY .env ./
 
 # Build the application and output the binary as 'build'
-RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd/api
 
 # Expose port
 EXPOSE 8090
