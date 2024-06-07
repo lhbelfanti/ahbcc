@@ -19,7 +19,7 @@ COPY internal/ ./internal
 COPY migrations/ ./migrations
 COPY .env ./
 
-# Build the application and output the binary as 'build'
+# Build the application and output the binary as 'ahbcc'
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd/api
 
 # Expose port
