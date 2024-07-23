@@ -28,7 +28,7 @@ func main() {
 	/* --- Router --- */
 	router := http.NewServeMux()
 	router.HandleFunc("GET /ping/v1", ping.HandlerV1())
-	router.HandleFunc("POST /run-migrations/v1", migrations.RunHandlerV1(runMigrations))
+	router.HandleFunc("POST /migrations/run/v1", migrations.RunHandlerV1(runMigrations))
 
 	/* --- Server --- */
 	log.Println("Starting AHBCC server on :8090")

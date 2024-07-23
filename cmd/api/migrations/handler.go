@@ -7,7 +7,7 @@ import (
 
 const migrationsDir string = "./migrations"
 
-// RunHandlerV1 HTTP Handler of the endpoint /run-migrations/v1
+// RunHandlerV1 HTTP Handler of the endpoint /migrations/run/v1
 func RunHandlerV1(runMigrations Run) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

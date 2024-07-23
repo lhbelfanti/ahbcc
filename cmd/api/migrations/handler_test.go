@@ -16,7 +16,7 @@ import (
 func TestRunHandlerV1_success(t *testing.T) {
 	mockRun := migrations.MockRun(nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/run-migrations/v1", strings.NewReader(""))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/migrations/run/v1", strings.NewReader(""))
 
 	runHandlerV1 := migrations.RunHandlerV1(mockRun)
 
@@ -31,7 +31,7 @@ func TestRunHandlerV1_success(t *testing.T) {
 func TestRunHandlerV1_failsWhenMigrationsRunThrowsError(t *testing.T) {
 	mockRun := migrations.MockRun(errors.New("migrations run failed"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/run-migrations/v1", strings.NewReader(""))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/migrations/run/v1", strings.NewReader(""))
 
 	runHandlerV1 := migrations.RunHandlerV1(mockRun)
 
