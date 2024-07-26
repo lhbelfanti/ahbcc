@@ -1,29 +1,23 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
+	"ahbcc/internal/database"
 	"ahbcc/internal/setup"
 )
-
-const databaseURL string = "postgresql://%s:%s@postgres_db:5432/%s?sslmode=disable"
 
 func main() {
 	/* --- Dependencies --- */
 	// Database
-	pool := setup.Init(pgxpool.New(context.Background(), resolveDatabaseURL()))
-	defer pool.Close()
+	pg := setup.Init(database.InitPostgres())
+	defer pg.Close()
 
 	// Services
-	runMigrations := migrations.MakeRun(pool)
+	runMigrations := migrations.MakeRun(pg.Database())
 
 	/* --- Router --- */
 	router := http.NewServeMux()
@@ -36,12 +30,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not start server: %s\n", err.Error())
 	}
-}
-
-func resolveDatabaseURL() string {
-	dbUser := os.Getenv("POSTGRES_DB_USER")
-	dbPass := os.Getenv("POSTGRES_DB_PASS")
-	dbName := os.Getenv("POSTGRES_DB_NAME")
-
-	return fmt.Sprintf(databaseURL, dbUser, dbPass, dbName)
 }
