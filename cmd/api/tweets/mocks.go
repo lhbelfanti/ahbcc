@@ -16,3 +16,11 @@ func MockTweetDTO() TweetDTO {
 		SearchCriteriaID: 1,
 	}
 }
+
+// MockTweetDTOSlice mocks a slice of TweetDTO
+func MockTweetDTOSlice() []TweetDTO {
+	return []TweetDTO{
+		MockTweetDTO(),
+		MockTweetDTO(),
+	}
+}
