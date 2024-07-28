@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS tweets_quotes (
     id            SERIAL PRIMARY KEY,
-    is_a_reply    BOOLEAN,
-    has_text      BOOLEAN,
-    has_images    BOOLEAN,
-    text_content  TEXT,
-    images        TEXT[]
+    is_a_reply    BOOLEAN NOT NULL,
+    has_text      BOOLEAN NOT NULL,
+    has_images    BOOLEAN NOT NULL,
+    text_content  TEXT NULL,
+    images        TEXT[] NULL
 );
 
 COMMENT ON TABLE tweets_quotes                IS 'Contains the quotes of tweets scrapped by GoXCrap';
