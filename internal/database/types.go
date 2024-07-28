@@ -6,13 +6,17 @@ import (
 	"os"
 	"sync"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type (
+	// Connection is an interface created as an abstraction of pgxpool.Pool to be able to mock it
 	Connection interface {
 		Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+		Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+		QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	}
 
 	// Postgres is the representation of a postgres database connection
