@@ -49,6 +49,7 @@ func TestRun_success(t *testing.T) {
 	got := run(context.Background(), migrationsTestDir)
 
 	assert.NoError(t, got)
+	mockPostgresConnection.AssertExpectations(t)
 }
 
 func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T) {
@@ -62,7 +63,6 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T
 		}
 	}(invalidFile)
 	mockPostgresConnection := new(database.MockPostgresConnection)
-	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 
 	run := migrations.MakeRun(mockPostgresConnection)
 
@@ -70,6 +70,7 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T
 	got := run(context.Background(), migrationsTestDir)
 
 	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
 }
 
 func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToExecuteSQLError(t *testing.T) {
@@ -91,4 +92,5 @@ func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToExecuteSQLError(t *testing
 	got := run(context.Background(), migrationsTestDir)
 
 	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
 }

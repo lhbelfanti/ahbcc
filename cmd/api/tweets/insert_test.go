@@ -24,6 +24,7 @@ func TestMakeInsert_success(t *testing.T) {
 	got := insertTweet(mockTweetDTO)
 
 	assert.Nil(t, got)
+	mockPostgresConnection.AssertExpectations(t)
 }
 
 func TestMakeInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
@@ -43,6 +44,7 @@ func TestMakeInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
 	got := insertTweet(mockTweetDTO)
 
 	assert.Nil(t, got)
+	mockPostgresConnection.AssertExpectations(t)
 }
 
 func TestMakeInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsTable(t *testing.T) {
@@ -56,6 +58,7 @@ func TestMakeInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsT
 	got := insertTweet(mockTweetDTO)
 
 	assert.Nil(t, got)
+	mockPostgresConnection.AssertExpectations(t)
 }
 
 func TestMakeInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
@@ -70,4 +73,5 @@ func TestMakeInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	got := insertTweet(mockTweetDTO)
 
 	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
 }
