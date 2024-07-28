@@ -6,27 +6,47 @@ import (
 	"log/slog"
 	"strings"
 
+	"ahbcc/cmd/api/tweets/quotes"
 	"ahbcc/internal/database"
 )
 
-// Insert inserts a new TweetDTO into tweets table
+// Insert inserts a new TweetDTO into 'tweets' table
 type Insert func(tweet []TweetDTO) error
 
 // MakeInsert creates a new Insert
-func MakeInsert(db database.Connection) Insert {
-	const query string = `INSERT INTO tweets(hash, is_a_reply, has_text, has_images, text_content, images, has_quote, quote_id, search_criteria_id) VALUES `
+func MakeInsert(db database.Connection, insertQuote quotes.InsertSingle) Insert {
+	const (
+		query string = `
+			INSERT INTO tweets(hash, is_a_reply, text_content, images, quote_id, search_criteria_id) 
+			VALUES %s
+		    ON CONFLICT (hash, search_criteria_id) DO NOTHING;
+		`
+		parameters = 6
+	)
 
 	return func(tweets []TweetDTO) error {
 		var valueStrings []string
 		var values []any
 		for i, tweet := range tweets {
-			valueStrings = append(valueStrings, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)", i*9+1, i*9+2, i*9+3, i*9+4, i*9+5, i*9+6, i*9+7, i*9+8, i*9+9))
-			values = append(values, tweet.Hash, tweet.IsAReply, tweet.HasText, tweet.HasImages, tweet.TextContent, tweet.Images, tweet.HasQuote, tweet.QuoteID, tweet.SearchCriteriaID)
+			idx := i * parameters
+			valueStrings = append(valueStrings, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d)", idx+1, idx+2, idx+3, idx+4, idx+5, idx+6))
+			values = append(values, tweet.Hash, tweet.IsAReply, tweet.TextContent, tweet.Images)
+
+			if tweet.Quote != nil {
+				quoteID, err := insertQuote(*tweet.Quote)
+				if err != nil {
+					values = append(values, nil)
+				} else {
+					values = append(values, quoteID)
+				}
+			}
+
+			values = append(values, tweet.SearchCriteriaID)
 		}
 
-		query := query + strings.Join(valueStrings, ",")
+		queryToExecute := fmt.Sprintf(query, strings.Join(valueStrings, ","))
 
-		_, err := db.Exec(context.Background(), query, values...)
+		_, err := db.Exec(context.Background(), queryToExecute, values...)
 		if err != nil {
 			slog.Error(err.Error())
 			return FailedToInsertTweets

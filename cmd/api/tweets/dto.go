@@ -1,14 +1,13 @@
 package tweets
 
-// TweetDTO represents a tweet to be inserted into the database
+import "ahbcc/cmd/api/tweets/quotes"
+
+// TweetDTO represents a tweet to be inserted into the 'tweets' table
 type TweetDTO struct {
-	Hash             string   `json:"hash"`
-	IsAReply         bool     `json:"is_a_reply"`
-	HasText          bool     `json:"has_text"`
-	HasImages        bool     `json:"has_images"`
-	TextContent      string   `json:"text_content"`
-	Images           []string `json:"images"`
-	HasQuote         bool     `json:"has_quote"`
-	QuoteID          *int     `json:"quote_id"`
-	SearchCriteriaID int      `json:"search_criteria_id"`
+	Hash             string           `json:"hash"`
+	IsAReply         bool             `json:"is_a_reply"`
+	TextContent      *string          `json:"text_content,omitempty"`
+	Images           []string         `json:"images,omitempty"`
+	Quote            *quotes.QuoteDTO `json:"quote,omitempty"`
+	SearchCriteriaID int              `json:"search_criteria_id"`
 }
