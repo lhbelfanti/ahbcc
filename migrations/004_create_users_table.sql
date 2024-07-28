@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
     id   SERIAL PRIMARY KEY,
-    name TEXT
+    name TEXT NOT NULL
 );
 
 COMMENT ON TABLE users          IS 'Contains the users enabled to give a verdict on the tweets';
