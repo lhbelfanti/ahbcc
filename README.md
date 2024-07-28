@@ -37,25 +37,19 @@ Tables: **Entity Relationship Diagram**
 ```mermaid
 erDiagram
     tweets ||--o| tweets_quotes : ""
-    tweets ||--|| search_criteria : ""
+    tweets }|--|{ search_criteria : ""
     tweets {
-        INTEGER id PK
-        TEXT hash
+        TEXT hash "CK"
         TIMESTAMP posted_at
         BOOLEAN is_a_reply
-        BOOLEAN has_text
-        BOOLEAN has_images
         TEXT text_content
         TEXT[] images
-        BOOLEAN has_quote
         INTEGER quote_id FK
-        INTEGER search_criteria_id FK
+        INTEGER search_criteria_id FK "CK"
     }
     tweets_quotes {
         INTEGER id PK
         BOOLEAN is_a_reply
-        BOOLEAN has_text
-        BOOLEAN has_images
         TEXT text_content
         TEXT[] images
     }
