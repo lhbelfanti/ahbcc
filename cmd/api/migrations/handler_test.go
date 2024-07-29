@@ -23,7 +23,7 @@ func TestRunHandlerV1_success(t *testing.T) {
 	runHandlerV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusOK
-	got := mockResponseWriter.Code
+	got := mockResponseWriter.Result().StatusCode
 
 	assert.Equal(t, want, got)
 }
@@ -38,7 +38,7 @@ func TestRunHandlerV1_failsWhenMigrationsRunThrowsError(t *testing.T) {
 	runHandlerV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusInternalServerError
-	got := mockResponseWriter.Code
+	got := mockResponseWriter.Result().StatusCode
 
 	assert.Equal(t, want, got)
 }

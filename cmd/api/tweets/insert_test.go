@@ -17,7 +17,7 @@ func TestMakeInsert_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
-	mockTweetDTO := tweets.MockTweetDTOSlice()
+	mockTweetDTO := tweets.MockTweets()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
 
@@ -31,7 +31,7 @@ func TestMakeInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
-	mockTweetDTO := tweets.MockTweetDTOSlice()
+	mockTweetDTO := tweets.MockTweets()
 	mockTweetDTO[0].TextContent = nil
 	mockTweetDTO[0].Images = nil
 	mockTweetDTO[0].Quote = nil
@@ -51,7 +51,7 @@ func TestMakeInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsT
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(-1, errors.New("failed to insert single quote"))
-	mockTweetDTO := tweets.MockTweetDTOSlice()
+	mockTweetDTO := tweets.MockTweets()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
 
@@ -65,7 +65,7 @@ func TestMakeInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert tweets"))
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
-	mockTweetDTO := tweets.MockTweetDTOSlice()
+	mockTweetDTO := tweets.MockTweets()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
 
