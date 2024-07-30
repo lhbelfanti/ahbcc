@@ -1,10 +1,14 @@
 package tweets
 
-import "ahbcc/cmd/api/tweets/quotes"
+import (
+	"context"
+
+	"ahbcc/cmd/api/tweets/quotes"
+)
 
 // MockInsert mocks Insert function
 func MockInsert(err error) Insert {
-	return func(tweet []TweetDTO) error {
+	return func(ctx context.Context, tweet []TweetDTO) error {
 		return err
 	}
 }

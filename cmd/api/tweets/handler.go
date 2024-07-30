@@ -23,7 +23,7 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
 		}
 
-		err = insertTweets(tweets)
+		err = insertTweets(r.Context(), tweets)
 		if err != nil {
 			slog.Error(err.Error())
 			http.Error(w, FailedToInsertTweetsIntoDatabase, http.StatusInternalServerError)
@@ -31,6 +31,7 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Tweets successfully inserted"))
 	}
 }
 

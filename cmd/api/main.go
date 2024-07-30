@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 
 	"ahbcc/cmd/api/migrations"
@@ -17,11 +18,13 @@ func main() {
 	// Database
 	pg := setup.Init(database.InitPostgres())
 	defer pg.Close()
+	db := pg.Database()
 
 	// Services
-	runMigrations := migrations.MakeRun(pg.Database())
-	insertSingleQuote := quotes.MakeInsertSingle(pg.Database())
-	insertTweets := tweets.MakeInsert(pg.Database(), insertSingleQuote)
+	runMigrations := migrations.MakeRun(db)
+	insertSingleQuote := quotes.MakeInsertSingle(db)
+	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
+	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
 
 	/* --- Router --- */
 	router := http.NewServeMux()
@@ -30,7 +33,7 @@ func main() {
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 
 	/* --- Server --- */
-	log.Println("Starting AHBCC server on :8090")
+	slog.Info("AHBCC server is ready to receive request on port :8090")
 	err := http.ListenAndServe(":8090", router)
 	if err != nil {
 		log.Fatalf("Could not start server: %s\n", err.Error())
