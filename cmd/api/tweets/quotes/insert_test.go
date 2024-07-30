@@ -1,6 +1,7 @@
 package quotes_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -11,7 +12,7 @@ import (
 	"ahbcc/internal/database"
 )
 
-func TestMakeInsertSingle_success(t *testing.T) {
+func TestInsertSingle_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
 	mockPgxRow.On("Scan", mock.Anything).Return(nil).Run(
@@ -30,7 +31,7 @@ func TestMakeInsertSingle_success(t *testing.T) {
 	insertSingleQuote := quotes.MakeInsertSingle(mockPostgresConnection)
 
 	want := 1
-	got, err := insertSingleQuote(mockQuoteDTO)
+	got, err := insertSingleQuote(context.Background(), &mockQuoteDTO)
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
@@ -38,7 +39,19 @@ func TestMakeInsertSingle_success(t *testing.T) {
 	mockPgxRow.AssertExpectations(t)
 }
 
-func TestMakeInsertSingle_failsWhenInsertOperationThrowsError(t *testing.T) {
+func TestInsertSingle_failsWhenQuoteIsNil(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+
+	insertSingleQuote := quotes.MakeInsertSingle(mockPostgresConnection)
+
+	want := quotes.NothingToInsertWhenQuoteIsNil
+	_, got := insertSingleQuote(context.Background(), nil)
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+}
+
+func TestInsertSingle_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
 	mockPgxRow.On("Scan", mock.Anything).Return(pgx.ErrNoRows)
@@ -48,7 +61,7 @@ func TestMakeInsertSingle_failsWhenInsertOperationThrowsError(t *testing.T) {
 	insertSingleQuote := quotes.MakeInsertSingle(mockPostgresConnection)
 
 	want := quotes.FailedToInsertQuote
-	_, got := insertSingleQuote(mockQuoteDTO)
+	_, got := insertSingleQuote(context.Background(), &mockQuoteDTO)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

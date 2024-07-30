@@ -1,6 +1,7 @@
 package tweets_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -13,24 +14,26 @@ import (
 	"ahbcc/internal/database"
 )
 
-func TestMakeInsert_success(t *testing.T) {
+func TestInsert_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
+	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
 	mockTweetDTO := tweets.MockTweets()
 
-	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
+	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
-	got := insertTweet(mockTweetDTO)
+	got := insertTweet(context.Background(), mockTweetDTO)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
 }
 
-func TestMakeInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
+func TestInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
+	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
 	mockTweetDTO := tweets.MockTweets()
 	mockTweetDTO[0].TextContent = nil
 	mockTweetDTO[0].Images = nil
@@ -39,38 +42,55 @@ func TestMakeInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
 	mockTweetDTO[1].Images = nil
 	mockTweetDTO[1].Quote = nil
 
-	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
+	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
-	got := insertTweet(mockTweetDTO)
+	got := insertTweet(context.Background(), mockTweetDTO)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
 }
 
-func TestMakeInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsTable(t *testing.T) {
+func TestInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsTable(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(-1, errors.New("failed to insert single quote"))
+	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
 	mockTweetDTO := tweets.MockTweets()
 
-	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
+	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
-	got := insertTweet(mockTweetDTO)
+	got := insertTweet(context.Background(), mockTweetDTO)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
 }
 
-func TestMakeInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
+func TestInsert_successEvenWhenTheDeleteOrphanQuotesThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
+	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
+	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(errors.New("failed to delete orphan quotes"))
+	mockTweetDTO := tweets.MockTweets()
+
+	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
+
+	got := insertTweet(context.Background(), mockTweetDTO)
+
+	assert.Nil(t, got)
+	mockPostgresConnection.AssertExpectations(t)
+}
+
+func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert tweets"))
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
+	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
 	mockTweetDTO := tweets.MockTweets()
 
-	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote)
+	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
 	want := tweets.FailedToInsertTweets
-	got := insertTweet(mockTweetDTO)
+	got := insertTweet(context.Background(), mockTweetDTO)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

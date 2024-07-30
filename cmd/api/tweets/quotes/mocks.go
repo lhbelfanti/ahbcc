@@ -1,9 +1,18 @@
 package quotes
 
+import "context"
+
 // MockInsertSingle mocks InsertSingle function
 func MockInsertSingle(quoteID int, err error) InsertSingle {
-	return func(q QuoteDTO) (int, error) {
+	return func(ctx context.Context, q *QuoteDTO) (int, error) {
 		return quoteID, err
+	}
+}
+
+// MockDeleteOrphans mocks DeleteOrphans function
+func MockDeleteOrphans(err error) DeleteOrphans {
+	return func(ctx context.Context, ids []int) error {
+		return err
 	}
 }
 
