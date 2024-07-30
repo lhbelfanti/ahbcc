@@ -39,13 +39,14 @@ erDiagram
     tweets ||--o| tweets_quotes : ""
     tweets }|--|{ search_criteria : ""
     tweets {
-        TEXT hash "CK"
+        INTEGER id PK
+        TEXT hash
         TIMESTAMP posted_at
         BOOLEAN is_a_reply
         TEXT text_content
         TEXT[] images
         INTEGER quote_id FK
-        INTEGER search_criteria_id FK "CK"
+        INTEGER search_criteria_id FK
     }
     tweets_quotes {
         INTEGER id PK
