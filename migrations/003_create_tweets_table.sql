@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS tweets (
     CONSTRAINT fk_search_criteria_id FOREIGN KEY(search_criteria_id) REFERENCES search_criteria(id)
 );
 
+CREATE INDEX idx_tweets_quote_id ON tweets(quote_id);
+CREATE INDEX idx_tweets_search_criteria ON tweets(search_criteria_id);
+
 COMMENT ON TABLE tweets                         IS 'Contains the tweets scrapped by GoXCrap';
 COMMENT ON COLUMN tweets.id                     IS 'Auto-incrementing ID of the tweet, agnostic to business logic';
 COMMENT ON COLUMN tweets.hash                   IS 'Unique hash identifier for the tweet. It is part of the primary key';
