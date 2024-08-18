@@ -1,3 +1,4 @@
+-- Create the tweets_quotes table
 CREATE TABLE IF NOT EXISTS tweets_quotes (
     id            SERIAL PRIMARY KEY,
     is_a_reply    BOOLEAN NOT NULL,
@@ -5,6 +6,7 @@ CREATE TABLE IF NOT EXISTS tweets_quotes (
     images        TEXT[] NULL
 );
 
+-- Table comments
 COMMENT ON TABLE tweets_quotes                IS 'Contains the quotes of tweets scrapped by GoXCrap';
 COMMENT ON COLUMN tweets_quotes.id            IS 'Auto-incrementing ID of the quote, agnostic to business logic';
 COMMENT ON COLUMN tweets_quotes.is_a_reply    IS 'Boolean indicating if the quoted tweet is a reply to another tweet';
