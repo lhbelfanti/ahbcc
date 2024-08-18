@@ -54,6 +54,7 @@ erDiagram
         TEXT text_content
         TEXT[] images
     }
+    search_criteria ||--o{ search_criteria_executions : ""
     search_criteria {
         INTEGER id PK
         TEXT name
@@ -65,6 +66,19 @@ erDiagram
         TEXT language
         DATE since_date
         DATE until_date
+    }
+    search_criteria_executions ||--o{ search_criteria_execution_days : ""
+    search_criteria_executions {
+        INTEGER id PK
+        ENUM status
+        INTEGER search_criteria_id FK
+    }
+    search_criteria_execution_days {
+        INTEGER id PK
+        DATE execution_date
+        INTEGER tweets_quantity
+        TEXT error_reason
+        INTEGER search_criteria_execution_id FK
     }
     users {
         INTEGER id PK
@@ -82,8 +96,9 @@ erDiagram
 
 #### Necessary files to start the database
 
-To connect to the database we need to define a `.env` file in the root of the project. It should contain the following environment variables
+To connect to the database create a `.env` file in the root of the project or rename the provided [.env.example](.env.example). 
 
+This file should contain the following environment variables:
 ```
 DB_NAME=<Database name>
 DB_USER=<Database username>
