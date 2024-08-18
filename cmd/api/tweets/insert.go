@@ -52,7 +52,9 @@ func MakeInsert(db database.Connection, insertQuote quotes.InsertSingle, deleteO
 			return FailedToInsertTweets
 		}
 
-		_ = deleteOrphanQuotes(ctx, quoteIDs)
+		if len(quoteIDs) > 0 {
+			err = deleteOrphanQuotes(ctx, quoteIDs)
+		}
 
 		return nil
 	}
