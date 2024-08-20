@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"testing"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -38,4 +39,18 @@ func (m *MockPostgresConnection) QueryRow(ctx context.Context, sql string, argum
 func (m *MockPgxRow) Scan(dest ...any) error {
 	args := m.Called(dest)
 	return args.Error(0)
+}
+
+// MockScan mocks the "Scan" func
+func MockScan[T any](mockPgxRow *MockPgxRow, value T, t *testing.T) {
+	mockPgxRow.On("Scan", mock.Anything).Return(nil).Run(
+		func(args mock.Arguments) {
+			dest := args.Get(0).([]interface{})
+			ptr, ok := dest[0].(*T)
+			if !ok {
+				t.Errorf("Incorrect data type %T", dest[0])
+			}
+			*ptr = value
+		},
+	)
 }

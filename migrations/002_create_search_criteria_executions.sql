@@ -10,9 +10,6 @@ CREATE TABLE IF NOT EXISTS search_criteria_executions (
     CONSTRAINT fk_search_criteria_id FOREIGN KEY(search_criteria_id) REFERENCES search_criteria(id)
 );
 
--- Table indexes
-CREATE INDEX idx_search_criteria_executions_search_criteria_id ON search_criteria_executions(search_criteria_id);
-
 -- Table comments
 COMMENT ON TABLE search_criteria_executions IS 'Tracks the execution status of each search criteria';
 COMMENT ON COLUMN search_criteria_executions.id IS 'Auto-incrementing ID of the search criteria execution, agnostic to business logic';

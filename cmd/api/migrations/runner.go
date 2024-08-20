@@ -17,19 +17,37 @@ type (
 )
 
 // MakeRun creates a new Run
-func MakeRun(db database.Connection) Run {
+func MakeRun(db database.Connection, createMigrationsTable CreateMigrationsTable, isMigrationApplied IsMigrationApplied, insertAppliedMigration InsertAppliedMigration) Run {
 	return func(ctx context.Context, migrationsDir string) error {
+		err := createMigrationsTable(ctx)
+		if err != nil {
+			return err
+		}
+
 		files, _ := filepath.Glob(filepath.Join(migrationsDir, "*.sql"))
 
-		var err error
 		for _, file := range files {
-			fmt.Printf("Executing %s...\n", file)
-			err = executeSQLFromFile(ctx, db, file)
+			applied, err := isMigrationApplied(ctx, file)
 			if err != nil {
-				slog.Error(err.Error())
-				return FailedToExecuteMigration
+				return err
 			}
-			fmt.Printf("Executed %s successfully\n", file)
+
+			if !applied {
+				fmt.Printf("Executing %s...\n", file)
+				err = executeSQLFromFile(ctx, db, file)
+				if err != nil {
+					slog.Error(err.Error())
+					return FailedToExecuteMigration
+				}
+				fmt.Printf("Executed %s successfully\n", file)
+
+				err = insertAppliedMigration(ctx, file)
+				if err != nil {
+					return err
+				}
+			} else {
+				fmt.Printf("Migration file %s already applied\n", file)
+			}
 		}
 
 		return nil
