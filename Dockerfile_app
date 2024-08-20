@@ -3,8 +3,11 @@ FROM golang:1.22.3-alpine
 LABEL maintainer="Lucas Belfanti"
 
 # Install necessary dependencies
-RUN apk update && apk add --no-cache curl \
+RUN apk update && apk add --no-cache curl tzdata \
     && rm -rf /var/cache/apk/*
+
+# Set timezone
+ENV TZ=America/Argentina/Buenos_Aires
 
 # Create the application directory and set it as the working directory
 WORKDIR /app
