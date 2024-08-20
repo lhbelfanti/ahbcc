@@ -21,7 +21,10 @@ func main() {
 	db := pg.Database()
 
 	// Services
-	runMigrations := migrations.MakeRun(db)
+	createMigrationsTable := migrations.MakeCreateMigrationsTable(db)
+	isMigrationApplied := migrations.MakeIsMigrationApplied(db)
+	insertAppliedMigration := migrations.MakeInsertAppliedMigration(db)
+	runMigrations := migrations.MakeRun(db, createMigrationsTable, isMigrationApplied, insertAppliedMigration)
 	insertSingleQuote := quotes.MakeInsertSingle(db)
 	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
