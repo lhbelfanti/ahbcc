@@ -30,6 +30,7 @@ services:
       context: .
       dockerfile: Dockerfile_migrations
     container_name: migrations
+    restart: "no"
     depends_on:
       app:
         condition: service_healthy
@@ -43,6 +44,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
+      TZ: "America/Argentina/Buenos_Aires"
     ports:
       - 1234:5432
     volumes:
@@ -51,7 +53,7 @@ services:
       - network
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"'"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
 
