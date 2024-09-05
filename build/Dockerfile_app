@@ -3,7 +3,9 @@ FROM golang:1.22.3-alpine
 LABEL maintainer="Lucas Belfanti"
 
 # Install necessary dependencies
-RUN apk update && apk add --no-cache curl tzdata \
+RUN apk update && apk add --no-cache \
+    curl \
+    tzdata \
     && rm -rf /var/cache/apk/*
 
 # Set timezone
@@ -20,13 +22,12 @@ RUN go mod download
 COPY cmd/ ./cmd
 COPY internal/ ./internal
 COPY migrations/ ./migrations
-COPY .env ./
 
 # Build the application and output the binary as 'ahbcc'
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd/api
 
 # Expose port
-EXPOSE 8090
+EXPOSE ${API_PORT}
 
 # Run application
 CMD [ "/ahbcc" ]

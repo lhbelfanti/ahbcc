@@ -10,7 +10,6 @@
 
 ---
 
-
 # AHBCC: Adverse Human Behaviors Corpus Creator
 
 Adverse Human Behaviors is a term created to encompass all types of human behaviors that affect one or more individuals in physical, psychological, or emotional ways.
@@ -94,15 +93,32 @@ erDiagram
     }
 ```
 
-#### Necessary files to start the database
+### Run
 
-To connect to the database create a `.env` file in the root of the project or rename the provided [.env.example](.env.example). 
+```
+docker compose -f build/compose.yml up --build
+```
+
+#### Necessary files to run the app
+
+To connect to the database create a `.env` file inside the build folder of the project or rename the provided [.env.example](build/.env.example). 
 
 This file should contain the following environment variables:
+
+1. For this app (this repository):
 ```
+# App settings
+APP_EXPOSED_PORT=<AHBCC Host Port>
+APP_INTERNAL_PORT=<AHBCC Container Port>
+
+# Database
 DB_NAME=<Database name>
 DB_USER=<Database username>
 DB_PASS=<Database password>
+DB_PORT=<Database port>
 ```
-
 Replace the `< ... >` by the correct value. For example: `DB_NAME=<Database name>` --> `DB_NAME=ahbcc`.
+
+2. For the env variables of the scrapper app, please check the [documentation of its repository](https://github.com/lhbelfanti/goxcrap?tab=readme-ov-file#setup).
+
+They must also be added into the same `.env` file.
