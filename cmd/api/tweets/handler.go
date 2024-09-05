@@ -2,30 +2,32 @@ package tweets
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
+
+	"ahbcc/internal/log"
 )
 
 // InsertHandlerV1 HTTP Handler of the endpoint /tweets/v1
 func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		var tweets []TweetDTO
 		err := json.NewDecoder(r.Body).Decode(&tweets)
 		if err != nil {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
 			return
 		}
 
 		err = validateBody(tweets)
 		if err != nil {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
 		}
 
 		err = insertTweets(r.Context(), tweets)
 		if err != nil {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			http.Error(w, FailedToInsertTweetsIntoDatabase, http.StatusInternalServerError)
 			return
 		}

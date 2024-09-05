@@ -3,10 +3,10 @@ package quotes
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"strings"
 
 	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
 // DeleteOrphans when the tweet insertion fails, and that tweets contains a quote,
@@ -39,7 +39,7 @@ func MakeDeleteOrphans(db database.Connection) DeleteOrphans {
 
 		_, err := db.Exec(ctx, queryToExecute, values...)
 		if err != nil {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			return FailedToDeleteOrphanQuotes
 		}
 

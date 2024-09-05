@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile_app
     container_name: ahbcc
+    command: ["/ahbcc", "--prod"]
     ports:
       - "${APP_EXPOSED_PORT}:${APP_INTERNAL_PORT}"
     environment:

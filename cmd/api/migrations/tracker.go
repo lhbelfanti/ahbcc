@@ -3,10 +3,11 @@ package migrations
 import (
 	"context"
 	"errors"
+
 	"github.com/jackc/pgx/v5"
-	"log/slog"
 
 	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
 type (
@@ -33,7 +34,7 @@ func MakeCreateMigrationsTable(db database.Connection) CreateMigrationsTable {
 	return func(ctx context.Context) error {
 		_, err := db.Exec(ctx, query)
 		if err != nil {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			return FailedToCreateMigrationsTable
 		}
 
@@ -56,7 +57,7 @@ func MakeIsMigrationApplied(db database.Connection) IsMigrationApplied {
 
 		err := db.QueryRow(ctx, query, migrationName).Scan(&applied)
 		if errors.Is(err, pgx.ErrNoRows) {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			return false, FailedToRetrieveIfMigrationWasApplied
 		}
 

@@ -3,18 +3,15 @@ package migrations
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"os"
 	"path/filepath"
 
 	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
-type (
-
-	// Run executes the migrations after the database is initialized
-	Run func(ctx context.Context, migrationsDir string) error
-)
+// Run executes the migrations after the database is initialized
+type Run func(ctx context.Context, migrationsDir string) error
 
 // MakeRun creates a new Run
 func MakeRun(db database.Connection, createMigrationsTable CreateMigrationsTable, isMigrationApplied IsMigrationApplied, insertAppliedMigration InsertAppliedMigration) Run {
@@ -33,20 +30,20 @@ func MakeRun(db database.Connection, createMigrationsTable CreateMigrationsTable
 			}
 
 			if !applied {
-				fmt.Printf("Executing %s...\n", file)
+				log.Info(ctx, fmt.Sprintf("Executing %s...\n", file))
 				err = executeSQLFromFile(ctx, db, file)
 				if err != nil {
-					slog.Error(err.Error())
+					log.Error(ctx, err.Error())
 					return FailedToExecuteMigration
 				}
-				fmt.Printf("Executed %s successfully\n", file)
+				log.Info(ctx, fmt.Sprintf("Executed %s successfully\n", file))
 
 				err = insertAppliedMigration(ctx, file)
 				if err != nil {
 					return err
 				}
 			} else {
-				fmt.Printf("Migration file %s already applied\n", file)
+				log.Info(ctx, fmt.Sprintf("Migration file %s already applied\n", file))
 			}
 		}
 
@@ -58,13 +55,13 @@ func MakeRun(db database.Connection, createMigrationsTable CreateMigrationsTable
 func executeSQLFromFile(ctx context.Context, db database.Connection, filename string) error {
 	content, err := os.ReadFile(filename)
 	if err != nil {
-		slog.Error(err.Error())
+		log.Error(ctx, err.Error())
 		return UnableToReadFile
 	}
 
 	_, err = db.Exec(ctx, string(content))
 	if err != nil {
-		slog.Error(err.Error())
+		log.Error(ctx, err.Error())
 		return UnableToExecuteSQL
 	}
 
