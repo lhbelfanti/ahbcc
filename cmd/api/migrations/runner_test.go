@@ -55,6 +55,29 @@ func TestRun_success(t *testing.T) {
 	mockPostgresConnection.AssertExpectations(t)
 }
 
+func TestRun_successWhenTheMigrationsAreAlreadyApplied(t *testing.T) {
+	migrationFile := filepath.Join(migrationsTestDir, "001_init.sql")
+	err := os.WriteFile(migrationFile, []byte("CREATE TABLE test (id INT);"), 0644)
+	assert.NoError(t, err)
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}(migrationFile)
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
+	mockCreateMigrationsTable := migrations.MockCreateMigrationsTable(nil)
+	mockIsMigrationApplied := migrations.MockIsMigrationApplied(true, nil)
+	mockInsertAppliedMigration := migrations.MockInsertAppliedMigration(nil)
+
+	run := migrations.MakeRun(mockPostgresConnection, mockCreateMigrationsTable, mockIsMigrationApplied, mockInsertAppliedMigration)
+
+	got := run(context.Background(), migrationsTestDir)
+
+	assert.NoError(t, got)
+}
+
 func TestRun_failsWhenExecuteSQLFromFileThrowsUnableToReadFileError(t *testing.T) {
 	invalidFile := filepath.Join(migrationsTestDir, "invalid.sql")
 	err := os.WriteFile(invalidFile, []byte("CREATE TABLE test (id INT);"), 0000)
