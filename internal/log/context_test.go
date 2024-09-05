@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"goxcrap/internal/log"
+	"ahbcc/internal/log"
 )
 
 func TestParam_success(t *testing.T) {
