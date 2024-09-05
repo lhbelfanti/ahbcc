@@ -1,25 +1,29 @@
 services:
-  app:
+  corpus_creator:
     build:
       context: .
       dockerfile: Dockerfile_app
-    container_name: app
+    container_name: ahbcc
+    ports:
+      - "${APP_EXPOSED_PORT}:${APP_INTERNAL_PORT}"
     environment:
+      API_PORT: ${APP_INTERNAL_PORT:-4001}
       POSTGRES_DB_NAME: ${DB_NAME}
       POSTGRES_DB_USER: ${DB_USER}
       POSTGRES_DB_PASS: ${DB_PASS}
-    ports:
-      - 8080:8090
-    restart: on-failure
+      POSTGRES_DB_PORT: ${DB_PORT}
+    env_file:
+      - .env
     volumes:
       - .:/app
     depends_on:
       postgres_db:
         condition: service_healthy
     networks:
-      - network
+      - corpus_creator
+    restart: on-failure
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'curl -sSf http://localhost:8090/ping/v1 || exit 1'"]
+      test: ["CMD-SHELL", "sh -c 'curl -sSf http://localhost:${APP_INTERNAL_PORT}/ping/v1 || exit 1'"]
       interval: 5s
       timeout: 10s
       retries: 5
@@ -30,27 +34,33 @@ services:
       context: .
       dockerfile: Dockerfile_migrations
     container_name: migrations
-    restart: "no"
+    environment:
+      API_PORT: ${APP_INTERNAL_PORT:-4001}
+    env_file:
+      - .env
     depends_on:
-      app:
+      corpus_creator:
         condition: service_healthy
     networks:
-      - network
+      - corpus_creator
+    restart: "no"
 
   postgres_db:
     image: postgres:latest
     container_name: postgres
+    ports:
+      - 1234:${DB_PORT:-5432}
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       TZ: "America/Argentina/Buenos_Aires"
-    ports:
-      - 1234:5432
+    env_file:
+      - .env
     volumes:
-      - database:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - network
+      - corpus_creator
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"'"]
       interval: 10s
@@ -58,8 +68,8 @@ services:
       retries: 5
 
 volumes:
-  database:
+  postgres_data:
 
 networks:
-  network:
+  corpus_creator:
     driver: bridge

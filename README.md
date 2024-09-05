@@ -100,9 +100,15 @@ To connect to the database create a `.env` file in the root of the project or re
 
 This file should contain the following environment variables:
 ```
+# App settings
+APP_EXPOSED_PORT=<AHBCC Host Port>
+APP_INTERNAL_PORT=<AHBCC Container Port>
+
+# Database
 DB_NAME=<Database name>
 DB_USER=<Database username>
 DB_PASS=<Database password>
+DB_PORT=<Database port>
 ```
 
 Replace the `< ... >` by the correct value. For example: `DB_NAME=<Database name>` --> `DB_NAME=ahbcc`.

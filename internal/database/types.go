@@ -30,12 +30,13 @@ var (
 	pgOnce     sync.Once
 )
 
-const databaseURL string = "postgresql://%s:%s@postgres_db:5432/%s?sslmode=disable"
+const databaseURL string = "postgresql://%s:%s@postgres_db:%s/%s?sslmode=disable"
 
 func resolveDatabaseURL() string {
 	dbUser := os.Getenv("POSTGRES_DB_USER")
 	dbPass := os.Getenv("POSTGRES_DB_PASS")
 	dbName := os.Getenv("POSTGRES_DB_NAME")
+	dbPort := os.Getenv("POSTGRES_DB_PORT")
 
-	return fmt.Sprintf(databaseURL, dbUser, dbPass, dbName)
+	return fmt.Sprintf(databaseURL, dbUser, dbPass, dbPort, dbName)
 }
