@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
-	"log/slog"
 
 	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
 // InsertSingle inserts a new QuoteDTO into 'quotes' table and returns the PK
@@ -29,7 +29,7 @@ func MakeInsertSingle(db database.Connection) InsertSingle {
 		var quoteID int
 		err := db.QueryRow(ctx, query, quote.IsAReply, quote.TextContent, quote.Images).Scan(&quoteID)
 		if errors.Is(err, pgx.ErrNoRows) {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			return -1, FailedToInsertQuote
 		}
 

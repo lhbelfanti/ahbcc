@@ -3,11 +3,11 @@ package tweets
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"strings"
 
 	"ahbcc/cmd/api/tweets/quotes"
 	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
 // Insert inserts a new TweetDTO into 'tweets' table
@@ -48,7 +48,7 @@ func MakeInsert(db database.Connection, insertQuote quotes.InsertSingle, deleteO
 
 		_, err := db.Exec(ctx, queryToExecute, values...)
 		if err != nil {
-			slog.Error(err.Error())
+			log.Error(ctx, err.Error())
 			return FailedToInsertTweets
 		}
 
