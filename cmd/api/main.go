@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+	"os"
 
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
@@ -36,8 +38,9 @@ func main() {
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 
 	/* --- Server --- */
-	slog.Info("AHBCC server is ready to receive request on port :8090")
-	err := http.ListenAndServe(":8090", router)
+	port := fmt.Sprintf(":%s", os.Getenv("API_PORT"))
+	slog.Info(fmt.Sprintf("AHBCC server is ready to receive request on port %s", port))
+	err := http.ListenAndServe(port, router)
 	if err != nil {
 		log.Fatalf("Could not start server: %s\n", err.Error())
 	}
