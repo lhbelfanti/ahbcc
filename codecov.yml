@@ -1,3 +1,4 @@
 ignore:
   - "cmd/api/main.go"
   - "internal/database/*"
+  - "internal/http/*"

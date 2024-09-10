@@ -1,8 +1,17 @@
 package criteria
 
-// MockCriteria mocks a criteria.Type
-func MockCriteria() Type {
-	return Type{
+import "context"
+
+// MockSelectByID mocks SelectByID function
+func MockSelectByID(dao DAO, err error) SelectByID {
+	return func(ctx context.Context, id int) (DAO, error) {
+		return dao, err
+	}
+}
+
+// MockCriteriaDAO mocks a criteria.DAO
+func MockCriteriaDAO() DAO {
+	return DAO{
 		ID:               1,
 		Name:             "Example",
 		AllOfTheseWords:  []string{"word1", "word2"},

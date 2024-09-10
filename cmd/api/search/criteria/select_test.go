@@ -15,8 +15,8 @@ import (
 func TestSelectByID_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
-	mockCriteria := criteria.MockCriteria()
-	database.MockScan[criteria.Type](mockPgxRow, mockCriteria, t)
+	mockCriteria := criteria.MockCriteriaDAO()
+	database.MockScan[criteria.DAO](mockPgxRow, mockCriteria, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
 	selectCriteriaByID := criteria.MakeSelectByID(mockPostgresConnection)
