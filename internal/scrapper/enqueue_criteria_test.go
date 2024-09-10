@@ -19,10 +19,9 @@ func TestEnqueueCriteria_success(t *testing.T) {
 		Body:   `{"test": "body"}`,
 	}
 	mockHTTPClient.On("NewRequest", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(resp, nil)
-	mockCtx := context.Background()
 	enqueueCriteria := scrapper.MakeEnqueueCriteria(mockHTTPClient, "http://example.com")
 
-	got := enqueueCriteria(mockCtx, scrapper.MockCriteriaDTO())
+	got := enqueueCriteria(context.Background(), scrapper.MockCriteriaDTO())
 
 	assert.Nil(t, got)
 	mockHTTPClient.AssertExpectations(t)
@@ -31,11 +30,10 @@ func TestEnqueueCriteria_success(t *testing.T) {
 func TestEnqueueCriteria_failsWhenNewRequestThrowsError(t *testing.T) {
 	mockHTTPClient := new(http.MockHTTPClient)
 	mockHTTPClient.On("NewRequest", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(http.Response{}, errors.New("failed to execute NewRequest"))
-	mockCtx := context.Background()
 	enqueueCriteria := scrapper.MakeEnqueueCriteria(mockHTTPClient, "http://example.com")
 
 	want := scrapper.FailedToExecuteRequest
-	got := enqueueCriteria(mockCtx, scrapper.MockCriteriaDTO())
+	got := enqueueCriteria(context.Background(), scrapper.MockCriteriaDTO())
 
 	assert.Equal(t, want, got)
 	mockHTTPClient.AssertExpectations(t)
