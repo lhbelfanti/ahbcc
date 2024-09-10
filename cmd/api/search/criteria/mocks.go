@@ -9,6 +9,13 @@ func MockSelectByID(dao DAO, err error) SelectByID {
 	}
 }
 
+// MockEnqueue mocks Enqueue function
+func MockEnqueue(err error) Enqueue {
+	return func(ctx context.Context, criteriaID int) error {
+		return err
+	}
+}
+
 // MockCriteriaDAO mocks a criteria.DAO
 func MockCriteriaDAO() DAO {
 	return DAO{
