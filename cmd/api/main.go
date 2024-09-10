@@ -11,10 +11,13 @@ import (
 
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
+	"ahbcc/cmd/api/search/criteria"
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/tweets/quotes"
 	"ahbcc/internal/database"
+	_http "ahbcc/internal/http"
 	"ahbcc/internal/log"
+	"ahbcc/internal/scrapper"
 	"ahbcc/internal/setup"
 )
 
@@ -36,6 +39,8 @@ func main() {
 
 	log.NewCustomLogger(os.Stdout, logLevel)
 
+	httpClient := _http.NewClient()
+
 	// Database
 	pg := setup.Init(database.InitPostgres())
 	defer pg.Close()
@@ -49,6 +54,9 @@ func main() {
 	insertSingleQuote := quotes.MakeInsertSingle(db)
 	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
+	selectCriteriaByID := criteria.MakeSelectByID(db)
+	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
+	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, scrapperEnqueueCriteria)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
@@ -56,6 +64,7 @@ func main() {
 	router.HandleFunc("GET /ping/v1", ping.HandlerV1())
 	router.HandleFunc("POST /migrations/run/v1", migrations.RunHandlerV1(runMigrations))
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
+	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */
