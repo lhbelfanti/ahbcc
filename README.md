@@ -109,6 +109,9 @@ DB_NAME=<Database name>
 DB_USER=<Database username>
 DB_PASS=<Database password>
 DB_PORT=<Database port>
+
+# External APIs URLs
+ENQUEUE_CRITERIA_API_URL=<Domain of the application with the endpoint /criteria/enqueue/v1> --> Example: the URL to the GoXCrap API
 ```
 
 Replace the `< ... >` by the correct value. For example: `DB_NAME=<Database name>` --> `DB_NAME=ahbcc`.
