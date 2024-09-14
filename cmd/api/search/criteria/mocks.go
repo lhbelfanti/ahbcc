@@ -32,12 +32,28 @@ func MockCriteriaDAO() DAO {
 	}
 }
 
-// MockExecutionDayDTO mocks a ExecutionDayDTO
+// MockExecutionDayDTO mocks an ExecutionDayDTO
 func MockExecutionDayDTO(errorReason *string) ExecutionDayDTO {
 	return ExecutionDayDTO{
 		ExecutionDate:             "2006-01-01",
 		TweetsQuantity:            20,
 		ErrorReason:               errorReason,
 		SearchCriteriaExecutionID: 5,
+	}
+}
+
+// MockExecutionDAOSlice mocks a slice of ExecutionDAO
+func MockExecutionDAOSlice() []ExecutionDAO {
+	return []ExecutionDAO{
+		{
+			ID:               1,
+			Status:           "DONE",
+			SearchCriteriaID: 2,
+		},
+		{
+			ID:               2,
+			Status:           "DONE",
+			SearchCriteriaID: 4,
+		},
 	}
 }
