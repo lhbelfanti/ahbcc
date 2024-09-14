@@ -19,6 +19,11 @@ type (
 	MockPgxRow struct {
 		mock.Mock
 	}
+
+	// MockPgxRows mock implementation of pgx.Rows
+	MockPgxRows struct {
+		mock.Mock
+	}
 )
 
 func (m *MockPostgresConnection) Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error) {
@@ -41,6 +46,50 @@ func (m *MockPgxRow) Scan(dest ...any) error {
 	return args.Error(0)
 }
 
+func (m *MockPgxRows) Close() {
+	m.Called()
+}
+
+func (m *MockPgxRows) Err() error {
+	args := m.Called()
+	return args.Error(0)
+}
+
+func (m *MockPgxRows) CommandTag() pgconn.CommandTag {
+	args := m.Called()
+	return args.Get(0).(pgconn.CommandTag)
+}
+
+func (m *MockPgxRows) FieldDescriptions() []pgconn.FieldDescription {
+	args := m.Called()
+	return args.Get(0).([]pgconn.FieldDescription)
+}
+
+func (m *MockPgxRows) Next() bool {
+	args := m.Called()
+	return args.Bool(0)
+}
+
+func (m *MockPgxRows) Scan(dest ...any) error {
+	args := m.Called(dest)
+	return args.Error(0)
+}
+
+func (m *MockPgxRows) Values() ([]any, error) {
+	args := m.Called()
+	return args.Get(0).([]any), args.Error(1)
+}
+
+func (m *MockPgxRows) RawValues() [][]byte {
+	args := m.Called()
+	return args.Get(0).([][]byte)
+}
+
+func (m *MockPgxRows) Conn() *pgx.Conn {
+	args := m.Called()
+	return args.Get(0).(*pgx.Conn)
+}
+
 // MockScan mocks the "Scan" func
 func MockScan[T any](mockPgxRow *MockPgxRow, value T, t *testing.T) {
 	mockPgxRow.On("Scan", mock.Anything).Return(nil).Run(
@@ -53,4 +102,11 @@ func MockScan[T any](mockPgxRow *MockPgxRow, value T, t *testing.T) {
 			*ptr = value
 		},
 	)
+}
+
+// MockCollectRows mocks CollectRows function
+func MockCollectRows[T any](slice []T, err error) CollectRows[T] {
+	return func(rows pgx.Rows) ([]T, error) {
+		return slice, err
+	}
 }

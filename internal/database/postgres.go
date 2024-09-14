@@ -3,10 +3,11 @@ package database
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// InitPostgres creates a new
+// InitPostgres creates a new postgres instance
 func InitPostgres() (*Postgres, error) {
 	var initErr error
 	pgOnce.Do(func() {
@@ -26,4 +27,11 @@ func (pg *Postgres) Database() *pgxpool.Pool {
 // Close closes the database connection
 func (pg *Postgres) Close() {
 	pg.db.Close()
+}
+
+// MakeCollectRows creates a new CollectRows
+func MakeCollectRows[T any]() CollectRows[T] {
+	return func(rows pgx.Rows) ([]T, error) {
+		return pgx.CollectRows(rows, pgx.RowToStructByPos[T])
+	}
 }
