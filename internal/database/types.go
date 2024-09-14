@@ -23,6 +23,9 @@ type (
 	Postgres struct {
 		db *pgxpool.Pool
 	}
+
+	// CollectRows is a wrapper created to be able to mock pgx.CollectRows function
+	CollectRows[T any] func(rows pgx.Rows) ([]T, error)
 )
 
 var (
