@@ -31,3 +31,13 @@ func MockCriteriaDAO() DAO {
 		Until:            "2024-01-01",
 	}
 }
+
+// MockExecutionDayDTO mocks a ExecutionDayDTO
+func MockExecutionDayDTO(errorReason *string) ExecutionDayDTO {
+	return ExecutionDayDTO{
+		ExecutionDate:             "2006-01-01",
+		TweetsQuantity:            20,
+		ErrorReason:               errorReason,
+		SearchCriteriaExecutionID: 5,
+	}
+}
