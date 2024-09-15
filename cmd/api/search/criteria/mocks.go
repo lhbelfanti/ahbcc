@@ -9,9 +9,16 @@ func MockSelectByID(dao DAO, err error) SelectByID {
 	}
 }
 
+// MockSelectExecutionsByStatuses mocks SelectExecutionsByStatuses function
+func MockSelectExecutionsByStatuses(executionsDAO []ExecutionDAO, err error) SelectExecutionsByStatuses {
+	return func(ctx context.Context, statuses []string) ([]ExecutionDAO, error) {
+		return executionsDAO, err
+	}
+}
+
 // MockEnqueue mocks Enqueue function
 func MockEnqueue(err error) Enqueue {
-	return func(ctx context.Context, criteriaID int) error {
+	return func(ctx context.Context, criteriaID int, forced bool) error {
 		return err
 	}
 }
@@ -42,17 +49,17 @@ func MockExecutionDayDTO(errorReason *string) ExecutionDayDTO {
 	}
 }
 
-// MockExecutionDAOSlice mocks a slice of ExecutionDAO
-func MockExecutionDAOSlice() []ExecutionDAO {
+// MockExecutionsDAO mocks a slice of ExecutionDAO
+func MockExecutionsDAO() []ExecutionDAO {
 	return []ExecutionDAO{
 		{
 			ID:               1,
-			Status:           "DONE",
+			Status:           "PENDING",
 			SearchCriteriaID: 2,
 		},
 		{
 			ID:               2,
-			Status:           "DONE",
+			Status:           "IN PROGRESS",
 			SearchCriteriaID: 4,
 		},
 	}

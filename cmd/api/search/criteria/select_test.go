@@ -29,7 +29,6 @@ func TestSelectByID_success(t *testing.T) {
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
 	mockPgxRow.AssertExpectations(t)
-
 }
 
 func TestSelectByID_failsWhenSelectOperationFails(t *testing.T) {
@@ -51,14 +50,15 @@ func TestSelectByID_failsWhenSelectOperationFails(t *testing.T) {
 func TestSelectExecutionsByState_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
+	mockPgxRows.On("Close").Return()
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
-	mockExecutionDAOSlice := criteria.MockExecutionDAOSlice()
+	mockExecutionDAOSlice := criteria.MockExecutionsDAO()
 	mockCollectRows := database.MockCollectRows[criteria.ExecutionDAO](mockExecutionDAOSlice, nil)
 
-	selectExecutionsByState := criteria.MakeSelectExecutionsByState(mockPostgresConnection, mockCollectRows)
+	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
 	want := mockExecutionDAOSlice
-	got, err := selectExecutionsByState(context.Background(), "DONE")
+	got, err := selectExecutionsByState(context.Background(), []string{"PENDING", "IN PROGRESS", "DONE"})
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
@@ -66,33 +66,34 @@ func TestSelectExecutionsByState_success(t *testing.T) {
 	mockPgxRows.AssertExpectations(t)
 }
 
-func TestSelectExecutionsByState_failsWhenSelectOperationThrowsError(t *testing.T) {
+func TestSelectExecutionsByStatuses_failsWhenSelectOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, errors.New("failed to select executions by state"))
-	mockExecutionDAOSlice := criteria.MockExecutionDAOSlice()
+	mockExecutionDAOSlice := criteria.MockExecutionsDAO()
 	mockCollectRows := database.MockCollectRows[criteria.ExecutionDAO](mockExecutionDAOSlice, nil)
 
-	selectExecutionsByState := criteria.MakeSelectExecutionsByState(mockPostgresConnection, mockCollectRows)
+	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
 	want := criteria.FailedToExecuteSelectSearchCriteriaExecutionByState
-	_, got := selectExecutionsByState(context.Background(), "DONE")
+	_, got := selectExecutionsByState(context.Background(), []string{"PENDING", "IN PROGRESS", "DONE"})
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
 	mockPgxRows.AssertExpectations(t)
 }
 
-func TestSelectExecutionsByState_failsWhenCollectRowsThrowsError(t *testing.T) {
+func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
+	mockPgxRows.On("Close").Return()
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
 	mockCollectRows := database.MockCollectRows[criteria.ExecutionDAO](nil, errors.New("failed to collect rows"))
 
-	selectExecutionsByState := criteria.MakeSelectExecutionsByState(mockPostgresConnection, mockCollectRows)
+	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
 	want := criteria.FailedToExecuteSelectCollectRowsInSelectExecutionByState
-	_, got := selectExecutionsByState(context.Background(), "DONE")
+	_, got := selectExecutionsByState(context.Background(), []string{"PENDING", "IN PROGRESS", "DONE"})
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

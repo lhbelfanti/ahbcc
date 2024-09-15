@@ -1,6 +1,7 @@
 package criteria
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -20,11 +21,25 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 			return
 		}
 
-		err = enqueueCriteria(ctx, criteriaID)
+		forcedQueryParamStr := r.URL.Query().Get("forced")
+		forcedQueryParam, err := strconv.ParseBool(forcedQueryParamStr)
 		if err != nil {
 			log.Error(ctx, err.Error())
-			http.Error(w, FailedToEnqueueCriteria, http.StatusInternalServerError)
+			http.Error(w, InvalidQueryParameterFormat, http.StatusBadRequest)
 			return
+		}
+
+		err = enqueueCriteria(ctx, criteriaID, forcedQueryParam)
+		if err != nil {
+			switch {
+			case errors.Is(err, AnExecutionOfThisCriteriaIDIsAlreadyEnqueued):
+				log.Error(ctx, err.Error())
+				http.Error(w, ExecutionWithSameCriteriaIDAlreadyEnqueued, http.StatusConflict)
+			default:
+				log.Error(ctx, err.Error())
+				http.Error(w, FailedToEnqueueCriteria, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		log.Info(ctx, "Criteria successfully sent to enqueue")

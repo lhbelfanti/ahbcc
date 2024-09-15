@@ -3,15 +3,19 @@ package criteria
 import "errors"
 
 const (
-	InvalidURLParameter     string = "Invalid url parameter"
-	FailedToEnqueueCriteria string = "Failed to execute enqueue criteria"
+	InvalidURLParameter                        string = "Invalid url parameter"
+	InvalidQueryParameterFormat                string = "Invalid query parameter format"
+	FailedToEnqueueCriteria                    string = "Failed to execute enqueue criteria"
+	ExecutionWithSameCriteriaIDAlreadyEnqueued string = "An execution with the same criteria id is already enqueued"
 )
 
 var (
 	FailedToRetrieveCriteriaData = errors.New("failed to retrieve criteria data")
 
-	FailedToExecuteSelectCriteriaByID = errors.New("failed to execute select criteria by id")
-	FailedToExecuteEnqueueCriteria    = errors.New("failed to execute enqueue criteria")
+	FailedToExecuteSelectCriteriaByID            = errors.New("failed to execute select criteria by id")
+	FailedToExecuteSelectExecutionsByStatuses    = errors.New("failed to execute select executions by statuses")
+	AnExecutionOfThisCriteriaIDIsAlreadyEnqueued = errors.New("an execution of this criteria is already enqueued")
+	FailedToExecuteEnqueueCriteria               = errors.New("failed to execute enqueue criteria")
 
 	FailedToInsertSearchCriteriaExecution                    = errors.New("failed to insert search criteria execution")
 	FailedToUpdateSearchCriteriaExecution                    = errors.New("failed to update search criteria execution")

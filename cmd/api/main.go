@@ -51,12 +51,16 @@ func main() {
 	isMigrationApplied := migrations.MakeIsMigrationApplied(db)
 	insertAppliedMigration := migrations.MakeInsertAppliedMigration(db)
 	runMigrations := migrations.MakeRun(db, createMigrationsTable, isMigrationApplied, insertAppliedMigration)
+
 	insertSingleQuote := quotes.MakeInsertSingle(db)
 	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
+
 	selectCriteriaByID := criteria.MakeSelectByID(db)
+	collectExecutionDAORows := database.MakeCollectRows[criteria.ExecutionDAO]()
+	selectExecutionsByStatuses := criteria.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
 	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
-	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, scrapperEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
