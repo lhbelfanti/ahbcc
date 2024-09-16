@@ -47,6 +47,60 @@ func TestSelectByID_failsWhenSelectOperationFails(t *testing.T) {
 	mockPgxRow.AssertExpectations(t)
 }
 
+func TestSelectAll_success(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPgxRows.On("Close").Return()
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
+	mockExecutionDAOSlice := criteria.MockCriteriaDAOSlice()
+	mockCollectRows := database.MockCollectRows[criteria.DAO](mockExecutionDAOSlice, nil)
+
+	selectAllCriteria := criteria.MakeSelectAll(mockPostgresConnection, mockCollectRows)
+
+	want := mockExecutionDAOSlice
+	got, err := selectAllCriteria(context.Background())
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectAll_failsWhenSelectOperationThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, errors.New("failed to select all criteria"))
+	mockExecutionDAOSlice := criteria.MockCriteriaDAOSlice()
+	mockCollectRows := database.MockCollectRows[criteria.DAO](mockExecutionDAOSlice, nil)
+
+	selectAllCriteria := criteria.MakeSelectAll(mockPostgresConnection, mockCollectRows)
+
+	want := criteria.FailedToRetrieveAllCriteriaData
+	_, got := selectAllCriteria(context.Background())
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectAll_failsWhenCollectRowsThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPgxRows.On("Close").Return()
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
+	mockExecutionDAOSlice := criteria.MockCriteriaDAOSlice()
+	mockCollectRows := database.MockCollectRows[criteria.DAO](mockExecutionDAOSlice, errors.New("failed to collect rows"))
+
+	selectAllCriteria := criteria.MakeSelectAll(mockPostgresConnection, mockCollectRows)
+
+	want := criteria.FailedToExecuteSelectCollectRowsInSelectAll
+	_, got := selectAllCriteria(context.Background())
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
 func TestSelectExecutionsByState_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
