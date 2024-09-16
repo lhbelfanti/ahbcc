@@ -1,5 +1,7 @@
 package criteria
 
+import "ahbcc/internal/scrapper"
+
 type (
 	// DAO represents a search criteria
 	DAO struct {
@@ -22,3 +24,19 @@ type (
 		SearchCriteriaID int    `json:"search_criteria_id"`
 	}
 )
+
+// toCriteriaDTO converts a criteria.DAO into a scrapper.CriteriaDTO
+func (dao DAO) toCriteriaDTO() scrapper.CriteriaDTO {
+	return scrapper.CriteriaDTO{
+		ID:               dao.ID,
+		Name:             dao.Name,
+		AllOfTheseWords:  dao.AllOfTheseWords,
+		ThisExactPhrase:  dao.ThisExactPhrase,
+		AnyOfTheseWords:  dao.AllOfTheseWords,
+		NoneOfTheseWords: dao.NoneOfTheseWords,
+		TheseHashtags:    dao.TheseHashtags,
+		Language:         dao.Language,
+		Since:            dao.Since,
+		Until:            dao.Until,
+	}
+}

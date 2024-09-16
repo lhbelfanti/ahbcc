@@ -33,20 +33,7 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 			}
 		}
 
-		body := scrapper.CriteriaDTO{
-			ID:               criteriaDAO.ID,
-			Name:             criteriaDAO.Name,
-			AllOfTheseWords:  criteriaDAO.AllOfTheseWords,
-			ThisExactPhrase:  criteriaDAO.ThisExactPhrase,
-			AnyOfTheseWords:  criteriaDAO.AllOfTheseWords,
-			NoneOfTheseWords: criteriaDAO.NoneOfTheseWords,
-			TheseHashtags:    criteriaDAO.TheseHashtags,
-			Language:         criteriaDAO.Language,
-			Since:            criteriaDAO.Since,
-			Until:            criteriaDAO.Until,
-		}
-
-		err = enqueueCriteria(ctx, body)
+		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO())
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return FailedToExecuteEnqueueCriteria

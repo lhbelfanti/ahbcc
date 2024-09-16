@@ -12,6 +12,9 @@ const (
 var (
 	FailedToRetrieveCriteriaData = errors.New("failed to retrieve criteria data")
 
+	FailedToRetrieveAllCriteriaData             = errors.New("failed to retrieve all criteria data")
+	FailedToExecuteSelectCollectRowsInSelectAll = errors.New("failed to execute select collect rows in select all")
+
 	FailedToExecuteSelectCriteriaByID            = errors.New("failed to execute select criteria by id")
 	FailedToExecuteSelectExecutionsByStatuses    = errors.New("failed to execute select executions by statuses")
 	AnExecutionOfThisCriteriaIDIsAlreadyEnqueued = errors.New("an execution of this criteria is already enqueued")
