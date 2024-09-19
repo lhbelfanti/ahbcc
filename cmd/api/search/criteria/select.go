@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 
@@ -21,6 +22,9 @@ type (
 
 	// SelectExecutionsByStatuses returns all the search criteria executions in certain state
 	SelectExecutionsByStatuses func(ctx context.Context, statuses []string) ([]ExecutionDAO, error)
+
+	// SelectLastDayExecutedForCriteria returns the last day executed for the given criteria
+	SelectLastDayExecutedForCriteria func(ctx context.Context, id int) (string, error)
 )
 
 // MakeSelectByID creates a new SelectByID
@@ -36,7 +40,10 @@ func MakeSelectByID(db database.Connection) SelectByID {
 		err := db.QueryRow(ctx, query, id).Scan(&criteria)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
-			return DAO{}, FailedToRetrieveCriteriaData
+			return DAO{}, NoCriteriaDataFoundForTheGivenCriteriaID
+		} else if err != nil {
+			log.Error(ctx, err.Error())
+			return DAO{}, FailedExecuteQueryToRetrieveCriteriaData
 		}
 
 		return criteria, nil
@@ -98,5 +105,36 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 		}
 
 		return executions, nil
+	}
+}
+
+// MakeSelectLastDayExecutedForCriteria creates a new SelectLastDayExecutedForCriteria
+func MakeSelectLastDayExecutedForCriteria(db database.Connection) SelectLastDayExecutedForCriteria {
+	const query string = `
+		SELECT sced.id,
+		sced.execution_date,
+		sced.tweets_quantity,
+		sced.error_reason
+		FROM search_criteria_execution_days sced
+		JOIN search_criteria_executions sce
+		ON sced.search_criteria_execution_id = sce.id
+		WHERE sce.search_criteria_id = $1
+		ORDER BY sced.execution_date DESC
+		LIMIT 1;
+	`
+
+	return func(ctx context.Context, id int) (string, error) {
+		var lastDayExecutedDate time.Time
+		err := db.QueryRow(ctx, query, id).Scan(&lastDayExecutedDate)
+		if errors.Is(err, pgx.ErrNoRows) {
+			log.Error(ctx, err.Error())
+			return "", NoExecutionDaysFoundForTheGivenCriteriaID
+		} else if err != nil {
+			log.Error(ctx, err.Error())
+			return "", FailedToRetrieveLastDayExecutedDate
+		}
+
+		lastDayExecuted := lastDayExecutedDate.Format("2006-01-02")
+		return lastDayExecuted, nil
 	}
 }
