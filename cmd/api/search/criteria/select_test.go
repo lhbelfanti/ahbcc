@@ -123,7 +123,7 @@ func TestSelectExecutionsByState_success(t *testing.T) {
 	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
 	want := mockExecutionDAOSlice
-	got, err := selectExecutionsByState(context.Background(), []string{"PENDING", "IN PROGRESS", "DONE"})
+	got, err := selectExecutionsByState(context.Background(), []string{criteria.PendingStatus, criteria.InProgressStatus, criteria.DoneStatus})
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
@@ -141,7 +141,7 @@ func TestSelectExecutionsByStatuses_failsWhenSelectOperationThrowsError(t *testi
 	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
 	want := criteria.FailedToExecuteSelectSearchCriteriaExecutionByState
-	_, got := selectExecutionsByState(context.Background(), []string{"PENDING", "IN PROGRESS", "DONE"})
+	_, got := selectExecutionsByState(context.Background(), []string{criteria.PendingStatus, criteria.InProgressStatus, criteria.DoneStatus})
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
@@ -158,24 +158,24 @@ func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T
 	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
 	want := criteria.FailedToExecuteSelectCollectRowsInSelectExecutionByState
-	_, got := selectExecutionsByState(context.Background(), []string{"PENDING", "IN PROGRESS", "DONE"})
+	_, got := selectExecutionsByState(context.Background(), []string{criteria.PendingStatus, criteria.InProgressStatus, criteria.DoneStatus})
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
 	mockPgxRows.AssertExpectations(t)
 }
 
-func TestSelectLastDayExecutedForCriteria_success(t *testing.T) {
+func TestSelectLastDayExecutedByCriteriaID_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
 	mockDate := time.Date(2024, 9, 19, 0, 0, 0, 0, time.UTC)
 	database.MockScan[time.Time](mockPgxRow, mockDate, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-	selectLastDayExecutedForCriteria := criteria.MakeSelectLastDayExecutedForCriteria(mockPostgresConnection)
+	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(mockPostgresConnection)
 
 	want := "2024-09-19"
-	got, err := selectLastDayExecutedForCriteria(context.Background(), 1)
+	got, err := selectLastDayExecutedByCriteriaID(context.Background(), 1)
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
@@ -183,7 +183,7 @@ func TestSelectLastDayExecutedForCriteria_success(t *testing.T) {
 	mockPgxRow.AssertExpectations(t)
 }
 
-func TestSelectLastDayExecutedForCriteria_failsWhenSelectOperationFails(t *testing.T) {
+func TestSelectLastDayExecutedByCriteriaID_failsWhenSelectOperationFails(t *testing.T) {
 	tests := []struct {
 		err      error
 		expected error
@@ -198,10 +198,10 @@ func TestSelectLastDayExecutedForCriteria_failsWhenSelectOperationFails(t *testi
 		mockPgxRow.On("Scan", mock.Anything).Return(tt.err)
 		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-		selectLastDayExecutedForCriteria := criteria.MakeSelectLastDayExecutedForCriteria(mockPostgresConnection)
+		selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(mockPostgresConnection)
 
 		want := tt.expected
-		_, got := selectLastDayExecutedForCriteria(context.Background(), 1)
+		_, got := selectLastDayExecutedByCriteriaID(context.Background(), 1)
 
 		assert.Equal(t, want, got)
 		mockPostgresConnection.AssertExpectations(t)

@@ -25,6 +25,12 @@ type (
 	}
 )
 
+const (
+	PendingStatus    string = "PENDING"
+	InProgressStatus string = "IN_PROGRESS"
+	DoneStatus       string = "DONE"
+)
+
 // toCriteriaDTO converts a criteria.DAO into a scrapper.CriteriaDTO
 func (dao DAO) toCriteriaDTO() scrapper.CriteriaDTO {
 	return scrapper.CriteriaDTO{
