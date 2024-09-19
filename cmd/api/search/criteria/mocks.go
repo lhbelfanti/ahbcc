@@ -16,6 +16,13 @@ func MockSelectExecutionsByStatuses(executionsDAO []ExecutionDAO, err error) Sel
 	}
 }
 
+// MockSelectLastDayExecutedByCriteriaID mocks SelectLastDayExecutedByCriteriaID function
+func MockSelectLastDayExecutedByCriteriaID(err error) SelectLastDayExecutedByCriteriaID {
+	return func(ctx context.Context, id int) (string, error) {
+		return "2024-09-19", err
+	}
+}
+
 // MockEnqueue mocks Enqueue function
 func MockEnqueue(err error) Enqueue {
 	return func(ctx context.Context, criteriaID int, forced bool) error {
@@ -84,12 +91,12 @@ func MockExecutionsDAO() []ExecutionDAO {
 	return []ExecutionDAO{
 		{
 			ID:               1,
-			Status:           "PENDING",
+			Status:           PendingStatus,
 			SearchCriteriaID: 2,
 		},
 		{
 			ID:               2,
-			Status:           "IN PROGRESS",
+			Status:           InProgressStatus,
 			SearchCriteriaID: 4,
 		},
 	}

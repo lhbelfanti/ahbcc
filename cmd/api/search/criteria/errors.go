@@ -16,10 +16,11 @@ var (
 	FailedToRetrieveAllCriteriaData             = errors.New("failed to retrieve all criteria data")
 	FailedToExecuteSelectCollectRowsInSelectAll = errors.New("failed to execute select collect rows in select all")
 
-	FailedToExecuteSelectCriteriaByID            = errors.New("failed to execute select criteria by id")
-	FailedToExecuteSelectExecutionsByStatuses    = errors.New("failed to execute select executions by statuses")
-	AnExecutionOfThisCriteriaIDIsAlreadyEnqueued = errors.New("an execution of this criteria is already enqueued")
-	FailedToExecuteEnqueueCriteria               = errors.New("failed to execute enqueue criteria")
+	FailedToExecuteSelectCriteriaByID                = errors.New("failed to execute select criteria by id")
+	FailedToExecuteSelectLastDayExecutedByCriteriaID = errors.New("failed to execute select last day executed by criteria id")
+	FailedToExecuteSelectExecutionsByStatuses        = errors.New("failed to execute select executions by statuses")
+	AnExecutionOfThisCriteriaIDIsAlreadyEnqueued     = errors.New("an execution of this criteria is already enqueued")
+	FailedToExecuteEnqueueCriteria                   = errors.New("failed to execute enqueue criteria")
 
 	FailedToInsertSearchCriteriaExecution                    = errors.New("failed to insert search criteria execution")
 	FailedToUpdateSearchCriteriaExecution                    = errors.New("failed to update search criteria execution")

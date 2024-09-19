@@ -58,9 +58,10 @@ func main() {
 
 	selectCriteriaByID := criteria.MakeSelectByID(db)
 	collectExecutionDAORows := database.MakeCollectRows[criteria.ExecutionDAO]()
+	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(db)
 	selectExecutionsByStatuses := criteria.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
 	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
-	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")

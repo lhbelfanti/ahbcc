@@ -19,7 +19,7 @@ func TestUpdateExecution_success(t *testing.T) {
 
 	updateExecution := criteria.MakeUpdateExecution(mockPostgresConnection)
 
-	got := updateExecution(context.Background(), 1, "DONE")
+	got := updateExecution(context.Background(), 1, criteria.DoneStatus)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
@@ -32,7 +32,7 @@ func TestUpdateExecution_failsWhenUpdateOperationThrowsError(t *testing.T) {
 	updateExecution := criteria.MakeUpdateExecution(mockPostgresConnection)
 
 	want := criteria.FailedToUpdateSearchCriteriaExecution
-	got := updateExecution(context.Background(), 1, "DONE")
+	got := updateExecution(context.Background(), 1, criteria.DoneStatus)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

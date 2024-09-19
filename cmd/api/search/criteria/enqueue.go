@@ -11,7 +11,7 @@ import (
 type Enqueue func(ctx context.Context, criteriaID int, forced bool) error
 
 // MakeEnqueue creates a new Enqueue
-func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses SelectExecutionsByStatuses, enqueueCriteria scrapper.EnqueueCriteria) Enqueue {
+func MakeEnqueue(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria SelectLastDayExecutedByCriteriaID, selectExecutionsByStatuses SelectExecutionsByStatuses, enqueueCriteria scrapper.EnqueueCriteria) Enqueue {
 	return func(ctx context.Context, criteriaID int, forced bool) error {
 		criteriaDAO, err := selectCriteriaByID(ctx, criteriaID)
 		if err != nil {
@@ -19,8 +19,16 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 			return FailedToExecuteSelectCriteriaByID
 		}
 
-		if !forced {
-			executionsDAO, err := selectExecutionsByStatuses(ctx, []string{"PENDING", "IN PROGRESS"})
+		if forced {
+			lastDayExecutedDate, err := selectLastDayExecutedByCriteria(ctx, criteriaID)
+			if err != nil {
+				log.Error(ctx, err.Error())
+				return FailedToExecuteSelectLastDayExecutedByCriteriaID
+			}
+
+			criteriaDAO.Since = lastDayExecutedDate
+		} else {
+			executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
 			if err != nil {
 				log.Error(ctx, err.Error())
 				return FailedToExecuteSelectExecutionsByStatuses

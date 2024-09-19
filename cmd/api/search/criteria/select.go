@@ -23,8 +23,8 @@ type (
 	// SelectExecutionsByStatuses returns all the search criteria executions in certain state
 	SelectExecutionsByStatuses func(ctx context.Context, statuses []string) ([]ExecutionDAO, error)
 
-	// SelectLastDayExecutedForCriteria returns the last day executed for the given criteria
-	SelectLastDayExecutedForCriteria func(ctx context.Context, id int) (string, error)
+	// SelectLastDayExecutedByCriteriaID returns the last day executed for the given criteria
+	SelectLastDayExecutedByCriteriaID func(ctx context.Context, id int) (string, error)
 )
 
 // MakeSelectByID creates a new SelectByID
@@ -108,8 +108,8 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 	}
 }
 
-// MakeSelectLastDayExecutedForCriteria creates a new SelectLastDayExecutedForCriteria
-func MakeSelectLastDayExecutedForCriteria(db database.Connection) SelectLastDayExecutedForCriteria {
+// MakeSelectLastDayExecutedByCriteriaID creates a new SelectLastDayExecutedByCriteriaID
+func MakeSelectLastDayExecutedByCriteriaID(db database.Connection) SelectLastDayExecutedByCriteriaID {
 	const query string = `
 		SELECT sced.id,
 		sced.execution_date,
@@ -123,9 +123,9 @@ func MakeSelectLastDayExecutedForCriteria(db database.Connection) SelectLastDayE
 		LIMIT 1;
 	`
 
-	return func(ctx context.Context, id int) (string, error) {
+	return func(ctx context.Context, criteriaID int) (string, error) {
 		var lastDayExecutedDate time.Time
-		err := db.QueryRow(ctx, query, id).Scan(&lastDayExecutedDate)
+		err := db.QueryRow(ctx, query, criteriaID).Scan(&lastDayExecutedDate)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
 			return "", NoExecutionDaysFoundForTheGivenCriteriaID
