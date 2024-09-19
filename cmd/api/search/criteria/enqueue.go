@@ -2,6 +2,7 @@ package criteria
 
 import (
 	"context"
+	"errors"
 
 	"ahbcc/internal/log"
 	"ahbcc/internal/scrapper"
@@ -22,11 +23,13 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria 
 		if forced {
 			lastDayExecutedDate, err := selectLastDayExecutedByCriteria(ctx, criteriaID)
 			if err != nil {
-				log.Error(ctx, err.Error())
-				return FailedToExecuteSelectLastDayExecutedByCriteriaID
+				if !errors.Is(err, NoExecutionDaysFoundForTheGivenCriteriaID) {
+					log.Error(ctx, err.Error())
+					return FailedToExecuteSelectLastDayExecutedByCriteriaID
+				}
+			} else {
+				criteriaDAO.Since = lastDayExecutedDate
 			}
-
-			criteriaDAO.Since = lastDayExecutedDate
 		} else {
 			executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
 			if err != nil {
