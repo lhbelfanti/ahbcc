@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
@@ -32,19 +33,29 @@ func TestSelectByID_success(t *testing.T) {
 }
 
 func TestSelectByID_failsWhenSelectOperationFails(t *testing.T) {
-	mockPostgresConnection := new(database.MockPostgresConnection)
-	mockPgxRow := new(database.MockPgxRow)
-	mockPgxRow.On("Scan", mock.Anything).Return(pgx.ErrNoRows)
-	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+	tests := []struct {
+		err      error
+		expected error
+	}{
+		{err: pgx.ErrNoRows, expected: criteria.NoCriteriaDataFoundForTheGivenCriteriaID},
+		{err: errors.New("failed to execute select operation"), expected: criteria.FailedExecuteQueryToRetrieveCriteriaData},
+	}
 
-	selectCriteriaByID := criteria.MakeSelectByID(mockPostgresConnection)
+	for _, tt := range tests {
+		mockPostgresConnection := new(database.MockPostgresConnection)
+		mockPgxRow := new(database.MockPgxRow)
+		mockPgxRow.On("Scan", mock.Anything).Return(tt.err)
+		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-	want := criteria.FailedToRetrieveCriteriaData
-	_, got := selectCriteriaByID(context.Background(), 1)
+		selectCriteriaByID := criteria.MakeSelectByID(mockPostgresConnection)
 
-	assert.Equal(t, want, got)
-	mockPostgresConnection.AssertExpectations(t)
-	mockPgxRow.AssertExpectations(t)
+		want := tt.expected
+		_, got := selectCriteriaByID(context.Background(), 1)
+
+		assert.Equal(t, want, got)
+		mockPostgresConnection.AssertExpectations(t)
+		mockPgxRow.AssertExpectations(t)
+	}
 }
 
 func TestSelectAll_success(t *testing.T) {
@@ -152,4 +163,48 @@ func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
 	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectLastDayExecutedForCriteria_success(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRow := new(database.MockPgxRow)
+	mockDate := time.Date(2024, 9, 19, 0, 0, 0, 0, time.UTC)
+	database.MockScan[time.Time](mockPgxRow, mockDate, t)
+	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+
+	selectLastDayExecutedForCriteria := criteria.MakeSelectLastDayExecutedForCriteria(mockPostgresConnection)
+
+	want := "2024-09-19"
+	got, err := selectLastDayExecutedForCriteria(context.Background(), 1)
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRow.AssertExpectations(t)
+}
+
+func TestSelectLastDayExecutedForCriteria_failsWhenSelectOperationFails(t *testing.T) {
+	tests := []struct {
+		err      error
+		expected error
+	}{
+		{err: pgx.ErrNoRows, expected: criteria.NoExecutionDaysFoundForTheGivenCriteriaID},
+		{err: errors.New("failed to execute select operation"), expected: criteria.FailedToRetrieveLastDayExecutedDate},
+	}
+
+	for _, tt := range tests {
+		mockPostgresConnection := new(database.MockPostgresConnection)
+		mockPgxRow := new(database.MockPgxRow)
+		mockPgxRow.On("Scan", mock.Anything).Return(tt.err)
+		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+
+		selectLastDayExecutedForCriteria := criteria.MakeSelectLastDayExecutedForCriteria(mockPostgresConnection)
+
+		want := tt.expected
+		_, got := selectLastDayExecutedForCriteria(context.Background(), 1)
+
+		assert.Equal(t, want, got)
+		mockPostgresConnection.AssertExpectations(t)
+		mockPgxRow.AssertExpectations(t)
+	}
 }

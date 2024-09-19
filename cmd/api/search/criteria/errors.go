@@ -10,7 +10,8 @@ const (
 )
 
 var (
-	FailedToRetrieveCriteriaData = errors.New("failed to retrieve criteria data")
+	NoCriteriaDataFoundForTheGivenCriteriaID = errors.New("no criteria data found for given criteria id")
+	FailedExecuteQueryToRetrieveCriteriaData = errors.New("failed to execute query to retrieve criteria data")
 
 	FailedToRetrieveAllCriteriaData             = errors.New("failed to retrieve all criteria data")
 	FailedToExecuteSelectCollectRowsInSelectAll = errors.New("failed to execute select collect rows in select all")
@@ -26,4 +27,7 @@ var (
 	FailedToExecuteSelectCollectRowsInSelectExecutionByState = errors.New("failed to execute select collect rows in select criteria execution by state")
 
 	FailedToInsertSearchCriteriaExecutionDay = errors.New("failed to insert search criteria execution day")
+
+	FailedToRetrieveLastDayExecutedDate       = errors.New("failed to retrieve last day executed date")
+	NoExecutionDaysFoundForTheGivenCriteriaID = errors.New("no execution days found for the given criteria id")
 )
