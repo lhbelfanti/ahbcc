@@ -12,3 +12,6 @@ ENV TZ=America/Argentina/Buenos_Aires
 # Make HTTP request to /migrations/run/v1 endpoint
 CMD ["sh", "-c", "curl -X POST http://ahbcc:${API_PORT}/migrations/run/v1"]
 
+# Make HTTP request to /criteria/init/v1 endpoint
+CMD ["sh", "-c", "curl -X POST http://ahbcc:${API_PORT}/criteria/init/v1"]
+

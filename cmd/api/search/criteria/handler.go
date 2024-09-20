@@ -8,7 +8,7 @@ import (
 	"ahbcc/internal/log"
 )
 
-// EnqueueHandlerV1 HTTP Handler of the endpoint /criteria/enqueue/v1
+// EnqueueHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/enqueue/v1
 func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -45,5 +45,23 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 		log.Info(ctx, "Criteria successfully sent to enqueue")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("Criteria successfully sent to enqueue"))
+	}
+}
+
+// InitHandlerV1 HTTP Handler of the endpoint /criteria/init/v1
+func InitHandlerV1(init Init) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		err := init(ctx)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, FailedToExecuteInitCriteria, http.StatusInternalServerError)
+			return
+		}
+
+		log.Info(ctx, "Criteria successfully initialized and enqueued")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Criteria successfully initialized and enqueued"))
 	}
 }

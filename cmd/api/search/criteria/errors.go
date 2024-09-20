@@ -7,6 +7,7 @@ const (
 	InvalidQueryParameterFormat                string = "Invalid query parameter format"
 	FailedToEnqueueCriteria                    string = "Failed to execute enqueue criteria"
 	ExecutionWithSameCriteriaIDAlreadyEnqueued string = "An execution with the same criteria id is already enqueued"
+	FailedToExecuteInitCriteria                string = "Failed to execute init criteria"
 )
 
 var (
