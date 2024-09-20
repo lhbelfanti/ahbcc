@@ -63,6 +63,8 @@ func main() {
 	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
 	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 
+	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, enqueueCriteria)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -70,6 +72,7 @@ func main() {
 	router.HandleFunc("POST /migrations/run/v1", migrations.RunHandlerV1(runMigrations))
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
+	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */

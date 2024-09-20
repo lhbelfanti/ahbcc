@@ -30,6 +30,13 @@ func MockEnqueue(err error) Enqueue {
 	}
 }
 
+// MockInit mocks Init function
+func MockInit(err error) Init {
+	return func(ctx context.Context) error {
+		return err
+	}
+}
+
 // MockCriteriaDAO mocks a criteria.DAO
 func MockCriteriaDAO() DAO {
 	return DAO{

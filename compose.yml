@@ -29,12 +29,12 @@ services:
       timeout: 10s
       retries: 5
 
-  migrations:
+  db_initializer:
     image: alpine:latest
     build:
       context: .
-      dockerfile: Dockerfile_migrations
-    container_name: migrations
+      dockerfile: Dockerfile_db
+    container_name: db_initializer
     environment:
       API_PORT: ${APP_INTERNAL_PORT:-4001}
     env_file:

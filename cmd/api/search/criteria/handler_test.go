@@ -105,3 +105,35 @@ func TestEnqueueHandlerV1_failsWhenEnqueueCriteriaThrowsError(t *testing.T) {
 		assert.Equal(t, want, got)
 	}
 }
+
+func TestInitHandlerV1_success(t *testing.T) {
+	mockInit := criteria.MockInit(nil)
+
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/init", http.NoBody)
+
+	handlerV1 := criteria.InitHandlerV1(mockInit)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusOK
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestInitHandlerV1_failsWhenInitThrowsError(t *testing.T) {
+	mockInit := criteria.MockInit(errors.New("failed while executing init criteria"))
+
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/init", http.NoBody)
+
+	handlerV1 := criteria.InitHandlerV1(mockInit)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusInternalServerError
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
