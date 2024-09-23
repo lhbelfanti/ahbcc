@@ -1,20 +1,24 @@
 package criteria
 
-import "ahbcc/internal/scrapper"
+import (
+	"time"
+
+	"ahbcc/internal/scrapper"
+)
 
 type (
 	// DAO represents a search criteria
 	DAO struct {
-		ID               int      `json:"id"`
-		Name             string   `json:"name"`
-		AllOfTheseWords  []string `json:"all_of_these_words"`
-		ThisExactPhrase  string   `json:"this_exact_phrase"`
-		AnyOfTheseWords  []string `json:"any_of_these_words"`
-		NoneOfTheseWords []string `json:"none_of_these_words"`
-		TheseHashtags    []string `json:"these_hashtags"`
-		Language         string   `json:"language"`
-		Since            string   `json:"since"`
-		Until            string   `json:"until"`
+		ID               int       `json:"id"`
+		Name             string    `json:"name"`
+		AllOfTheseWords  []string  `json:"all_of_these_words"`
+		ThisExactPhrase  string    `json:"this_exact_phrase"`
+		AnyOfTheseWords  []string  `json:"any_of_these_words"`
+		NoneOfTheseWords []string  `json:"none_of_these_words"`
+		TheseHashtags    []string  `json:"these_hashtags"`
+		Language         string    `json:"language"`
+		Since            time.Time `json:"since"`
+		Until            time.Time `json:"until"`
 	}
 
 	// ExecutionDAO represents a search criteria execution
@@ -27,7 +31,7 @@ type (
 
 const (
 	PendingStatus    string = "PENDING"
-	InProgressStatus string = "IN_PROGRESS"
+	InProgressStatus string = "IN PROGRESS"
 	DoneStatus       string = "DONE"
 )
 
@@ -42,7 +46,7 @@ func (dao DAO) toCriteriaDTO() scrapper.CriteriaDTO {
 		NoneOfTheseWords: dao.NoneOfTheseWords,
 		TheseHashtags:    dao.TheseHashtags,
 		Language:         dao.Language,
-		Since:            dao.Since,
-		Until:            dao.Until,
+		Since:            dao.Since.Format("2006-01-02"),
+		Until:            dao.Until.Format("2006-01-02"),
 	}
 }

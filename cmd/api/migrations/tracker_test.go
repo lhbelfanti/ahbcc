@@ -42,7 +42,7 @@ func TestCreateMigrationsTable_failsWhenTableCreationThrowsError(t *testing.T) {
 func TestIsMigrationApplied_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
-	database.MockScan[bool](mockPgxRow, true, t)
+	database.MockScan(mockPgxRow, []any{true}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
 	isMigrationApplied := migrations.MakeIsMigrationApplied(mockPostgresConnection)

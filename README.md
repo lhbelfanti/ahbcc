@@ -30,6 +30,22 @@ The primary objective is to gather information from X (formerly Twitter) using [
 
 To allow [GoXCrap](https://github.com/lhbelfanti/goxcrap) to save the tweets into the database and then retrieve them using [Binarizer](https://github.com/lhbelfanti/binarizer), this application exposes different endpoints, encapsulating the access to the database in one place (this app).
 
+#### Network
+This app calls an endpoint defined by the env variable `ENQUEUE_CRITERIA_API_URL`. To ensure proper communication, the app that owns this endpoint must be on the same network (named shared), which is defined in the [compose.yml](compose.yml) as follows:
+```
+networks:
+  shared:
+    driver: bridge
+    name: shared
+```
+
+To join the same network, the corresponding `compose.yml` for the other app should include the following configuration:
+```
+networks:
+  shared:
+    external: true
+```
+
 ### Database
 
 Tables: **Entity Relationship Diagram**

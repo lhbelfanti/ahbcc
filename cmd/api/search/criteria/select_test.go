@@ -18,7 +18,8 @@ func TestSelectByID_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
 	mockCriteria := criteria.MockCriteriaDAO()
-	database.MockScan[criteria.DAO](mockPgxRow, mockCriteria, t)
+	mockScanCriteriaDAOValues := criteria.MockScanCriteriaDAOValues(mockCriteria)
+	database.MockScan(mockPgxRow, mockScanCriteriaDAOValues, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
 	selectCriteriaByID := criteria.MakeSelectByID(mockPostgresConnection)
@@ -61,7 +62,6 @@ func TestSelectByID_failsWhenSelectOperationFails(t *testing.T) {
 func TestSelectAll_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
-	mockPgxRows.On("Close").Return()
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
 	mockExecutionDAOSlice := criteria.MockCriteriaDAOSlice()
 	mockCollectRows := database.MockCollectRows[criteria.DAO](mockExecutionDAOSlice, nil)
@@ -97,7 +97,6 @@ func TestSelectAll_failsWhenSelectOperationThrowsError(t *testing.T) {
 func TestSelectAll_failsWhenCollectRowsThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
-	mockPgxRows.On("Close").Return()
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
 	mockExecutionDAOSlice := criteria.MockCriteriaDAOSlice()
 	mockCollectRows := database.MockCollectRows[criteria.DAO](mockExecutionDAOSlice, errors.New("failed to collect rows"))
@@ -115,7 +114,6 @@ func TestSelectAll_failsWhenCollectRowsThrowsError(t *testing.T) {
 func TestSelectExecutionsByState_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
-	mockPgxRows.On("Close").Return()
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
 	mockExecutionDAOSlice := criteria.MockExecutionsDAO()
 	mockCollectRows := database.MockCollectRows[criteria.ExecutionDAO](mockExecutionDAOSlice, nil)
@@ -151,7 +149,6 @@ func TestSelectExecutionsByStatuses_failsWhenSelectOperationThrowsError(t *testi
 func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
-	mockPgxRows.On("Close").Return()
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
 	mockCollectRows := database.MockCollectRows[criteria.ExecutionDAO](nil, errors.New("failed to collect rows"))
 
@@ -168,13 +165,13 @@ func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T
 func TestSelectLastDayExecutedByCriteriaID_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
-	mockDate := time.Date(2024, 9, 19, 0, 0, 0, 0, time.UTC)
-	database.MockScan[time.Time](mockPgxRow, mockDate, t)
+	mockDate := time.Date(2024, 9, 19, 0, 0, 0, 0, time.Local)
+	database.MockScan(mockPgxRow, []any{mockDate}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
 	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(mockPostgresConnection)
 
-	want := "2024-09-19"
+	want := mockDate
 	got, err := selectLastDayExecutedByCriteriaID(context.Background(), 1)
 
 	assert.Nil(t, err)

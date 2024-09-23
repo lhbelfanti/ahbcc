@@ -1,6 +1,9 @@
 package criteria
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // MockSelectByID mocks SelectByID function
 func MockSelectByID(dao DAO, err error) SelectByID {
@@ -17,9 +20,9 @@ func MockSelectExecutionsByStatuses(executionsDAO []ExecutionDAO, err error) Sel
 }
 
 // MockSelectLastDayExecutedByCriteriaID mocks SelectLastDayExecutedByCriteriaID function
-func MockSelectLastDayExecutedByCriteriaID(err error) SelectLastDayExecutedByCriteriaID {
-	return func(ctx context.Context, id int) (string, error) {
-		return "2024-09-19", err
+func MockSelectLastDayExecutedByCriteriaID(lastDayExecuted time.Time, err error) SelectLastDayExecutedByCriteriaID {
+	return func(ctx context.Context, id int) (time.Time, error) {
+		return lastDayExecuted, err
 	}
 }
 
@@ -48,8 +51,24 @@ func MockCriteriaDAO() DAO {
 		NoneOfTheseWords: []string{"none1", "none2"},
 		TheseHashtags:    []string{"#hashtag1", "#hashtag2"},
 		Language:         "es",
-		Since:            "2006-01-01",
-		Until:            "2024-01-01",
+		Since:            time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
+		Until:            time.Date(2024, time.January, 1, 0, 0, 0, 0, time.Local),
+	}
+}
+
+// MockScanCriteriaDAOValues mocks the properties of DAO to be used in the Scan function
+func MockScanCriteriaDAOValues(dao DAO) []any {
+	return []any{
+		dao.ID,
+		dao.Name,
+		dao.AllOfTheseWords,
+		dao.ThisExactPhrase,
+		dao.AnyOfTheseWords,
+		dao.NoneOfTheseWords,
+		dao.TheseHashtags,
+		dao.Language,
+		dao.Since,
+		dao.Until,
 	}
 }
 
@@ -65,8 +84,8 @@ func MockCriteriaDAOSlice() []DAO {
 			NoneOfTheseWords: []string{"none1", "none2"},
 			TheseHashtags:    []string{"#hashtag1", "#hashtag2"},
 			Language:         "es",
-			Since:            "2006-01-01",
-			Until:            "2024-01-01",
+			Since:            time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
+			Until:            time.Date(2024, time.January, 1, 0, 0, 0, 0, time.Local),
 		},
 		{
 			ID:               2,
@@ -77,8 +96,8 @@ func MockCriteriaDAOSlice() []DAO {
 			NoneOfTheseWords: []string{"none1", "none2"},
 			TheseHashtags:    []string{"#hashtag1", "#hashtag2"},
 			Language:         "es",
-			Since:            "2006-01-01",
-			Until:            "2024-01-01",
+			Since:            time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
+			Until:            time.Date(2024, time.January, 1, 0, 0, 0, 0, time.Local),
 		},
 	}
 }
