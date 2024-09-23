@@ -26,7 +26,7 @@ func TestInsertExecution_success(t *testing.T) {
 		searchCriteriaExecutionID := 1
 		mockPostgresConnection := new(database.MockPostgresConnection)
 		mockPgxRow := new(database.MockPgxRow)
-		database.MockScan[int](mockPgxRow, searchCriteriaExecutionID, t)
+		database.MockScan(mockPgxRow, []any{searchCriteriaExecutionID}, t)
 		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
 		insertExecution := criteria.MakeInsertExecution(mockPostgresConnection)

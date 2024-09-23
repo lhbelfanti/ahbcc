@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -91,15 +92,29 @@ func (m *MockPgxRows) Conn() *pgx.Conn {
 }
 
 // MockScan mocks the "Scan" func
-func MockScan[T any](mockPgxRow *MockPgxRow, value T, t *testing.T) {
+func MockScan(mockPgxRow *MockPgxRow, values []any, t *testing.T) {
 	mockPgxRow.On("Scan", mock.Anything).Return(nil).Run(
 		func(args mock.Arguments) {
 			dest := args.Get(0).([]interface{})
-			ptr, ok := dest[0].(*T)
-			if !ok {
-				t.Errorf("Incorrect data type %T", dest[0])
+			if len(dest) != len(values) {
+				t.Errorf("Expected %d destination arguments but got %d", len(values), len(dest))
 			}
-			*ptr = value
+			for i, val := range values {
+				switch v := dest[i].(type) {
+				case *int:
+					*v = val.(int)
+				case *bool:
+					*v = val.(bool)
+				case *string:
+					*v = val.(string)
+				case *time.Time:
+					*v = val.(time.Time)
+				case *[]string:
+					*v = val.([]string)
+				default:
+					t.Errorf("Unsupported type %T", v)
+				}
+			}
 		},
 	)
 }

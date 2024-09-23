@@ -7,7 +7,7 @@ type (
 		SearchCriteriaID int    `json:"search_criteria_id"`
 	}
 
-	// ExecutionDayDTO represents a search criteria execution dat to be inserted into the 'search_criteria_execution_days' table
+	// ExecutionDayDTO represents a search criteria execution day to be inserted into the 'search_criteria_execution_days' table
 	ExecutionDayDTO struct {
 		ExecutionDate             string  `json:"execution_date"`
 		TweetsQuantity            int     `json:"tweets_quantity"`

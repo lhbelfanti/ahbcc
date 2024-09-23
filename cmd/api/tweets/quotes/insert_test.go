@@ -15,7 +15,7 @@ import (
 func TestInsertSingle_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
-	database.MockScan[int](mockPgxRow, 1, t)
+	database.MockScan(mockPgxRow, []any{1}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 	mockQuoteDTO := quotes.MockQuoteDTO()
 

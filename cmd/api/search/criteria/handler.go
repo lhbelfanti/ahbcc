@@ -20,6 +20,7 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
 			return
 		}
+		ctx = log.With(ctx, log.Param("criteria_id", criteriaIDParam))
 
 		forcedQueryParamStr := r.URL.Query().Get("forced")
 		forcedQueryParam, err := strconv.ParseBool(forcedQueryParamStr)
@@ -28,6 +29,7 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 			http.Error(w, InvalidQueryParameterFormat, http.StatusBadRequest)
 			return
 		}
+		ctx = log.With(ctx, log.Param("forced", forcedQueryParamStr))
 
 		err = enqueueCriteria(ctx, criteriaID, forcedQueryParam)
 		if err != nil {

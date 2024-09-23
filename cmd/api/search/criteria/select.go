@@ -24,7 +24,7 @@ type (
 	SelectExecutionsByStatuses func(ctx context.Context, statuses []string) ([]ExecutionDAO, error)
 
 	// SelectLastDayExecutedByCriteriaID returns the last day executed for the given criteria
-	SelectLastDayExecutedByCriteriaID func(ctx context.Context, id int) (string, error)
+	SelectLastDayExecutedByCriteriaID func(ctx context.Context, id int) (time.Time, error)
 )
 
 // MakeSelectByID creates a new SelectByID
@@ -37,7 +37,18 @@ func MakeSelectByID(db database.Connection) SelectByID {
 
 	return func(ctx context.Context, id int) (DAO, error) {
 		var criteria DAO
-		err := db.QueryRow(ctx, query, id).Scan(&criteria)
+		err := db.QueryRow(ctx, query, id).Scan(
+			&criteria.ID,
+			&criteria.Name,
+			&criteria.AllOfTheseWords,
+			&criteria.ThisExactPhrase,
+			&criteria.AnyOfTheseWords,
+			&criteria.NoneOfTheseWords,
+			&criteria.TheseHashtags,
+			&criteria.Language,
+			&criteria.Since,
+			&criteria.Until,
+		)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
 			return DAO{}, NoCriteriaDataFoundForTheGivenCriteriaID
@@ -63,7 +74,6 @@ func MakeSelectAll(db database.Connection, collectRows database.CollectRows[DAO]
 			log.Error(ctx, err.Error())
 			return nil, FailedToRetrieveAllCriteriaData
 		}
-		defer rows.Close()
 
 		searchCriteria, err := collectRows(rows)
 		if err != nil {
@@ -85,18 +95,19 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 
 	return func(ctx context.Context, statuses []string) ([]ExecutionDAO, error) {
 		placeholders := make([]string, len(statuses))
-		for i := range statuses {
+		values := make([]any, len(statuses))
+		for i, status := range statuses {
 			placeholders[i] = fmt.Sprintf("$%d", i+1)
+			values[i] = status
 		}
 
 		queryToExecute := fmt.Sprintf(query, strings.Join(placeholders, ","))
 
-		rows, err := db.Query(ctx, queryToExecute, statuses)
+		rows, err := db.Query(ctx, queryToExecute, values...)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return nil, FailedToExecuteSelectSearchCriteriaExecutionByState
 		}
-		defer rows.Close()
 
 		executions, err := collectRows(rows)
 		if err != nil {
@@ -111,10 +122,7 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 // MakeSelectLastDayExecutedByCriteriaID creates a new SelectLastDayExecutedByCriteriaID
 func MakeSelectLastDayExecutedByCriteriaID(db database.Connection) SelectLastDayExecutedByCriteriaID {
 	const query string = `
-		SELECT sced.id,
-		sced.execution_date,
-		sced.tweets_quantity,
-		sced.error_reason
+		SELECT sced.execution_date
 		FROM search_criteria_execution_days sced
 		JOIN search_criteria_executions sce
 		ON sced.search_criteria_execution_id = sce.id
@@ -123,18 +131,17 @@ func MakeSelectLastDayExecutedByCriteriaID(db database.Connection) SelectLastDay
 		LIMIT 1;
 	`
 
-	return func(ctx context.Context, criteriaID int) (string, error) {
+	return func(ctx context.Context, criteriaID int) (time.Time, error) {
 		var lastDayExecutedDate time.Time
 		err := db.QueryRow(ctx, query, criteriaID).Scan(&lastDayExecutedDate)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
-			return "", NoExecutionDaysFoundForTheGivenCriteriaID
+			return time.Time{}, NoExecutionDaysFoundForTheGivenCriteriaID
 		} else if err != nil {
 			log.Error(ctx, err.Error())
-			return "", FailedToRetrieveLastDayExecutedDate
+			return time.Time{}, FailedToRetrieveLastDayExecutedDate
 		}
 
-		lastDayExecuted := lastDayExecutedDate.Format("2006-01-02")
-		return lastDayExecuted, nil
+		return lastDayExecutedDate, nil
 	}
 }

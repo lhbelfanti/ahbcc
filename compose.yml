@@ -22,6 +22,7 @@ services:
         condition: service_healthy
     networks:
       - corpus_creator
+      - shared
     restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'curl -sSf http://localhost:${APP_INTERNAL_PORT}/ping/v1 || exit 1'"]
@@ -74,3 +75,6 @@ volumes:
 networks:
   corpus_creator:
     driver: bridge
+  shared:
+    driver: bridge
+    name: shared

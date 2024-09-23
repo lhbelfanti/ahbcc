@@ -18,6 +18,7 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
 			return
 		}
+		ctx = log.With(ctx, log.Param("tweets", tweets))
 
 		err = validateBody(tweets)
 		if err != nil {
@@ -25,7 +26,7 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
 		}
 
-		err = insertTweets(r.Context(), tweets)
+		err = insertTweets(ctx, tweets)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			http.Error(w, FailedToInsertTweetsIntoDatabase, http.StatusInternalServerError)

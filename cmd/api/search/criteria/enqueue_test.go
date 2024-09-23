@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -22,7 +23,8 @@ func TestEnqueue_success(t *testing.T) {
 	for _, tt := range tests {
 		mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 		mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
-		mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(nil)
+		mockDate := time.Date(2024, time.September, 19, 0, 0, 0, 0, time.Local)
+		mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(mockDate, nil)
 		mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
 		enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectLastDayExecutedByCriteriaID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
 
@@ -35,7 +37,7 @@ func TestEnqueue_success(t *testing.T) {
 func TestEnqueue_failsWhenSelectLastDayExecutedByCriteriaThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
-	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(errors.New("failed to execute select last day executed by criteria id"))
+	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(time.Time{}, errors.New("failed to execute select last day executed by criteria id"))
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
 	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectLastDayExecutedByCriteriaID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
 
@@ -48,7 +50,8 @@ func TestEnqueue_failsWhenSelectLastDayExecutedByCriteriaThrowsError(t *testing.
 func TestEnqueue_failsWhenSelectCriteriaByIDThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), errors.New("failed to execute select criteria by id"))
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
-	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(nil)
+	mockDate := time.Date(2024, time.September, 19, 0, 0, 0, 0, time.Local)
+	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(mockDate, nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
 	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectLastDayExecutedByCriteriaID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
 
@@ -61,7 +64,8 @@ func TestEnqueue_failsWhenSelectCriteriaByIDThrowsError(t *testing.T) {
 func TestEnqueue_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
-	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(nil)
+	mockDate := time.Date(2024, time.September, 19, 0, 0, 0, 0, time.Local)
+	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(mockDate, nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), errors.New("failed to execute select executions by statuses"))
 	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectLastDayExecutedByCriteriaID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
 
@@ -74,7 +78,8 @@ func TestEnqueue_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 func TestEnqueue_failsWhenThereIsAlreadyAnExecutionWithTheSameCriteriaIDEnqueued(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
-	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(nil)
+	mockDate := time.Date(2024, time.September, 19, 0, 0, 0, 0, time.Local)
+	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(mockDate, nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
 	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectLastDayExecutedByCriteriaID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
 
@@ -87,7 +92,8 @@ func TestEnqueue_failsWhenThereIsAlreadyAnExecutionWithTheSameCriteriaIDEnqueued
 func TestEnqueue_failsWhenEnqueueCriteriaThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(errors.New("failed to execute enqueue criteria"))
-	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(nil)
+	mockDate := time.Date(2024, time.September, 19, 0, 0, 0, 0, time.Local)
+	mockSelectLastDayExecutedByCriteriaID := criteria.MockSelectLastDayExecutedByCriteriaID(mockDate, nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
 	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectLastDayExecutedByCriteriaID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
 
