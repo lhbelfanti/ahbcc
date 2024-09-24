@@ -2,6 +2,9 @@ package criteria
 
 import (
 	"context"
+	"errors"
+	"net/http"
+	"net/http/httptest"
 	"time"
 )
 
@@ -37,6 +40,13 @@ func MockEnqueue(err error) Enqueue {
 func MockInit(err error) Init {
 	return func(ctx context.Context) error {
 		return err
+	}
+}
+
+// MockInsertExecution mocks InsertExecution function
+func MockInsertExecution(criteriaID int, err error) InsertExecution {
+	return func(ctx context.Context, searchCriteriaID int, forced bool) (int, error) {
+		return criteriaID, err
 	}
 }
 
@@ -126,4 +136,24 @@ func MockExecutionsDAO() []ExecutionDAO {
 			SearchCriteriaID: 4,
 		},
 	}
+}
+
+// MockErrorResponseWriter mocks a ResponseRecorder
+type MockErrorResponseWriter struct {
+	ResponseRecorder *httptest.ResponseRecorder
+}
+
+// Write is the method of MockErrorResponseWriter that mocks the Write behaviour of a ResponseRecorder
+func (w *MockErrorResponseWriter) Write(b []byte) (int, error) {
+	return 0, errors.New("error while executing ResponseRecorder.Write")
+}
+
+// WriteHeader is the method of MockErrorResponseWriter that mocks the WriteHeader behaviour of a ResponseRecorder
+func (w *MockErrorResponseWriter) WriteHeader(statusCode int) {
+	w.ResponseRecorder.WriteHeader(statusCode)
+}
+
+// Header is the method of MockErrorResponseWriter that mocks the Header behaviour of a ResponseRecorder
+func (w *MockErrorResponseWriter) Header() http.Header {
+	return w.ResponseRecorder.Header()
 }
