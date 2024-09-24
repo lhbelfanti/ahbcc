@@ -97,8 +97,8 @@ func InsertExecutionHandlerV1(insertExecution InsertExecution) http.HandlerFunc 
 
 		log.Info(ctx, "Criteria execution successfully inserted")
 		w.Header().Set("Content-Type", "application/json")
-		
-		err = json.NewEncoder(w).Encode(response) // w.WriteHeader(http.StatusOK) is implicit set inside the encoder
+
+		err = json.NewEncoder(w).Encode(response) // w.WriteHeader(http.StatusOK) is implicitly set inside the encoder
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Error(ctx, err.Error())
