@@ -65,6 +65,8 @@ func main() {
 
 	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, enqueueCriteria)
 
+	insertCriteriaExecution := criteria.MakeInsertExecution(db)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -73,6 +75,7 @@ func main() {
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
+	router.HandleFunc("POST /criteria/{criteria_id}/executions/v1", criteria.InsertExecutionHandlerV1(insertCriteriaExecution))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */

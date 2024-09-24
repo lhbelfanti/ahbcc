@@ -3,11 +3,13 @@ package criteria
 import "errors"
 
 const (
-	InvalidURLParameter                        string = "Invalid url parameter"
-	InvalidQueryParameterFormat                string = "Invalid query parameter format"
-	FailedToEnqueueCriteria                    string = "Failed to execute enqueue criteria"
-	ExecutionWithSameCriteriaIDAlreadyEnqueued string = "An execution with the same criteria id is already enqueued"
-	FailedToExecuteInitCriteria                string = "Failed to execute init criteria"
+	InvalidURLParameter                           string = "Invalid url parameter"
+	InvalidQueryParameterFormat                   string = "Invalid query parameter format"
+	FailedToEnqueueCriteria                       string = "Failed to execute enqueue criteria"
+	ExecutionWithSameCriteriaIDAlreadyEnqueued    string = "An execution with the same criteria id is already enqueued"
+	FailedToExecuteInitCriteria                   string = "Failed to execute init criteria"
+	FailedToExecuteInsertCriteriaExecution        string = "Failed to execute insert criteria execution"
+	FailedToEncodeInsertCriteriaExecutionResponse string = "Failed to encode insert criteria execution response"
 )
 
 var (

@@ -14,4 +14,10 @@ type (
 		ErrorReason               *string `json:"error_reason"`
 		SearchCriteriaExecutionID int     `json:"search_criteria_execution_id"`
 	}
+
+	// InsertExecutionHandlerV1Response represents the response of the InsertExecutionHandlerV1 function
+	InsertExecutionHandlerV1Response struct {
+		Message     string `json:"message"`
+		ExecutionID int    `json:"execution_id"`
+	}
 )
