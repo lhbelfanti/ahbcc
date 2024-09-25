@@ -50,6 +50,13 @@ func MockInsertExecution(criteriaID int, err error) InsertExecution {
 	}
 }
 
+// MockInsertExecutionDay mocks InsertExecutionDay function
+func MockInsertExecutionDay(err error) InsertExecutionDay {
+	return func(ctx context.Context, executionDay ExecutionDayDTO) error {
+		return err
+	}
+}
+
 // MockCriteriaDAO mocks a criteria.DAO
 func MockCriteriaDAO() DAO {
 	return DAO{

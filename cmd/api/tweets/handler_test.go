@@ -17,7 +17,7 @@ import (
 func TestInsertHandlerV1_success(t *testing.T) {
 	mockInsert := tweets.MockInsert(nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockTweets := tweets.MockTweets()
+	mockTweets := tweets.MockTweetsDTOs()
 	mockBody, _ := json.Marshal(mockTweets)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/v1", bytes.NewReader(mockBody))
 
@@ -50,7 +50,7 @@ func TestInsertHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
 func TestInsertHandlerV1_failsWhenTweetHashIsNotPresentInBody(t *testing.T) {
 	mockInsert := tweets.MockInsert(nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockTweets := tweets.MockTweets()
+	mockTweets := tweets.MockTweetsDTOs()
 	mockTweets[0].Hash = nil
 	mockBody, _ := json.Marshal(mockTweets)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/v1", bytes.NewReader(mockBody))
@@ -68,7 +68,7 @@ func TestInsertHandlerV1_failsWhenTweetHashIsNotPresentInBody(t *testing.T) {
 func TestInsertHandlerV1_failsWhenTweetSearchCriteriaIDIsNotPresentInBody(t *testing.T) {
 	mockInsert := tweets.MockInsert(nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockTweets := tweets.MockTweets()
+	mockTweets := tweets.MockTweetsDTOs()
 	mockTweets[0].SearchCriteriaID = nil
 	mockBody, _ := json.Marshal(mockTweets)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/v1", bytes.NewReader(mockBody))
@@ -86,7 +86,7 @@ func TestInsertHandlerV1_failsWhenTweetSearchCriteriaIDIsNotPresentInBody(t *tes
 func TestInsertHandlerV1_failsWhenInsertTweetsThrowsError(t *testing.T) {
 	mockInsert := tweets.MockInsert(errors.New("failed to insert tweets"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockTweets := tweets.MockTweets()
+	mockTweets := tweets.MockTweetsDTOs()
 	mockBody, _ := json.Marshal(mockTweets)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/v1", bytes.NewReader(mockBody))
 

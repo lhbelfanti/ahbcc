@@ -11,6 +11,7 @@ import (
 func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+		
 		var tweets []TweetDTO
 		err := json.NewDecoder(r.Body).Decode(&tweets)
 		if err != nil {

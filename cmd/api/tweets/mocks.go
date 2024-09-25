@@ -30,8 +30,8 @@ func MockTweetDTO() TweetDTO {
 	}
 }
 
-// MockTweets mocks a slice of TweetDTO
-func MockTweets() []TweetDTO {
+// MockTweetsDTOs mocks a slice of TweetDTO
+func MockTweetsDTOs() []TweetDTO {
 	return []TweetDTO{
 		MockTweetDTO(),
 		MockTweetDTO(),

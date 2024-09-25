@@ -67,6 +67,8 @@ func main() {
 
 	insertCriteriaExecution := criteria.MakeInsertExecution(db)
 
+	insertCriteriaExecutionDay := criteria.MakeInsertExecutionDay(db)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -76,6 +78,7 @@ func main() {
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
 	router.HandleFunc("POST /criteria/{criteria_id}/executions/v1", criteria.InsertExecutionHandlerV1(insertCriteriaExecution))
+	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", criteria.InsertExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */

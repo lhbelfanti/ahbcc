@@ -19,7 +19,7 @@ func TestInsert_success(t *testing.T) {
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
 	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
-	mockTweetDTO := tweets.MockTweets()
+	mockTweetDTO := tweets.MockTweetsDTOs()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
@@ -34,7 +34,7 @@ func TestInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
 	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
-	mockTweetDTO := tweets.MockTweets()
+	mockTweetDTO := tweets.MockTweetsDTOs()
 	mockTweetDTO[0].TextContent = nil
 	mockTweetDTO[0].Images = nil
 	mockTweetDTO[0].Quote = nil
@@ -55,7 +55,7 @@ func TestInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsTable
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(-1, errors.New("failed to insert single quote"))
 	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
-	mockTweetDTO := tweets.MockTweets()
+	mockTweetDTO := tweets.MockTweetsDTOs()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
@@ -70,7 +70,7 @@ func TestInsert_successEvenWhenTheDeleteOrphanQuotesThrowsError(t *testing.T) {
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
 	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(errors.New("failed to delete orphan quotes"))
-	mockTweetDTO := tweets.MockTweets()
+	mockTweetDTO := tweets.MockTweetsDTOs()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
@@ -85,7 +85,7 @@ func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert tweets"))
 	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
 	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
-	mockTweetDTO := tweets.MockTweets()
+	mockTweetDTO := tweets.MockTweetsDTOs()
 
 	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
 
