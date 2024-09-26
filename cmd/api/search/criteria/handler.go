@@ -108,6 +108,42 @@ func InsertExecutionHandlerV1(insertExecution InsertExecution) http.HandlerFunc 
 	}
 }
 
+// UpdateExecutionHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/v1
+func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		executionIDParam := r.PathValue("execution_id")
+		executionID, err := strconv.Atoi(executionIDParam)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
+			return
+		}
+		ctx = log.With(ctx, log.Param("execution_id", executionIDParam))
+
+		var execution ExecutionDTO
+		err = json.NewDecoder(r.Body).Decode(&execution)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			return
+		}
+		ctx = log.With(ctx, log.Param("execution", execution))
+
+		err = updateExecution(ctx, executionID, execution.Status)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, FailedToExecuteUpdateCriteriaExecution, http.StatusInternalServerError)
+			return
+		}
+
+		log.Info(ctx, "Criteria execution successfully updated")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("Criteria execution successfully updated"))
+	}
+}
+
 // InsertExecutionDayHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/day/v1
 func InsertExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
