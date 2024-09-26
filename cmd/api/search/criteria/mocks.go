@@ -50,6 +50,13 @@ func MockInsertExecution(criteriaID int, err error) InsertExecution {
 	}
 }
 
+// MockUpdateExecution mocks UpdateExecution function
+func MockUpdateExecution(err error) UpdateExecution {
+	return func(ctx context.Context, executionID int, status string) error {
+		return err
+	}
+}
+
 // MockInsertExecutionDay mocks InsertExecutionDay function
 func MockInsertExecutionDay(err error) InsertExecutionDay {
 	return func(ctx context.Context, executionDay ExecutionDayDTO) error {
@@ -119,16 +126,6 @@ func MockCriteriaDAOSlice() []DAO {
 	}
 }
 
-// MockExecutionDayDTO mocks an ExecutionDayDTO
-func MockExecutionDayDTO(errorReason *string) ExecutionDayDTO {
-	return ExecutionDayDTO{
-		ExecutionDate:             "2006-01-01",
-		TweetsQuantity:            20,
-		ErrorReason:               errorReason,
-		SearchCriteriaExecutionID: 5,
-	}
-}
-
 // MockExecutionsDAO mocks a slice of ExecutionDAO
 func MockExecutionsDAO() []ExecutionDAO {
 	return []ExecutionDAO{
@@ -142,6 +139,24 @@ func MockExecutionsDAO() []ExecutionDAO {
 			Status:           InProgressStatus,
 			SearchCriteriaID: 4,
 		},
+	}
+}
+
+// MockExecutionDayDTO mocks an ExecutionDayDTO
+func MockExecutionDayDTO(errorReason *string) ExecutionDayDTO {
+	return ExecutionDayDTO{
+		ExecutionDate:             "2006-01-01",
+		TweetsQuantity:            20,
+		ErrorReason:               errorReason,
+		SearchCriteriaExecutionID: 5,
+	}
+}
+
+// MockExecutionDTO mocks an ExecutionDTO
+func MockExecutionDTO() ExecutionDTO {
+	return ExecutionDTO{
+		Status:           "DONE",
+		SearchCriteriaID: 0,
 	}
 }
 

@@ -10,6 +10,7 @@ const (
 	ExecutionWithSameCriteriaIDAlreadyEnqueued    string = "An execution with the same criteria id is already enqueued"
 	FailedToExecuteInitCriteria                   string = "Failed to execute init criteria"
 	FailedToExecuteInsertCriteriaExecution        string = "Failed to execute insert criteria execution"
+	FailedToExecuteUpdateCriteriaExecution        string = "Failed to execute update criteria execution"
 	FailedToEncodeInsertCriteriaExecutionResponse string = "Failed to encode insert criteria execution response"
 )
 

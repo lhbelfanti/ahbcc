@@ -196,6 +196,76 @@ func TestInsertExecutionHandlerV1_failsWhenJSONEncoderThrowsError(t *testing.T) 
 	assert.Equal(t, want, got)
 }
 
+func TestUpdateExecutionHandlerV1_success(t *testing.T) {
+	mockUpdateExecution := criteria.MockUpdateExecution(nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockExecution := criteria.MockExecutionDTO()
+	mockBody, _ := json.Marshal(mockExecution)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("execution_id", "1")
+
+	handlerV1 := criteria.UpdateExecutionHandlerV1(mockUpdateExecution)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusOK
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestUpdateExecutionHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
+	mockUpdateExecution := criteria.MockUpdateExecution(nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockExecution := criteria.MockExecutionDTO()
+	mockBody, _ := json.Marshal(mockExecution)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+
+	handlerV1 := criteria.UpdateExecutionHandlerV1(mockUpdateExecution)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusBadRequest
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestUpdateExecutionHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
+	mockUpdateExecution := criteria.MockUpdateExecution(nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("execution_id", "1")
+
+	handlerV1 := criteria.UpdateExecutionHandlerV1(mockUpdateExecution)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusBadRequest
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestUpdateExecutionHandlerV1_failsWhenUpdateExecutionThrowsError(t *testing.T) {
+	mockUpdateExecution := criteria.MockUpdateExecution(errors.New("failed to update execution"))
+	mockResponseWriter := httptest.NewRecorder()
+	mockExecution := criteria.MockExecutionDTO()
+	mockBody, _ := json.Marshal(mockExecution)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("execution_id", "1")
+
+	handlerV1 := criteria.UpdateExecutionHandlerV1(mockUpdateExecution)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusInternalServerError
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
 func TestInsertExecutionDayHandlerV1_success(t *testing.T) {
 	mockInsertExecutionDay := criteria.MockInsertExecutionDay(nil)
 	mockResponseWriter := httptest.NewRecorder()
@@ -248,7 +318,7 @@ func TestInsertExecutionDayHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) 
 	assert.Equal(t, want, got)
 }
 
-func TestInsertExecutionDayHandlerV1_failsWhenInsertTweetsThrowsError(t *testing.T) {
+func TestInsertExecutionDayHandlerV1_failsWhenInsertExecutionDayThrowsError(t *testing.T) {
 	mockInsertExecutionDay := criteria.MockInsertExecutionDay(errors.New("failed to insert execution day"))
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecutionDay := criteria.MockExecutionDayDTO(nil)
