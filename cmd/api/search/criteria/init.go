@@ -10,7 +10,7 @@ import (
 type Init func(ctx context.Context) error
 
 // MakeInit creates a new Init
-func MakeInit(selectExecutionsByStatuses SelectExecutionsByStatuses, enqueue Enqueue) Init {
+func MakeInit(selectExecutionsByStatuses SelectExecutionsByStatuses, resume Resume) Init {
 	return func(ctx context.Context) error {
 		executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
 		if err != nil {
@@ -19,7 +19,7 @@ func MakeInit(selectExecutionsByStatuses SelectExecutionsByStatuses, enqueue Enq
 		}
 
 		for _, execution := range executionsDAO {
-			err = enqueue(ctx, execution.SearchCriteriaID, true)
+			err = resume(ctx, execution.SearchCriteriaID)
 			if err != nil {
 				log.Error(ctx, err.Error())
 				return FailedToExecuteEnqueueCriteria
