@@ -40,7 +40,7 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 			}
 		}
 
-		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO())
+		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), 0)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return FailedToExecuteEnqueueCriteria
@@ -70,7 +70,7 @@ func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria S
 			criteriaDAO.Since = lastDayExecutedDate
 		}
 
-		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO())
+		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), 0)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return FailedToExecuteEnqueueCriteria

@@ -4,7 +4,7 @@ import "context"
 
 // MockEnqueueCriteria mocks EnqueueCriteria function
 func MockEnqueueCriteria(err error) EnqueueCriteria {
-	return func(ctx context.Context, body CriteriaDTO) error {
+	return func(ctx context.Context, body CriteriaDTO, executionID int) error {
 		return err
 	}
 }
