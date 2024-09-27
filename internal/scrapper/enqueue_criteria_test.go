@@ -21,7 +21,7 @@ func TestEnqueueCriteria_success(t *testing.T) {
 	mockHTTPClient.On("NewRequest", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(resp, nil)
 	enqueueCriteria := scrapper.MakeEnqueueCriteria(mockHTTPClient, "http://example.com")
 
-	got := enqueueCriteria(context.Background(), scrapper.MockCriteriaDTO())
+	got := enqueueCriteria(context.Background(), scrapper.MockCriteriaDTO(), 1)
 
 	assert.Nil(t, got)
 	mockHTTPClient.AssertExpectations(t)
@@ -33,7 +33,7 @@ func TestEnqueueCriteria_failsWhenNewRequestThrowsError(t *testing.T) {
 	enqueueCriteria := scrapper.MakeEnqueueCriteria(mockHTTPClient, "http://example.com")
 
 	want := scrapper.FailedToExecuteRequest
-	got := enqueueCriteria(context.Background(), scrapper.MockCriteriaDTO())
+	got := enqueueCriteria(context.Background(), scrapper.MockCriteriaDTO(), 1)
 
 	assert.Equal(t, want, got)
 	mockHTTPClient.AssertExpectations(t)
