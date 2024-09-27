@@ -13,9 +13,9 @@ import (
 func TestInit_success(t *testing.T) {
 	mockExecutionsDAO := criteria.MockExecutionsDAO()
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(mockExecutionsDAO, nil)
-	mockEnqueue := criteria.MockEnqueue(nil)
+	mockResume := criteria.MockResume(nil)
 
-	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockEnqueue)
+	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockResume)
 
 	got := init(context.Background())
 
@@ -24,9 +24,9 @@ func TestInit_success(t *testing.T) {
 
 func TestInit_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(nil, errors.New("failed while executing select executions by statuses"))
-	mockEnqueue := criteria.MockEnqueue(nil)
+	mockResume := criteria.MockResume(nil)
 
-	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockEnqueue)
+	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockResume)
 
 	want := criteria.FailedToExecuteSelectExecutionsByStatuses
 	got := init(context.Background())
@@ -37,9 +37,9 @@ func TestInit_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 func TestInit_failsWhenEnqueueThrowsError(t *testing.T) {
 	mockExecutionsDAO := criteria.MockExecutionsDAO()
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(mockExecutionsDAO, nil)
-	mockEnqueue := criteria.MockEnqueue(errors.New("failed while executing enqueue"))
+	mockResume := criteria.MockResume(errors.New("failed while executing resume"))
 
-	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockEnqueue)
+	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockResume)
 
 	want := criteria.FailedToExecuteEnqueueCriteria
 	got := init(context.Background())

@@ -36,6 +36,13 @@ func MockEnqueue(err error) Enqueue {
 	}
 }
 
+// MockResume mocks Resume function
+func MockResume(err error) Resume {
+	return func(ctx context.Context, criteriaID int) error {
+		return err
+	}
+}
+
 // MockInit mocks Init function
 func MockInit(err error) Init {
 	return func(ctx context.Context) error {
