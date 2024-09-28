@@ -4,10 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
-	"time"
-
 	"github.com/jackc/pgx/v5"
+	"strings"
 
 	"ahbcc/internal/database"
 	"ahbcc/internal/log"
@@ -24,7 +22,7 @@ type (
 	SelectExecutionsByStatuses func(ctx context.Context, statuses []string) ([]ExecutionDAO, error)
 
 	// SelectLastDayExecutedByCriteriaID returns the last day executed for the given criteria
-	SelectLastDayExecutedByCriteriaID func(ctx context.Context, id int) (time.Time, error)
+	SelectLastDayExecutedByCriteriaID func(ctx context.Context, id int) (ExecutionDayDAO, error)
 )
 
 // MakeSelectByID creates a new SelectByID
@@ -122,7 +120,7 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 // MakeSelectLastDayExecutedByCriteriaID creates a new SelectLastDayExecutedByCriteriaID
 func MakeSelectLastDayExecutedByCriteriaID(db database.Connection) SelectLastDayExecutedByCriteriaID {
 	const query string = `
-		SELECT sced.execution_date
+		SELECT sced.execution_date, sced.search_criteria_execution_id
 		FROM search_criteria_execution_days sced
 		JOIN search_criteria_executions sce
 		ON sced.search_criteria_execution_id = sce.id
@@ -131,17 +129,20 @@ func MakeSelectLastDayExecutedByCriteriaID(db database.Connection) SelectLastDay
 		LIMIT 1;
 	`
 
-	return func(ctx context.Context, criteriaID int) (time.Time, error) {
-		var lastDayExecutedDate time.Time
-		err := db.QueryRow(ctx, query, criteriaID).Scan(&lastDayExecutedDate)
+	return func(ctx context.Context, criteriaID int) (ExecutionDayDAO, error) {
+		var lastExecutionDayExecuted ExecutionDayDAO
+		err := db.QueryRow(ctx, query, criteriaID).Scan(
+			&lastExecutionDayExecuted.ExecutionDate,
+			&lastExecutionDayExecuted.SearchCriteriaExecutionID,
+		)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
-			return time.Time{}, NoExecutionDaysFoundForTheGivenCriteriaID
+			return ExecutionDayDAO{}, NoExecutionDaysFoundForTheGivenCriteriaID
 		} else if err != nil {
 			log.Error(ctx, err.Error())
-			return time.Time{}, FailedToRetrieveLastDayExecutedDate
+			return ExecutionDayDAO{}, FailedToRetrieveLastDayExecutedDate
 		}
 
-		return lastDayExecutedDate, nil
+		return lastExecutionDayExecuted, nil
 	}
 }

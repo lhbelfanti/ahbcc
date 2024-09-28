@@ -26,6 +26,7 @@ var (
 	FailedToExecuteSelectExecutionsByStatuses        = errors.New("failed to execute select executions by statuses")
 	AnExecutionOfThisCriteriaIDIsAlreadyEnqueued     = errors.New("an execution of this criteria is already enqueued")
 	FailedToExecuteEnqueueCriteria                   = errors.New("failed to execute enqueue criteria")
+	FailedToRetrieveSearchCriteriaExecutionID        = errors.New("failed to retrieve search criteria execution id")
 
 	FailedToInsertSearchCriteriaExecution                    = errors.New("failed to insert search criteria execution")
 	FailedToUpdateSearchCriteriaExecution                    = errors.New("failed to update search criteria execution")

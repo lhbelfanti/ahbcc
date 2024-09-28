@@ -2,6 +2,7 @@ package criteria
 
 import (
 	"context"
+	"errors"
 
 	"ahbcc/internal/log"
 )
@@ -21,8 +22,13 @@ func MakeInit(selectExecutionsByStatuses SelectExecutionsByStatuses, resume Resu
 		for _, execution := range executionsDAO {
 			err = resume(ctx, execution.SearchCriteriaID)
 			if err != nil {
-				log.Error(ctx, err.Error())
-				return FailedToExecuteEnqueueCriteria
+				if !errors.Is(err, FailedToRetrieveSearchCriteriaExecutionID) {
+					log.Error(ctx, err.Error())
+					return FailedToExecuteEnqueueCriteria
+				} else {
+					// If the search criteria does not have an active execution, there is nothing to enqueue
+					continue
+				}
 			}
 		}
 
