@@ -59,14 +59,13 @@ func main() {
 	selectCriteriaByID := criteria.MakeSelectByID(db)
 	collectExecutionDAORows := database.MakeCollectRows[criteria.ExecutionDAO]()
 	selectExecutionsByStatuses := criteria.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
+	insertCriteriaExecution := criteria.MakeInsertExecution(db)
 	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
-	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, insertCriteriaExecution, scrapperEnqueueCriteria)
 
 	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(db)
 	resumeCriteria := criteria.MakeResume(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, resumeCriteria)
-
-	insertCriteriaExecution := criteria.MakeInsertExecution(db)
 
 	updateCriteriaExecution := criteria.MakeUpdateExecution(db)
 
@@ -80,7 +79,6 @@ func main() {
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
-	router.HandleFunc("POST /criteria/{criteria_id}/executions/v1", criteria.InsertExecutionHandlerV1(insertCriteriaExecution))
 	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", criteria.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", criteria.InsertExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	log.Info(ctx, "Router initialized!")

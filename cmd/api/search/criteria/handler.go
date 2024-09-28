@@ -69,45 +69,6 @@ func InitHandlerV1(init Init) http.HandlerFunc {
 	}
 }
 
-// InsertExecutionHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/executions/{execution_id}/v1
-func InsertExecutionHandlerV1(insertExecution InsertExecution) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-
-		criteriaIDParam := r.PathValue("criteria_id")
-		criteriaID, err := strconv.Atoi(criteriaIDParam)
-		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
-			return
-		}
-		ctx = log.With(ctx, log.Param("criteria_id", criteriaIDParam))
-
-		executionID, err := insertExecution(ctx, criteriaID, true)
-		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToExecuteInsertCriteriaExecution, http.StatusInternalServerError)
-			return
-		}
-
-		response := InsertExecutionHandlerV1Response{
-			Message:     "Criteria execution successfully inserted",
-			ExecutionID: executionID,
-		}
-
-		log.Info(ctx, "Criteria execution successfully inserted")
-		w.Header().Set("Content-Type", "application/json")
-
-		err = json.NewEncoder(w).Encode(response) // w.WriteHeader(http.StatusOK) is implicitly set inside the encoder
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToEncodeInsertCriteriaExecutionResponse, http.StatusInternalServerError)
-			return
-		}
-	}
-}
-
 // UpdateExecutionHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/v1
 func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

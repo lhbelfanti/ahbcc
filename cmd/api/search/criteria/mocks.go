@@ -2,9 +2,6 @@ package criteria
 
 import (
 	"context"
-	"errors"
-	"net/http"
-	"net/http/httptest"
 	"time"
 )
 
@@ -165,24 +162,4 @@ func MockExecutionDTO() ExecutionDTO {
 		Status:           "DONE",
 		SearchCriteriaID: 0,
 	}
-}
-
-// MockErrorResponseWriter mocks a ResponseRecorder
-type MockErrorResponseWriter struct {
-	ResponseRecorder *httptest.ResponseRecorder
-}
-
-// Write is the method of MockErrorResponseWriter that mocks the Write behaviour of a ResponseRecorder
-func (w *MockErrorResponseWriter) Write(b []byte) (int, error) {
-	return 0, errors.New("error while executing ResponseRecorder.Write")
-}
-
-// WriteHeader is the method of MockErrorResponseWriter that mocks the WriteHeader behaviour of a ResponseRecorder
-func (w *MockErrorResponseWriter) WriteHeader(statusCode int) {
-	w.ResponseRecorder.WriteHeader(statusCode)
-}
-
-// Header is the method of MockErrorResponseWriter that mocks the Header behaviour of a ResponseRecorder
-func (w *MockErrorResponseWriter) Header() http.Header {
-	return w.ResponseRecorder.Header()
 }

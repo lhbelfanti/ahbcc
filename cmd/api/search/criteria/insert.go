@@ -34,6 +34,7 @@ func MakeInsertExecution(db database.Connection) InsertExecution {
 		forcedInsertQuery string = `
 			INSERT INTO search_criteria_executions(status, search_criteria_id)
 			VALUES ('PENDING', %d)
+			RETURNING id;
 		`
 	)
 
