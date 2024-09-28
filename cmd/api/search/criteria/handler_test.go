@@ -133,69 +133,6 @@ func TestInitHandlerV1_failsWhenInitThrowsError(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInsertExecutionHandlerV1_success(t *testing.T) {
-	mockInsertExecution := criteria.MockInsertExecution(1, nil)
-	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/{criteria_id}/executions/v1", http.NoBody)
-	mockRequest.SetPathValue("criteria_id", "1")
-
-	handlerV1 := criteria.InsertExecutionHandlerV1(mockInsertExecution)
-
-	handlerV1(mockResponseWriter, mockRequest)
-
-	want := http.StatusOK
-	got := mockResponseWriter.Result().StatusCode
-
-	assert.Equal(t, want, got)
-}
-
-func TestInsertExecutionHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
-	mockInsertExecution := criteria.MockInsertExecution(1, nil)
-	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/{criteria_id}/executions/v1", http.NoBody)
-
-	handlerV1 := criteria.InsertExecutionHandlerV1(mockInsertExecution)
-
-	handlerV1(mockResponseWriter, mockRequest)
-
-	want := http.StatusBadRequest
-	got := mockResponseWriter.Result().StatusCode
-
-	assert.Equal(t, want, got)
-}
-
-func TestInsertExecutionHandlerV1_failsWhenInsertExecutionThrowsError(t *testing.T) {
-	mockInsertExecution := criteria.MockInsertExecution(-1, errors.New("failed while executing insert criteria"))
-	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/{criteria_id}/executions/v1", http.NoBody)
-	mockRequest.SetPathValue("criteria_id", "1")
-
-	handlerV1 := criteria.InsertExecutionHandlerV1(mockInsertExecution)
-
-	handlerV1(mockResponseWriter, mockRequest)
-
-	want := http.StatusInternalServerError
-	got := mockResponseWriter.Result().StatusCode
-
-	assert.Equal(t, want, got)
-}
-
-func TestInsertExecutionHandlerV1_failsWhenJSONEncoderThrowsError(t *testing.T) {
-	mockInsertExecution := criteria.MockInsertExecution(1, nil)
-	mockResponseWriter := &criteria.MockErrorResponseWriter{ResponseRecorder: httptest.NewRecorder()}
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/{criteria_id}/executions/v1", http.NoBody)
-	mockRequest.SetPathValue("criteria_id", "1")
-
-	handlerV1 := criteria.InsertExecutionHandlerV1(mockInsertExecution)
-
-	handlerV1(mockResponseWriter, mockRequest)
-
-	want := http.StatusInternalServerError
-	got := mockResponseWriter.ResponseRecorder.Result().StatusCode
-
-	assert.Equal(t, want, got)
-}
-
 func TestUpdateExecutionHandlerV1_success(t *testing.T) {
 	mockUpdateExecution := criteria.MockUpdateExecution(nil)
 	mockResponseWriter := httptest.NewRecorder()

@@ -22,10 +22,11 @@ func TestEnqueue_success(t *testing.T) {
 
 	for _, tt := range tests {
 		mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
-		mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
 		mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
+		mockInsertExecution := criteria.MockInsertExecution(1, nil)
+		mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
 
-		enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
+		enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockInsertExecution, mockEnqueueCriteria)
 
 		got := enqueueCriteria(context.Background(), 1, tt.forced)
 
@@ -36,9 +37,10 @@ func TestEnqueue_success(t *testing.T) {
 func TestEnqueue_failsWhenSelectCriteriaByIDThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), errors.New("failed to execute select criteria by id"))
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
+	mockInsertExecution := criteria.MockInsertExecution(1, nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
 
-	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockInsertExecution, mockEnqueueCriteria)
 
 	want := criteria.FailedToExecuteSelectCriteriaByID
 	got := enqueueCriteria(context.Background(), 1, false)
@@ -49,9 +51,10 @@ func TestEnqueue_failsWhenSelectCriteriaByIDThrowsError(t *testing.T) {
 func TestEnqueue_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), errors.New("failed to execute select executions by statuses"))
+	mockInsertExecution := criteria.MockInsertExecution(1, nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
 
-	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockInsertExecution, mockEnqueueCriteria)
 
 	want := criteria.FailedToExecuteSelectExecutionsByStatuses
 	got := enqueueCriteria(context.Background(), 1, false)
@@ -62,12 +65,27 @@ func TestEnqueue_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 func TestEnqueue_failsWhenThereIsAlreadyAnExecutionWithTheSameCriteriaIDEnqueued(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
+	mockInsertExecution := criteria.MockInsertExecution(1, nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
 
-	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockInsertExecution, mockEnqueueCriteria)
 
 	want := criteria.AnExecutionOfThisCriteriaIDIsAlreadyEnqueued
-	got := enqueueCriteria(context.Background(), 4, false)
+	got := enqueueCriteria(context.Background(), 2, false)
+
+	assert.Equal(t, want, got)
+}
+
+func TestEnqueue_failsWhenInsertExecutionThrowsError(t *testing.T) {
+	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
+	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
+	mockInsertExecution := criteria.MockInsertExecution(-1, errors.New("failed to insert execution"))
+	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(nil)
+
+	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockInsertExecution, mockEnqueueCriteria)
+
+	want := criteria.FailedToInsertSearchCriteriaExecution
+	got := enqueueCriteria(context.Background(), 1, false)
 
 	assert.Equal(t, want, got)
 }
@@ -75,9 +93,10 @@ func TestEnqueue_failsWhenThereIsAlreadyAnExecutionWithTheSameCriteriaIDEnqueued
 func TestEnqueue_failsWhenEnqueueCriteriaThrowsError(t *testing.T) {
 	mockSelectCriteriaByID := criteria.MockSelectByID(criteria.MockCriteriaDAO(), nil)
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(criteria.MockExecutionsDAO(), nil)
+	mockInsertExecution := criteria.MockInsertExecution(1, nil)
 	mockEnqueueCriteria := scrapper.MockEnqueueCriteria(errors.New("failed to execute enqueue criteria"))
 
-	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockEnqueueCriteria)
+	enqueueCriteria := criteria.MakeEnqueue(mockSelectCriteriaByID, mockSelectExecutionsByStatuses, mockInsertExecution, mockEnqueueCriteria)
 
 	want := criteria.FailedToExecuteEnqueueCriteria
 	got := enqueueCriteria(context.Background(), 1, false)

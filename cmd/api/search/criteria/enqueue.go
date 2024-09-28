@@ -19,7 +19,7 @@ type (
 )
 
 // MakeEnqueue creates a new Enqueue
-func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses SelectExecutionsByStatuses, enqueueCriteria scrapper.EnqueueCriteria) Enqueue {
+func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses SelectExecutionsByStatuses, insertExecution InsertExecution, enqueueCriteria scrapper.EnqueueCriteria) Enqueue {
 	return func(ctx context.Context, criteriaID int, forced bool) error {
 		criteriaDAO, err := selectCriteriaByID(ctx, criteriaID)
 		if err != nil {
@@ -41,7 +41,13 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 			}
 		}
 
-		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), 0)
+		executionID, err := insertExecution(ctx, criteriaID, forced)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return FailedToInsertSearchCriteriaExecution
+		}
+
+		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), executionID)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return FailedToExecuteEnqueueCriteria
