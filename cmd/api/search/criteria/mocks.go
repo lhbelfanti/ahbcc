@@ -23,8 +23,8 @@ func MockSelectExecutionsByStatuses(executionsDAO []ExecutionDAO, err error) Sel
 }
 
 // MockSelectLastDayExecutedByCriteriaID mocks SelectLastDayExecutedByCriteriaID function
-func MockSelectLastDayExecutedByCriteriaID(lastDayExecuted time.Time, err error) SelectLastDayExecutedByCriteriaID {
-	return func(ctx context.Context, id int) (time.Time, error) {
+func MockSelectLastDayExecutedByCriteriaID(lastDayExecuted ExecutionDayDAO, err error) SelectLastDayExecutedByCriteriaID {
+	return func(ctx context.Context, id int) (ExecutionDayDAO, error) {
 		return lastDayExecuted, err
 	}
 }

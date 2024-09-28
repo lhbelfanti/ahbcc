@@ -3,6 +3,7 @@ package criteria
 import (
 	"context"
 	"errors"
+	"time"
 
 	"ahbcc/internal/log"
 	"ahbcc/internal/scrapper"
@@ -51,7 +52,7 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 }
 
 // MakeResume creates a new Resume
-func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria SelectLastDayExecutedByCriteriaID, enqueueCriteria scrapper.EnqueueCriteria) Resume {
+func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria SelectLastDayExecutedByCriteriaID, selectExecutionsByStatuses SelectExecutionsByStatuses, enqueueCriteria scrapper.EnqueueCriteria) Resume {
 	return func(ctx context.Context, criteriaID int) error {
 		criteriaDAO, err := selectCriteriaByID(ctx, criteriaID)
 		if err != nil {
@@ -59,18 +60,38 @@ func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria S
 			return FailedToExecuteSelectCriteriaByID
 		}
 
-		lastDayExecutedDate, err := selectLastDayExecutedByCriteria(ctx, criteriaID)
+		searchCriteriaExecutionID := -1
+		lastExecutionDayExecuted, err := selectLastDayExecutedByCriteria(ctx, criteriaID)
 		if err != nil {
-			// if err == NoExecutionDaysFoundForTheGivenCriteriaID the criteria hasn’t started yet, but it was enqueued once before
 			if !errors.Is(err, NoExecutionDaysFoundForTheGivenCriteriaID) {
 				log.Error(ctx, err.Error())
 				return FailedToExecuteSelectLastDayExecutedByCriteriaID
+			} else {
+				// The criteria hasn't started yet, but it was enqueued once before (it is in a PENDING state for example)
+				executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
+				if err != nil {
+					log.Error(ctx, err.Error())
+					return FailedToExecuteSelectExecutionsByStatuses
+				}
+
+				for _, execution := range executionsDAO {
+					if execution.SearchCriteriaID == criteriaID {
+						searchCriteriaExecutionID = execution.ID
+						break
+					}
+				}
 			}
-		} else { // The criteria has been executed once before and is needed to start from the last day it was executed
-			criteriaDAO.Since = lastDayExecutedDate
+		} else {
+			// The criteria has been executed once before and is needed to start from the next day of the last day it was executed
+			criteriaDAO.Since = lastExecutionDayExecuted.ExecutionDate.Add(24 * time.Hour)
+			searchCriteriaExecutionID = lastExecutionDayExecuted.SearchCriteriaExecutionID
 		}
 
-		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), 0)
+		if searchCriteriaExecutionID == -1 {
+			return FailedToRetrieveSearchCriteriaExecutionID
+		}
+
+		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), searchCriteriaExecutionID)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return FailedToExecuteEnqueueCriteria

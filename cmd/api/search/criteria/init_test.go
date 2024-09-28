@@ -22,6 +22,18 @@ func TestInit_success(t *testing.T) {
 	assert.Nil(t, got)
 }
 
+func TestInit_successWhenResumeThrowsErrorFailedToRetrieveSearchCriteriaExecutionID(t *testing.T) {
+	mockExecutionsDAO := criteria.MockExecutionsDAO()
+	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(mockExecutionsDAO, nil)
+	mockResume := criteria.MockResume(criteria.FailedToRetrieveSearchCriteriaExecutionID)
+
+	init := criteria.MakeInit(mockSelectExecutionsByStatuses, mockResume)
+
+	got := init(context.Background())
+
+	assert.Nil(t, got)
+}
+
 func TestInit_failsWhenSelectExecutionsByStatusesThrowsError(t *testing.T) {
 	mockSelectExecutionsByStatuses := criteria.MockSelectExecutionsByStatuses(nil, errors.New("failed while executing select executions by statuses"))
 	mockResume := criteria.MockResume(nil)

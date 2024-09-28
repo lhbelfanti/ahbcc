@@ -63,7 +63,7 @@ func main() {
 	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 
 	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(db)
-	resumeCriteria := criteria.MakeResume(selectCriteriaByID, selectLastDayExecutedByCriteriaID, scrapperEnqueueCriteria)
+	resumeCriteria := criteria.MakeResume(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, resumeCriteria)
 
 	insertCriteriaExecution := criteria.MakeInsertExecution(db)

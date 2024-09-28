@@ -162,16 +162,17 @@ func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T
 	mockPgxRows.AssertExpectations(t)
 }
 
-func TestSelectLastDayExecutedByCriteriaID_success(t *testing.T) {
+func TestSelectLastExecutionDayExecutedByCriteriaID_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
 	mockDate := time.Date(2024, 9, 19, 0, 0, 0, 0, time.Local)
-	database.MockScan(mockPgxRow, []any{mockDate}, t)
+	mockExecutionID := 1
+	database.MockScan(mockPgxRow, []any{mockDate, mockExecutionID}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
 	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(mockPostgresConnection)
 
-	want := mockDate
+	want := criteria.ExecutionDayDAO{ExecutionDate: mockDate, SearchCriteriaExecutionID: mockExecutionID}
 	got, err := selectLastDayExecutedByCriteriaID(context.Background(), 1)
 
 	assert.Nil(t, err)
@@ -180,7 +181,7 @@ func TestSelectLastDayExecutedByCriteriaID_success(t *testing.T) {
 	mockPgxRow.AssertExpectations(t)
 }
 
-func TestSelectLastDayExecutedByCriteriaID_failsWhenSelectOperationFails(t *testing.T) {
+func TestSelectLastExecutionDayExecutedByCriteriaID_failsWhenSelectOperationFails(t *testing.T) {
 	tests := []struct {
 		err      error
 		expected error
