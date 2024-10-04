@@ -48,7 +48,7 @@ services:
     restart: "no"
 
   postgres_db:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres
     ports:
       - 1234:${DB_PORT:-5432}

@@ -38,6 +38,7 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 			case errors.Is(err, AnExecutionOfThisCriteriaIDIsAlreadyEnqueued):
 				log.Error(ctx, err.Error())
 				http.Error(w, ExecutionWithSameCriteriaIDAlreadyEnqueued, http.StatusConflict)
+				return
 			default:
 				log.Error(ctx, err.Error())
 				http.Error(w, FailedToEnqueueCriteria, http.StatusInternalServerError)
