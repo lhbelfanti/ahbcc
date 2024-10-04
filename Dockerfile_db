@@ -18,6 +18,7 @@ CMD ["sh", "-c", " \
     echo ' ' && \
     echo 'Criteria initialization: started' && \
     curl -X POST http://ahbcc:${API_PORT}/criteria/init/v1 && \
+    echo ' ' && \
     echo 'Criteria initialization: finished' && \
     echo ' ' \
 "]
