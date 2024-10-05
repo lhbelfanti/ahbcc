@@ -13,12 +13,9 @@ ENV TZ=America/Argentina/Buenos_Aires
 CMD ["sh", "-c", " \
     echo ' ' && \
     echo 'Migrations execution: started' && \
+    echo ' ' && \
     curl -X POST http://ahbcc:${API_PORT}/migrations/run/v1 && \
+    echo ' ' && \
     echo 'Migrations execution: finished' && \
-    echo ' ' && \
-    echo 'Criteria initialization: started' && \
-    curl -X POST http://ahbcc:${API_PORT}/criteria/init/v1 && \
-    echo ' ' && \
-    echo 'Criteria initialization: finished' && \
     echo ' ' \
 "]
