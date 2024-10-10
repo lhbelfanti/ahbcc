@@ -47,6 +47,13 @@ func MockInit(err error) Init {
 	}
 }
 
+// MockSelectExecutionByID mocks SelectExecutionByID function
+func MockSelectExecutionByID(executionDAO ExecutionDAO, err error) SelectExecutionByID {
+	return func(ctx context.Context, id int) (ExecutionDAO, error) {
+		return executionDAO, err
+	}
+}
+
 // MockInsertExecution mocks InsertExecution function
 func MockInsertExecution(criteriaID int, err error) InsertExecution {
 	return func(ctx context.Context, searchCriteriaID int, forced bool) (int, error) {
@@ -127,6 +134,24 @@ func MockCriteriaDAOSlice() []DAO {
 			Since:            time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
 			Until:            time.Date(2024, time.January, 1, 0, 0, 0, 0, time.Local),
 		},
+	}
+}
+
+// MockExecutionDAOValues mocks the properties of ExecutionDAO to be used in the Scan function
+func MockExecutionDAOValues(dao ExecutionDAO) []any {
+	return []any{
+		dao.ID,
+		dao.Status,
+		dao.SearchCriteriaID,
+	}
+}
+
+// MockExecutionDAO mocks an ExecutionDAO
+func MockExecutionDAO() ExecutionDAO {
+	return ExecutionDAO{
+		ID:               1,
+		Status:           DoneStatus,
+		SearchCriteriaID: 2,
 	}
 }
 

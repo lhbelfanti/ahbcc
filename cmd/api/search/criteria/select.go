@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v5"
 	"strings"
+
+	"github.com/jackc/pgx/v5"
 
 	"ahbcc/internal/database"
 	"ahbcc/internal/log"
@@ -17,6 +18,9 @@ type (
 
 	// SelectAll returns all the criteria of the 'search_criteria' table
 	SelectAll func(ctx context.Context) ([]DAO, error)
+
+	// SelectExecutionByID returns an execution seeking by its ID
+	SelectExecutionByID func(ctx context.Context, id int) (ExecutionDAO, error)
 
 	// SelectExecutionsByStatuses returns all the search criteria executions in certain state
 	SelectExecutionsByStatuses func(ctx context.Context, statuses []string) ([]ExecutionDAO, error)
@@ -80,6 +84,33 @@ func MakeSelectAll(db database.Connection, collectRows database.CollectRows[DAO]
 		}
 
 		return searchCriteria, nil
+	}
+}
+
+// MakeSelectExecutionByID creates a new SelectExecutionByID
+func MakeSelectExecutionByID(db database.Connection) SelectExecutionByID {
+	const query string = `
+		SELECT id, status, search_criteria_id
+		FROM search_criteria_executions
+		WHERE id = $1
+	`
+
+	return func(ctx context.Context, id int) (ExecutionDAO, error) {
+		var execution ExecutionDAO
+		err := db.QueryRow(ctx, query, id).Scan(
+			&execution.ID,
+			&execution.Status,
+			&execution.SearchCriteriaID,
+		)
+		if errors.Is(err, pgx.ErrNoRows) {
+			log.Error(ctx, err.Error())
+			return ExecutionDAO{}, NoExecutionFoundForTheGivenID
+		} else if err != nil {
+			log.Error(ctx, err.Error())
+			return ExecutionDAO{}, FailedToExecuteQueryToRetrieveExecutionData
+		}
+
+		return execution, nil
 	}
 }
 

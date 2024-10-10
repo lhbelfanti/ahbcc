@@ -111,6 +111,51 @@ func TestSelectAll_failsWhenCollectRowsThrowsError(t *testing.T) {
 	mockPgxRows.AssertExpectations(t)
 }
 
+func TestSelectExecutionByID_success(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRow := new(database.MockPgxRow)
+	mockExecution := criteria.MockExecutionDAO()
+	mockScanCriteriaDAOValues := criteria.MockExecutionDAOValues(mockExecution)
+	database.MockScan(mockPgxRow, mockScanCriteriaDAOValues, t)
+	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+
+	selectExecutionByID := criteria.MakeSelectExecutionByID(mockPostgresConnection)
+
+	want := mockExecution
+	got, err := selectExecutionByID(context.Background(), 1)
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRow.AssertExpectations(t)
+}
+
+func TestSelectExecutionByID_failsWhenSelectOperationFails(t *testing.T) {
+	tests := []struct {
+		err      error
+		expected error
+	}{
+		{err: pgx.ErrNoRows, expected: criteria.NoExecutionFoundForTheGivenID},
+		{err: errors.New("failed to execute select operation"), expected: criteria.FailedToExecuteQueryToRetrieveExecutionData},
+	}
+
+	for _, tt := range tests {
+		mockPostgresConnection := new(database.MockPostgresConnection)
+		mockPgxRow := new(database.MockPgxRow)
+		mockPgxRow.On("Scan", mock.Anything).Return(tt.err)
+		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+
+		selectExecutionByID := criteria.MakeSelectExecutionByID(mockPostgresConnection)
+
+		want := tt.expected
+		_, got := selectExecutionByID(context.Background(), 1)
+
+		assert.Equal(t, want, got)
+		mockPostgresConnection.AssertExpectations(t)
+		mockPgxRow.AssertExpectations(t)
+	}
+}
+
 func TestSelectExecutionsByState_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)

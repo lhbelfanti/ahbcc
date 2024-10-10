@@ -67,6 +67,8 @@ func main() {
 	resumeCriteria := criteria.MakeResume(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, resumeCriteria)
 
+	selectExecutionByID := criteria.MakeSelectExecutionByID(db)
+
 	updateCriteriaExecution := criteria.MakeUpdateExecution(db)
 
 	insertCriteriaExecutionDay := criteria.MakeInsertExecutionDay(db)
@@ -79,8 +81,9 @@ func main() {
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
+	router.HandleFunc("GET /criteria/executions/{execution_id}/v1", criteria.GetExecutionByIDHandlerV1(selectExecutionByID))
 	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", criteria.UpdateExecutionHandlerV1(updateCriteriaExecution))
-	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", criteria.InsertExecutionDayHandlerV1(insertCriteriaExecutionDay))
+	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", criteria.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */

@@ -70,6 +70,34 @@ func InitHandlerV1(init Init) http.HandlerFunc {
 	}
 }
 
+// GetExecutionByIDHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/v1
+func GetExecutionByIDHandlerV1(selectExecutionByID SelectExecutionByID) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		executionIDParam := r.PathValue("execution_id")
+		executionID, err := strconv.Atoi(executionIDParam)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
+			return
+		}
+		ctx = log.With(ctx, log.Param("execution_id", executionIDParam))
+
+		executions, err := selectExecutionByID(ctx, executionID)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, FailedToExecuteGetExecutionsByStatuses, http.StatusInternalServerError)
+			return
+		}
+
+		log.Info(ctx, "Executions successfully obtained")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(executions)
+	}
+}
+
 // UpdateExecutionHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/v1
 func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -106,8 +134,8 @@ func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc 
 	}
 }
 
-// InsertExecutionDayHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/day/v1
-func InsertExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.HandlerFunc {
+// CreateExecutionDayHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/day/v1
+func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
