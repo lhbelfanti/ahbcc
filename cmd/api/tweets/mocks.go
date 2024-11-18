@@ -16,6 +16,8 @@ func MockInsert(err error) Insert {
 // MockTweetDTO mocks a TweetDTO
 func MockTweetDTO() TweetDTO {
 	hash := "02bd92faa38aaa6cc0ea75e59937a1ef8d6ad3a9f75f3ac4166fef23da9f209b"
+	avatar := "https://testuseravatar.com"
+
 	textContent := "test"
 	quote := quotes.MockQuoteDTO()
 	searchCriteriaID := 1
@@ -23,6 +25,9 @@ func MockTweetDTO() TweetDTO {
 	return TweetDTO{
 		Hash:             &hash,
 		IsAReply:         true,
+		Author:           "TestAuthor",
+		Avatar:           &avatar,
+		PostedAt:         "2024-11-18T15:04:05Z",
 		TextContent:      &textContent,
 		Images:           []string{"test1", "test2"},
 		Quote:            &quote,

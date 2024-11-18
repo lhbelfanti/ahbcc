@@ -50,6 +50,22 @@ func TestInsert_successWithTextContentImagesAndQuoteNil(t *testing.T) {
 	mockPostgresConnection.AssertExpectations(t)
 }
 
+func TestInsert_successEvenWhenTheTimestampParseFails(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
+	mockInsertSingleQuote := quotes.MockInsertSingle(1, nil)
+	mockDeleteOrphanQuotes := quotes.MockDeleteOrphans(nil)
+	mockTweetDTO := tweets.MockTweetsDTOs()
+	mockTweetDTO[0].PostedAt = "wrong"
+
+	insertTweet := tweets.MakeInsert(mockPostgresConnection, mockInsertSingleQuote, mockDeleteOrphanQuotes)
+
+	got := insertTweet(context.Background(), mockTweetDTO)
+
+	assert.Nil(t, got)
+	mockPostgresConnection.AssertExpectations(t)
+}
+
 func TestInsert_successEvenWhenTheQuoteInsertFailsInsertingNilQuoteInTweetsTable(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)

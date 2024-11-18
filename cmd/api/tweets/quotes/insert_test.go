@@ -30,6 +30,25 @@ func TestInsertSingle_success(t *testing.T) {
 	mockPgxRow.AssertExpectations(t)
 }
 
+func TestInsertSingle_successEvenWhenTheTimestampParseFails(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRow := new(database.MockPgxRow)
+	database.MockScan(mockPgxRow, []any{1}, t)
+	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+	mockQuoteDTO := quotes.MockQuoteDTO()
+	mockQuoteDTO.PostedAt = "wrong"
+
+	insertSingleQuote := quotes.MakeInsertSingle(mockPostgresConnection)
+
+	want := 1
+	got, err := insertSingleQuote(context.Background(), &mockQuoteDTO)
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRow.AssertExpectations(t)
+}
+
 func TestInsertSingle_failsWhenQuoteIsNil(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 
