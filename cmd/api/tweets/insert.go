@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"ahbcc/cmd/api/tweets/quotes"
 	"ahbcc/internal/database"
@@ -17,11 +18,11 @@ type Insert func(ctx context.Context, tweet []TweetDTO) error
 func MakeInsert(db database.Connection, insertQuote quotes.InsertSingle, deleteOrphanQuotes quotes.DeleteOrphans) Insert {
 	const (
 		query string = `
-			INSERT INTO tweets(hash, is_a_reply, text_content, images, quote_id, search_criteria_id) 
+			INSERT INTO tweets(hash, author, avatar, posted_at, is_a_reply, text_content, images, quote_id, search_criteria_id) 
 			VALUES %s
 		    ON CONFLICT (hash, search_criteria_id) DO NOTHING;
 		`
-		parameters = 6
+		parameters = 9
 	)
 
 	return func(ctx context.Context, tweets []TweetDTO) error {
@@ -30,8 +31,20 @@ func MakeInsert(db database.Connection, insertQuote quotes.InsertSingle, deleteO
 		quoteIDs := make([]int, 0, len(tweets))
 		for i, tweet := range tweets {
 			idx := i * parameters
-			placeholders = append(placeholders, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d)", idx+1, idx+2, idx+3, idx+4, idx+5, idx+6))
-			values = append(values, tweet.Hash, tweet.IsAReply, tweet.TextContent, tweet.Images)
+			placeholders = append(placeholders, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)", idx+1, idx+2, idx+3, idx+4, idx+5, idx+6, idx+7, idx+8, idx+9))
+			values = append(values, tweet.Hash, tweet.Author, tweet.Avatar)
+
+			var postedAt *time.Time
+			if tweet.PostedAt != "" {
+				parsedDate, err := time.Parse(time.RFC3339, tweet.PostedAt)
+				if err != nil {
+					log.Warn(ctx, err.Error())
+				} else {
+					postedAt = &parsedDate
+				}
+			}
+
+			values = append(values, postedAt, tweet.IsAReply, tweet.TextContent, tweet.Images)
 
 			quoteID, err := insertQuote(ctx, tweet.Quote)
 			if err != nil {

@@ -19,9 +19,13 @@ func MockDeleteOrphans(err error) DeleteOrphans {
 // MockQuoteDTO mocks a QuoteDTO
 func MockQuoteDTO() QuoteDTO {
 	textContent := "test"
+	avatar := "https://testquoteavatar.com"
 
 	return QuoteDTO{
 		IsAReply:    true,
+		Author:      "TestQuoteAuthor",
+		Avatar:      &avatar,
+		PostedAt:    "2022-11-18T15:04:05Z",
 		TextContent: &textContent,
 		Images:      []string{"test1", "test2"},
 	}

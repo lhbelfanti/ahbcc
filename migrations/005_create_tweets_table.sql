@@ -2,7 +2,9 @@
 CREATE TABLE IF NOT EXISTS tweets (
     id                  SERIAL PRIMARY KEY,
     hash                TEXT NOT NULL,
-    posted_at           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    author              TEXT NOT NULL,
+    avatar              TEXT,
+    posted_at           TIMESTAMP WITH TIME ZONE,
     is_a_reply          BOOLEAN NOT NULL,
     text_content        TEXT NULL,
     images              TEXT[] NULL,
@@ -22,6 +24,8 @@ SELECT create_index_if_not_exists('idx_tweets_search_criteria', 'tweets', 'searc
 COMMENT ON TABLE tweets                         IS 'Contains the tweets scrapped by GoXCrap';
 COMMENT ON COLUMN tweets.id                     IS 'Auto-incrementing ID of the tweet, agnostic to business logic';
 COMMENT ON COLUMN tweets.hash                   IS 'Unique hash identifier for the tweet. It is part of the primary key';
+COMMENT ON COLUMN tweets.author                 IS 'The user that wrote the tweet';
+COMMENT ON COLUMN tweets.avatar                 IS 'The user profile image';
 COMMENT ON COLUMN tweets.posted_at              IS 'Timestamp indicating when the tweet was posted';
 COMMENT ON COLUMN tweets.is_a_reply             IS 'Boolean indicating if the tweet is a reply to another tweet';
 COMMENT ON COLUMN tweets.text_content           IS 'The text content of the tweet, if any';
