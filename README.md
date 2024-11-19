@@ -57,6 +57,8 @@ erDiagram
     tweets {
         INTEGER id PK
         TEXT hash
+        TEXT author
+        TEXT avatar
         TIMESTAMP posted_at
         BOOLEAN is_a_reply
         TEXT text_content
@@ -66,6 +68,9 @@ erDiagram
     }
     tweets_quotes {
         INTEGER id PK
+        TEXT author
+        TEXT avatar
+        TIMESTAMP posted_at
         BOOLEAN is_a_reply
         TEXT text_content
         TEXT[] images
