@@ -23,6 +23,7 @@ func MockTweetDTO() TweetDTO {
 	searchCriteriaID := 1
 
 	return TweetDTO{
+		UUID:             "1234567890987654321",
 		Hash:             &hash,
 		IsAReply:         true,
 		Author:           "TestAuthor",
