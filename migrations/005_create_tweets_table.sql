@@ -1,6 +1,7 @@
 -- Create the tweets table
 CREATE TABLE IF NOT EXISTS tweets (
     id                  SERIAL PRIMARY KEY,
+    uuid                TEXT NOT NULL,
     hash                TEXT NOT NULL,
     author              TEXT NOT NULL,
     avatar              TEXT,
@@ -23,6 +24,7 @@ SELECT create_index_if_not_exists('idx_tweets_search_criteria', 'tweets', 'searc
 -- Table comments
 COMMENT ON TABLE tweets                         IS 'Contains the tweets scrapped by GoXCrap';
 COMMENT ON COLUMN tweets.id                     IS 'Auto-incrementing ID of the tweet, agnostic to business logic';
+COMMENT ON COLUMN tweets.uuid                   IS 'UUID of the tweet';
 COMMENT ON COLUMN tweets.hash                   IS 'Unique hash identifier for the tweet. It is part of the primary key';
 COMMENT ON COLUMN tweets.author                 IS 'The user that wrote the tweet';
 COMMENT ON COLUMN tweets.avatar                 IS 'The user profile image';

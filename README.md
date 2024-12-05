@@ -56,6 +56,7 @@ erDiagram
     tweets }|--|{ search_criteria : ""
     tweets {
         INTEGER id PK
+        TEXT uuid
         TEXT hash
         TEXT author
         TEXT avatar
