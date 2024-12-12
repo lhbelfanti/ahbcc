@@ -57,7 +57,6 @@ erDiagram
     tweets {
         INTEGER id PK
         TEXT uuid
-        TEXT hash
         TEXT author
         TEXT avatar
         TIMESTAMP posted_at

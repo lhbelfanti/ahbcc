@@ -47,11 +47,11 @@ func TestInsertHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInsertHandlerV1_failsWhenTweetHashIsNotPresentInBody(t *testing.T) {
+func TestInsertHandlerV1_failsWhenTweetUUIDIsNotPresentInBody(t *testing.T) {
 	mockInsert := tweets.MockInsert(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockTweets := tweets.MockTweetsDTOs()
-	mockTweets[0].Hash = nil
+	mockTweets[0].UUID = ""
 	mockBody, _ := json.Marshal(mockTweets)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/v1", bytes.NewReader(mockBody))
 
