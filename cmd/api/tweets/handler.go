@@ -11,7 +11,7 @@ import (
 func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		
+
 		var tweets []TweetDTO
 		err := json.NewDecoder(r.Body).Decode(&tweets)
 		if err != nil {
@@ -42,8 +42,8 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 // validateBody validates that mandatory fields are present
 func validateBody(body []TweetDTO) error {
 	for _, tweet := range body {
-		if tweet.Hash == nil {
-			return MissingTweetHash
+		if tweet.UUID == "" {
+			return MissingTweetUUID
 		}
 
 		if tweet.SearchCriteriaID == nil {
