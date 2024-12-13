@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	FailedToInsertTweets         = errors.New("failed to insert tweets")
-	MissingTweetUUID             = errors.New("missing tweet UUID")
+	MissingTweetID               = errors.New("missing tweet ID")
 	MissingTweetSearchCriteriaID = errors.New("missing tweet search criteria ID")
 )
 

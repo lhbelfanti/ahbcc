@@ -42,8 +42,8 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 // validateBody validates that mandatory fields are present
 func validateBody(body []TweetDTO) error {
 	for _, tweet := range body {
-		if tweet.UUID == "" {
-			return MissingTweetUUID
+		if tweet.ID == "" {
+			return MissingTweetID
 		}
 
 		if tweet.SearchCriteriaID == nil {

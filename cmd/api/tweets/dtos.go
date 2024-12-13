@@ -4,7 +4,7 @@ import "ahbcc/cmd/api/tweets/quotes"
 
 // TweetDTO represents a tweet to be inserted into the 'tweets' table
 type TweetDTO struct {
-	UUID             string           `json:"uuid"`
+	ID               string           `json:"id"`
 	Author           string           `json:"author"`
 	Avatar           *string          `json:"avatar,omitempty"`
 	PostedAt         string           `json:"posted_at"`

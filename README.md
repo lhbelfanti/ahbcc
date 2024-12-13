@@ -55,8 +55,8 @@ erDiagram
     tweets ||--o| tweets_quotes : ""
     tweets }|--|{ search_criteria : ""
     tweets {
-        INTEGER id PK
-        TEXT uuid
+        INTEGER uuid PK
+        TEXT id
         TEXT author
         TEXT avatar
         TIMESTAMP posted_at
