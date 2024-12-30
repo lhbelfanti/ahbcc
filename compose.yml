@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_app
-    container_name: ahbcc
+    container_name: corpus_creator
     command: ["/ahbcc", "--prod"]
     ports:
       - "${APP_EXPOSED_PORT}:${APP_INTERNAL_PORT}"
@@ -21,8 +21,8 @@ services:
       postgres_db:
         condition: service_healthy
     networks:
-      - corpus_creator
-      - shared
+      - corpus_creator_network
+      - shared_network
     restart: on-failure
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'curl -sSf http://localhost:${APP_INTERNAL_PORT}/ping/v1 || exit 1'"]
@@ -44,7 +44,7 @@ services:
       corpus_creator:
         condition: service_healthy
     networks:
-      - corpus_creator
+      - corpus_creator_network
     restart: "no"
 
   postgres_db:
@@ -62,7 +62,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - corpus_creator
+      - corpus_creator_network
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"'"]
       interval: 10s
@@ -73,8 +73,9 @@ volumes:
   postgres_data:
 
 networks:
-  corpus_creator:
+  corpus_creator_network:
     driver: bridge
-  shared:
+    name: corpus_creator_network
+  shared_network:
     driver: bridge
-    name: shared
+    name: shared_network

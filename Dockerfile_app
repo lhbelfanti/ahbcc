@@ -1,9 +1,10 @@
-FROM golang:1.22.3-alpine
-
-LABEL maintainer="Lucas Belfanti"
+# Build Stage
+FROM golang:1.23.4-alpine AS builder
 
 # Install necessary dependencies
-RUN apk update && apk add --no-cache curl tzdata \
+RUN apk update && apk add --no-cache  \
+    curl  \
+    tzdata \
     && rm -rf /var/cache/apk/*
 
 # Set timezone
@@ -23,6 +24,27 @@ COPY migrations/ ./migrations
 
 # Build the application and output the binary as 'ahbcc'
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd/api
+
+# Final Stage
+FROM alpine:3.21.0 AS final
+
+# Maintainer
+LABEL maintainer="Lucas Belfanti"
+
+# Install necessary dependencies
+RUN apk update && apk add --no-cache  \
+    curl  \
+    tzdata \
+    && rm -rf /var/cache/apk/*
+
+# Set timezone
+ENV TZ=America/Argentina/Buenos_Aires
+
+# Create the application directory and set it as the working directory
+WORKDIR /app
+
+# Copy the built image from builder stage
+COPY --from=builder /ahbcc /ahbcc
 
 # Expose port
 EXPOSE ${API_PORT}

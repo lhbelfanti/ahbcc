@@ -1,5 +1,6 @@
-FROM alpine:latest
+FROM alpine:3.21.0
 
+# Maintainer
 LABEL maintainer="Lucas Belfanti"
 
 # Install necessary dependencies
@@ -9,12 +10,12 @@ RUN apk update && apk add --no-cache curl tzdata  \
 # Set timezone
 ENV TZ=America/Argentina/Buenos_Aires
 
-# Make HTTP requests to /migrations/run/v1 and /criteria/init/v1 endpoints
+# Make HTTP request to /migrations/run/v1 endpoint
 CMD ["sh", "-c", " \
     echo ' ' && \
     echo 'Migrations execution: started' && \
     echo ' ' && \
-    curl -X POST http://ahbcc:${API_PORT}/migrations/run/v1 && \
+    curl -X POST http://corpus_creator:${API_PORT}/migrations/run/v1 && \
     echo ' ' && \
     echo 'Migrations execution: finished' && \
     echo ' ' \
