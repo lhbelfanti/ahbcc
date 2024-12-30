@@ -49,6 +49,9 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 
 		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), executionID)
 		if err != nil {
+			// TODO: if the criteria was inserted but the enqueue failed, the criteria should be removed from the DB
+			// to avoid `AnExecutionOfThisCriteriaIDIsAlreadyEnqueued` if it is needed to enqueue the same criteria again
+
 			log.Error(ctx, err.Error())
 			return FailedToExecuteEnqueueCriteria
 		}
