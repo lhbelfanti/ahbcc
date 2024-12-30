@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS categorized_tweets (
     user_id           INTEGER NOT NULL,
     adverse_behavior  BOOLEAN NOT NULL,
 
-    CONSTRAINT fk_tweet_id FOREIGN KEY(tweet_id) REFERENCES tweets(id),
+    CONSTRAINT fk_tweet_id FOREIGN KEY(tweet_id) REFERENCES tweets(uuid),
     CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
