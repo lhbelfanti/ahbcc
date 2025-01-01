@@ -34,15 +34,15 @@ To allow [GoXCrap](https://github.com/lhbelfanti/goxcrap) to save the tweets int
 This app calls an endpoint defined by the env variable `ENQUEUE_CRITERIA_API_URL`. To ensure proper communication, the app that owns this endpoint must be on the same network (named shared), which is defined in the [compose.yml](compose.yml) as follows:
 ```
 networks:
-  shared:
+  shared_network:
     driver: bridge
-    name: shared
+    name: shared_network
 ```
 
 To join the same network, the corresponding `compose.yml` for the other app should include the following configuration:
 ```
 networks:
-  shared:
+  shared_network:
     external: true
 ```
 
