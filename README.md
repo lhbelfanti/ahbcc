@@ -103,7 +103,9 @@ erDiagram
     }
     users {
         INTEGER id PK
-        TEXT name
+        TEXT username
+        TEXT password_hash
+        DATE created_at
     }
     categorized_tweets ||--|{ tweets : ""
     categorized_tweets ||--|{ users : ""
@@ -112,6 +114,14 @@ erDiagram
         INTEGER tweet_id FK
         INTEGER user_id FK
         BOOLEAN adverse_behavior
+    }
+    users_sessions ||--|{ users : ""
+    users_sessions {
+        INTEGER id PK
+        INTEGER user_id FK
+        TEXT token
+        DATE expires_at
+        DATE created_at
     }
 ```
 
