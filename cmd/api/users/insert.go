@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
 // Insert inserts a new UserDTO into 'users' table
@@ -20,6 +21,7 @@ func MakeInsert(db database.Connection) Insert {
 	return func(ctx context.Context, user UserDTO) error {
 		_, err := db.Exec(ctx, query, user.Username, user.Password)
 		if err != nil {
+			log.Error(ctx, err.Error())
 			return FailedToInsertUser
 		}
 
