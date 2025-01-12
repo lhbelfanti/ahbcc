@@ -4,16 +4,16 @@ import (
 	"context"
 	"golang.org/x/crypto/bcrypt"
 
-	"ahbcc/cmd/api/users"
+	"ahbcc/cmd/api/user"
 	"ahbcc/internal/log"
 )
 
 // SignUp registers a new user in the system
-type SignUp func(ctx context.Context, user users.UserDTO) error
+type SignUp func(ctx context.Context, user user.DTO) error
 
 // MakeSignUp creates a new SignUp
-func MakeSignUp(userExists users.UserExists, insertUser users.Insert) SignUp {
-	return func(ctx context.Context, user users.UserDTO) error {
+func MakeSignUp(userExists user.Exists, insertUser user.Insert) SignUp {
+	return func(ctx context.Context, user user.DTO) error {
 		exists, err := userExists(ctx, user.Username)
 		if err != nil {
 			log.Error(ctx, err.Error())

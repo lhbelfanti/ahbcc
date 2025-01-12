@@ -16,7 +16,7 @@ SELECT create_index_if_not_exists('idx_users_sessions_token', 'users_sessions', 
 -- Table comments
 COMMENT ON TABLE users_sessions             IS 'Stores active sessions with token information';
 COMMENT ON COLUMN users_sessions.id         IS 'Auto-incrementing ID of the session, agnostic to business logic';
-COMMENT ON COLUMN users_sessions.user_id    IS 'Foreign key referencing users table';
+COMMENT ON COLUMN users_sessions.user_id    IS 'Foreign key referencing user table';
 COMMENT ON COLUMN users_sessions.token      IS 'Bearer token for session authentication';
 COMMENT ON COLUMN users_sessions.expires_at IS 'Expiration time of the session token';
 COMMENT ON COLUMN users_sessions.created_at IS 'Timestamp of when the session was created';
