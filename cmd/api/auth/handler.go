@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"ahbcc/cmd/api/users"
+	"ahbcc/cmd/api/user"
 )
 
 // SignUpHandlerV1 HTTP Handler of the endpoint /auth/signup
@@ -13,7 +13,7 @@ func SignUpHandlerV1(signUp SignUp) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		var user users.UserDTO
+		var user user.DTO
 		err := json.NewDecoder(r.Body).Decode(&user)
 		if err != nil {
 			log.Error(ctx, err.Error())
@@ -41,7 +41,7 @@ func SignUpHandlerV1(signUp SignUp) http.HandlerFunc {
 }
 
 // validateBody validates that mandatory fields are present
-func validateBody(user users.UserDTO) error {
+func validateBody(user user.DTO) error {
 	if user.Username == "" {
 		return MissingUsername
 	}

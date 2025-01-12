@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"ahbcc/cmd/api/auth"
-	"ahbcc/cmd/api/users"
+	"ahbcc/cmd/api/user"
 )
 
 func TestSignUp_success(t *testing.T) {
-	mockUserExists := users.MockUserExists(false, nil)
-	mockInsertUser := users.MockInsert(nil)
-	mockUserDTO := users.MockUserDTO()
+	mockUserExists := user.MockExists(false, nil)
+	mockInsertUser := user.MockInsert(nil)
+	mockUserDTO := user.MockDTO()
 
 	signUp := auth.MakeSignUp(mockUserExists, mockInsertUser)
 
@@ -24,9 +24,9 @@ func TestSignUp_success(t *testing.T) {
 }
 
 func TestSignUp_failsWhenUserExistsThrowsError(t *testing.T) {
-	mockUserExists := users.MockUserExists(false, errors.New("failed to execute UserExists"))
-	mockInsertUser := users.MockInsert(nil)
-	mockUserDTO := users.MockUserDTO()
+	mockUserExists := user.MockExists(false, errors.New("failed to execute Exists"))
+	mockInsertUser := user.MockInsert(nil)
+	mockUserDTO := user.MockDTO()
 
 	signUp := auth.MakeSignUp(mockUserExists, mockInsertUser)
 
@@ -37,9 +37,9 @@ func TestSignUp_failsWhenUserExistsThrowsError(t *testing.T) {
 }
 
 func TestSignUp_failsWhenUserAlreadyExists(t *testing.T) {
-	mockUserExists := users.MockUserExists(true, nil)
-	mockInsertUser := users.MockInsert(nil)
-	mockUserDTO := users.MockUserDTO()
+	mockUserExists := user.MockExists(true, nil)
+	mockInsertUser := user.MockInsert(nil)
+	mockUserDTO := user.MockDTO()
 
 	signUp := auth.MakeSignUp(mockUserExists, mockInsertUser)
 
@@ -50,9 +50,9 @@ func TestSignUp_failsWhenUserAlreadyExists(t *testing.T) {
 }
 
 func TestSignUp_failsWhenGenerateFromPasswordThrowsError(t *testing.T) {
-	mockUserExists := users.MockUserExists(false, nil)
-	mockInsertUser := users.MockInsert(nil)
-	mockUserDTO := users.MockUserDTO()
+	mockUserExists := user.MockExists(false, nil)
+	mockInsertUser := user.MockInsert(nil)
+	mockUserDTO := user.MockDTO()
 	mockUserDTO.Password = "verylongpassword1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
 
 	signUp := auth.MakeSignUp(mockUserExists, mockInsertUser)
@@ -64,9 +64,9 @@ func TestSignUp_failsWhenGenerateFromPasswordThrowsError(t *testing.T) {
 }
 
 func TestSignUp_failsWhenInsertThrowsError(t *testing.T) {
-	mockUserExists := users.MockUserExists(false, nil)
-	mockInsertUser := users.MockInsert(errors.New("failed to insert user"))
-	mockUserDTO := users.MockUserDTO()
+	mockUserExists := user.MockExists(false, nil)
+	mockInsertUser := user.MockInsert(errors.New("failed to insert user"))
+	mockUserDTO := user.MockDTO()
 
 	signUp := auth.MakeSignUp(mockUserExists, mockInsertUser)
 

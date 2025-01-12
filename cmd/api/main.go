@@ -15,7 +15,7 @@ import (
 	"ahbcc/cmd/api/search/criteria"
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/tweets/quotes"
-	"ahbcc/cmd/api/users"
+	"ahbcc/cmd/api/user"
 	"ahbcc/internal/database"
 	_http "ahbcc/internal/http"
 	"ahbcc/internal/log"
@@ -54,8 +54,8 @@ func main() {
 	insertAppliedMigration := migrations.MakeInsertAppliedMigration(db)
 	runMigrations := migrations.MakeRun(db, createMigrationsTable, isMigrationApplied, insertAppliedMigration)
 
-	userExists := users.MakeUserExists(db)
-	insertUser := users.MakeInsert(db)
+	userExists := user.MakeExists(db)
+	insertUser := user.MakeInsert(db)
 	signUp := auth.MakeSignUp(userExists, insertUser)
 
 	insertSingleQuote := quotes.MakeInsertSingle(db)

@@ -1,4 +1,4 @@
-package users_test
+package user_test
 
 import (
 	"context"
@@ -9,16 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/users"
+	"ahbcc/cmd/api/user"
 	"ahbcc/internal/database"
 )
 
 func TestInsert_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
-	mockUserDTO := users.MockUserDTO()
+	mockUserDTO := user.MockDTO()
 
-	insertUser := users.MakeInsert(mockPostgresConnection)
+	insertUser := user.MakeInsert(mockPostgresConnection)
 
 	got := insertUser(context.Background(), mockUserDTO)
 
@@ -29,11 +29,11 @@ func TestInsert_success(t *testing.T) {
 func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert user"))
-	mockUserDTO := users.MockUserDTO()
+	mockUserDTO := user.MockDTO()
 
-	insertUser := users.MakeInsert(mockPostgresConnection)
+	insertUser := user.MakeInsert(mockPostgresConnection)
 
-	want := users.FailedToInsertUser
+	want := user.FailedToInsertUser
 	got := insertUser(context.Background(), mockUserDTO)
 
 	assert.Equal(t, want, got)

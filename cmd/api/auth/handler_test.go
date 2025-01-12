@@ -12,13 +12,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"ahbcc/cmd/api/auth"
-	"ahbcc/cmd/api/users"
+	"ahbcc/cmd/api/user"
 )
 
 func TestSignUpHandlerV1_success(t *testing.T) {
 	mockSignUp := auth.MockSignUp(nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockUser := users.MockUserDTO()
+	mockUser := user.MockDTO()
 	mockBody, _ := json.Marshal(mockUser)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/signup/v1", bytes.NewReader(mockBody))
 
@@ -53,10 +53,10 @@ func TestSignUpHandlerV1_failsWhenValidateBodyThrowsError(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 
 	for _, test := range []struct {
-		mockUser users.UserDTO
+		mockUser user.DTO
 	}{
-		{mockUser: users.UserDTO{Username: "username"}},
-		{mockUser: users.UserDTO{Password: "password"}},
+		{mockUser: user.DTO{Username: "username"}},
+		{mockUser: user.DTO{Password: "password"}},
 	} {
 		mockBody, _ := json.Marshal(test.mockUser)
 		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/signup/v1", bytes.NewReader(mockBody))
@@ -75,7 +75,7 @@ func TestSignUpHandlerV1_failsWhenValidateBodyThrowsError(t *testing.T) {
 func TestSignUpHandlerV1_failsWhenSignUpThrowsError(t *testing.T) {
 	mockSignUp := auth.MockSignUp(errors.New("failed to sign up"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockUser := users.MockUserDTO()
+	mockUser := user.MockDTO()
 	mockBody, _ := json.Marshal(mockUser)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/signup/v1", bytes.NewReader(mockBody))
 

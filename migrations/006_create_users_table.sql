@@ -1,4 +1,4 @@
--- Create the users table
+-- Create the user table
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL PRIMARY KEY,
     username        TEXT NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Table indexes
-SELECT create_index_if_not_exists('idx_users_username', 'users', 'username');
+SELECT create_index_if_not_exists('idx_users_username', 'user', 'username');
 
 -- Table comments
 COMMENT ON TABLE users                  IS 'Stores user credentials and metadata';
