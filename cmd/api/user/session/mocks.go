@@ -12,6 +12,13 @@ func MockInsertUserSession(err error) Insert {
 	}
 }
 
+// MockCreateToken mocks a CreateToken function
+func MockCreateToken(token string, expiresAt time.Time, err error) CreateToken {
+	return func(ctx context.Context, userID int) (string, time.Time, error) {
+		return token, expiresAt, err
+	}
+}
+
 // MockUserSessionDAO mocks a session DAO
 func MockUserSessionDAO() DAO {
 	return DAO{

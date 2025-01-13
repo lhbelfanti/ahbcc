@@ -12,6 +12,13 @@ func MockExists(userExists bool, err error) Exists {
 	}
 }
 
+// MockSelectByUsername mocks SelectByUsername function
+func MockSelectByUsername(userDAO DAO, err error) SelectByUsername {
+	return func(ctx context.Context, username string) (DAO, error) {
+		return userDAO, err
+	}
+}
+
 // MockInsert mocks Insert function
 func MockInsert(err error) Insert {
 	return func(ctx context.Context, user DTO) error {
@@ -30,10 +37,10 @@ func MockDTO() DTO {
 // MockDAO mocks user DAO
 func MockDAO() DAO {
 	return DAO{
-		ID:        1,
-		Username:  "username",
-		Password:  "password",
-		CreatedAt: time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
+		ID:           1,
+		Username:     "username",
+		PasswordHash: "$2b$12$AEscv2yxile/9dNaaRbIPe2x.9ousol85rtBCPu83cS5F9gXPBZQK\n",
+		CreatedAt:    time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
 	}
 }
 
@@ -42,7 +49,7 @@ func MockScanUserDAOValues(dao DAO) []any {
 	return []any{
 		dao.ID,
 		dao.Username,
-		dao.Password,
+		dao.PasswordHash,
 		dao.CreatedAt,
 	}
 }
