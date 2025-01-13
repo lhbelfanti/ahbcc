@@ -54,7 +54,7 @@ func MakeSelectByUsername(db database.Connection) SelectByUsername {
 		err := db.QueryRow(ctx, query, username).Scan(
 			&user.ID,
 			&user.Username,
-			&user.Password,
+			&user.PasswordHash,
 			&user.CreatedAt,
 		)
 		if errors.Is(err, pgx.ErrNoRows) {

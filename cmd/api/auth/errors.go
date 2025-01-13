@@ -9,6 +9,9 @@ var (
 	FailedToInsertUserIntoDatabase            = errors.New("failed to insert user into database")
 	MissingUsername                           = errors.New("missing username")
 	MissingPassword                           = errors.New("missing password")
+	FailedToSelectUserByUsername              = errors.New("failed to execute select user by username")
+	FailedToLoginDueWrongPassword             = errors.New("failed to login due wrong password")
+	FailedToCreateUserSession                 = errors.New("failed to create user session")
 )
 
 const (
