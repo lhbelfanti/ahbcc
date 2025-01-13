@@ -10,11 +10,11 @@ import (
 	"ahbcc/internal/log"
 )
 
-// Login logs the user in
-type Login func(ctx context.Context, user user.DTO) (string, time.Time, error)
+// LogIn logs the user in
+type LogIn func(ctx context.Context, user user.DTO) (string, time.Time, error)
 
-// MakeLogin creates a new Login function
-func MakeLogin(selectUserByUsername user.SelectByUsername, createSessionToken session.CreateToken) Login {
+// MakeLogIn creates a new LogIn function
+func MakeLogIn(selectUserByUsername user.SelectByUsername, createSessionToken session.CreateToken) LogIn {
 	return func(ctx context.Context, user user.DTO) (string, time.Time, error) {
 		userDAO, err := selectUserByUsername(ctx, user.Username)
 		if err != nil {

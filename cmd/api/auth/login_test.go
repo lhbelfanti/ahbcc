@@ -13,24 +13,24 @@ import (
 	"ahbcc/cmd/api/user/session"
 )
 
-func TestLogin_success(t *testing.T) {
+func TestLogIn_success(t *testing.T) {
 	mockUserDAO := user.MockDAO()
 	mockSelectUserByUsername := user.MockSelectByUsername(mockUserDAO, nil)
 	mockToken := "abcd"
-	mockCreatedAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local)
-	mockCreateSessionToken := session.MockCreateToken(mockToken, mockCreatedAt, nil)
+	mockExpiresAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local)
+	mockCreateSessionToken := session.MockCreateToken(mockToken, mockExpiresAt, nil)
 	mockUserDTO := user.MockDTO()
 
-	login := auth.MakeLogin(mockSelectUserByUsername, mockCreateSessionToken)
+	logIn := auth.MakeLogIn(mockSelectUserByUsername, mockCreateSessionToken)
 
-	token, createdAt, err := login(context.Background(), mockUserDTO)
+	token, expiresAt, err := logIn(context.Background(), mockUserDTO)
 
 	assert.Nil(t, err)
 	assert.Equal(t, mockToken, token)
-	assert.Equal(t, mockCreatedAt, createdAt)
+	assert.Equal(t, mockExpiresAt, expiresAt)
 }
 
-func TestLogin_failsWhenSelectUserByUsernameThrowsError(t *testing.T) {
+func TestLogIn_failsWhenSelectUserByUsernameThrowsError(t *testing.T) {
 	mockUserDAO := user.MockDAO()
 	mockSelectUserByUsername := user.MockSelectByUsername(mockUserDAO, errors.New("error while executing SelectByUsername"))
 	mockToken := "abcd"
@@ -38,15 +38,15 @@ func TestLogin_failsWhenSelectUserByUsernameThrowsError(t *testing.T) {
 	mockCreateSessionToken := session.MockCreateToken(mockToken, mockCreatedAt, nil)
 	mockUserDTO := user.MockDTO()
 
-	login := auth.MakeLogin(mockSelectUserByUsername, mockCreateSessionToken)
+	logIn := auth.MakeLogIn(mockSelectUserByUsername, mockCreateSessionToken)
 
 	want := auth.FailedToSelectUserByUsername
-	_, _, got := login(context.Background(), mockUserDTO)
+	_, _, got := logIn(context.Background(), mockUserDTO)
 
 	assert.Equal(t, want, got)
 }
 
-func TestLogin_failsWhenCompareHashAndPasswordThrowsError(t *testing.T) {
+func TestLogIn_failsWhenCompareHashAndPasswordThrowsError(t *testing.T) {
 	mockUserDAO := user.MockDAO()
 	mockSelectUserByUsername := user.MockSelectByUsername(mockUserDAO, nil)
 	mockCreatedAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local)
@@ -54,24 +54,24 @@ func TestLogin_failsWhenCompareHashAndPasswordThrowsError(t *testing.T) {
 	mockUserDTO := user.MockDTO()
 	mockUserDTO.Password = "wrong password"
 
-	login := auth.MakeLogin(mockSelectUserByUsername, mockCreateSessionToken)
+	logIn := auth.MakeLogIn(mockSelectUserByUsername, mockCreateSessionToken)
 
 	want := auth.FailedToLoginDueWrongPassword
-	_, _, got := login(context.Background(), mockUserDTO)
+	_, _, got := logIn(context.Background(), mockUserDTO)
 
 	assert.Equal(t, want, got)
 }
 
-func TestLogin_failsWhenCreateSessionTokenThrowsError(t *testing.T) {
+func TestLogIn_failsWhenCreateSessionTokenThrowsError(t *testing.T) {
 	mockUserDAO := user.MockDAO()
 	mockSelectUserByUsername := user.MockSelectByUsername(mockUserDAO, nil)
 	mockCreateSessionToken := session.MockCreateToken("abcd", time.Time{}, errors.New("error while executing CreateSessionToken"))
 	mockUserDTO := user.MockDTO()
 
-	login := auth.MakeLogin(mockSelectUserByUsername, mockCreateSessionToken)
+	logIn := auth.MakeLogIn(mockSelectUserByUsername, mockCreateSessionToken)
 
 	want := auth.FailedToCreateUserSession
-	_, _, got := login(context.Background(), mockUserDTO)
+	_, _, got := logIn(context.Background(), mockUserDTO)
 
 	assert.Equal(t, want, got)
 }
