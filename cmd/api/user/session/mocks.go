@@ -1,6 +1,16 @@
 package session
 
-import "time"
+import (
+	"context"
+	"time"
+)
+
+// MockInsertUserSession mocks Insert function
+func MockInsertUserSession(err error) Insert {
+	return func(ctx context.Context, session DAO) error {
+		return err
+	}
+}
 
 // MockUserSessionDAO mocks a session DAO
 func MockUserSessionDAO() DAO {
