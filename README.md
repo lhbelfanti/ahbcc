@@ -125,9 +125,10 @@ erDiagram
     }
 ```
 
-#### Necessary files to start the database
+## Setup
 
-To connect to the database create a `.env` file in the root of the project or rename the provided [.env.example](.env.example). 
+To run the application, you must define specific environment variables. 
+You can create a .env file in the root directory of the project or rename the provided example file, .env.example.
 
 This file should contain the following environment variables:
 ```
@@ -141,8 +142,23 @@ DB_USER=<Database username>
 DB_PASS=<Database password>
 DB_PORT=<Database port>
 
+# Session
+SESSION_SECRET_KEY=<Secret key used for signing and verifying HMAC-based tokens>
+
 # External APIs URLs
 ENQUEUE_CRITERIA_API_URL=<Domain of the application with the endpoint /criteria/enqueue/v1> --> Example: the URL to the GoXCrap API
 ```
 
 Replace the `< ... >` by the correct value. For example: `DB_NAME=<Database name>` --> `DB_NAME=ahbcc`.
+
+#### Session secret key
+
+The value of the session secret key should be a random and long byte sequence that isn't easily guessable.
+
+An example of how to generate this key is by using a tool like `OpenSSL` or a `password generator`.
+```bash
+openssl rand -base64 32
+```
+This generates a 256-bit (32-byte) key encoded in Base64, which is suitable for HMAC-SHA256.
+
+
