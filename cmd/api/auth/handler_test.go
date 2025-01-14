@@ -98,7 +98,7 @@ func TestLoginHandlerV1_success(t *testing.T) {
 	mockBody, _ := json.Marshal(mockUser)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/login/v1", bytes.NewReader(mockBody))
 
-	logInHandlerV1 := auth.LogInV1(mockLogIn)
+	logInHandlerV1 := auth.LogInHandlerV1(mockLogIn)
 
 	logInHandlerV1(mockResponseWriter, mockRequest)
 
@@ -115,7 +115,7 @@ func TestLoginHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/login/v1", bytes.NewReader(mockBody))
 
-	logInHandlerV1 := auth.LogInV1(mockLogIn)
+	logInHandlerV1 := auth.LogInHandlerV1(mockLogIn)
 
 	logInHandlerV1(mockResponseWriter, mockRequest)
 
@@ -139,7 +139,7 @@ func TestLoginHandlerV1_failsWhenValidateBodyThrowsError(t *testing.T) {
 		mockBody, _ := json.Marshal(test.mockUser)
 		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/login/v1", bytes.NewReader(mockBody))
 
-		logInHandlerV1 := auth.LogInV1(mockLogIn)
+		logInHandlerV1 := auth.LogInHandlerV1(mockLogIn)
 
 		logInHandlerV1(mockResponseWriter, mockRequest)
 
@@ -164,7 +164,7 @@ func TestLoginHandlerV1_failsWhenLogInThrowsError(t *testing.T) {
 		mockBody, _ := json.Marshal(mockUser)
 		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/login/v1", bytes.NewReader(mockBody))
 
-		logInHandlerV1 := auth.LogInV1(mockLogIn)
+		logInHandlerV1 := auth.LogInHandlerV1(mockLogIn)
 
 		logInHandlerV1(mockResponseWriter, mockRequest)
 
@@ -174,4 +174,51 @@ func TestLoginHandlerV1_failsWhenLogInThrowsError(t *testing.T) {
 		assert.Equal(t, want, got)
 	}
 
+}
+
+func TestLogoutHandlerV1_success(t *testing.T) {
+	mockLogOut := auth.MockLogout(nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/logout/v1", nil)
+	mockRequest.Header.Set("X-Session-Token", "token")
+
+	logOutHandlerV1 := auth.LogOutHandlerV1(mockLogOut)
+
+	logOutHandlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusOK
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestLogoutHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
+	mockLogOut := auth.MockLogout(nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/logout/v1", nil)
+
+	logOutHandlerV1 := auth.LogOutHandlerV1(mockLogOut)
+
+	logOutHandlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusUnauthorized
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestLogoutHandlerV1_failsWhenLogOutThrowsError(t *testing.T) {
+	mockLogOut := auth.MockLogout(errors.New("failed to logout"))
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/auth/logout/v1", nil)
+	mockRequest.Header.Set("X-Session-Token", "token")
+
+	logOutHandlerV1 := auth.LogOutHandlerV1(mockLogOut)
+
+	logOutHandlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusInternalServerError
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
 }
