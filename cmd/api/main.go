@@ -16,6 +16,7 @@ import (
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/tweets/quotes"
 	"ahbcc/cmd/api/user"
+	"ahbcc/cmd/api/user/session"
 	"ahbcc/internal/database"
 	_http "ahbcc/internal/http"
 	"ahbcc/internal/log"
@@ -58,6 +59,15 @@ func main() {
 	insertUser := user.MakeInsert(db)
 	signUp := auth.MakeSignUp(userExists, insertUser)
 
+	selectUserByUsername := user.MakeSelectByUsername(db)
+	deleteExpiredUserSessions := session.MakeDeleteExpiredSessions(db)
+	insertUserSession := session.MakeInsert(db)
+	createSessionToken := session.MakeCreateToken(insertUserSession)
+	logIn := auth.MakeLogIn(selectUserByUsername, deleteExpiredUserSessions, createSessionToken)
+
+	deleteUserSession := session.MakeDelete(db)
+	logOut := auth.MakeLogOut(deleteUserSession)
+
 	insertSingleQuote := quotes.MakeInsertSingle(db)
 	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
@@ -85,6 +95,8 @@ func main() {
 	router.HandleFunc("GET /ping/v1", ping.HandlerV1())
 	router.HandleFunc("POST /migrations/run/v1", migrations.RunHandlerV1(runMigrations))
 	router.HandleFunc("POST /auth/signup/v1", auth.SignUpHandlerV1(signUp))
+	router.HandleFunc("POST /auth/login/v1", auth.LogInHandlerV1(logIn))
+	router.HandleFunc("POST /auth/logout/v1", auth.LogOutHandlerV1(logOut))
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
