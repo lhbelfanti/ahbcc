@@ -42,9 +42,9 @@ func TestDeleteExpiredSessions_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 
-	deleteUserExpiredSessions := session.MakeDeleteUserExpiredSessions(mockPostgresConnection)
+	deleteExpiredSessions := session.MakeDeleteExpiredSessions(mockPostgresConnection)
 
-	got := deleteUserExpiredSessions(context.Background(), 1234)
+	got := deleteExpiredSessions(context.Background(), 1234)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
@@ -54,10 +54,10 @@ func TestDeleteExpiredSessions_failsWhenDeleteOperationThrowsError(t *testing.T)
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to delete user expired sessions"))
 
-	deleteUserExpiredSessions := session.MakeDeleteUserExpiredSessions(mockPostgresConnection)
+	deleteExpiredSessions := session.MakeDeleteExpiredSessions(mockPostgresConnection)
 
-	want := session.FailedToDeleteExpiredUserSessions
-	got := deleteUserExpiredSessions(context.Background(), 1234)
+	want := session.FailedToDeleteExpiredSessions
+	got := deleteExpiredSessions(context.Background(), 1234)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

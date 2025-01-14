@@ -26,6 +26,13 @@ func MockDelete(err error) Delete {
 	}
 }
 
+// MockDeleteExpiredSessions mocks a DeleteExpiredSessions function
+func MockDeleteExpiredSessions(err error) DeleteExpiredSessions {
+	return func(ctx context.Context, userID int) error {
+		return err
+	}
+}
+
 // MockUserSessionDAO mocks a session DAO
 func MockUserSessionDAO() DAO {
 	return DAO{
