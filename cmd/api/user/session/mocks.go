@@ -19,6 +19,13 @@ func MockCreateToken(token string, expiresAt time.Time, err error) CreateToken {
 	}
 }
 
+// MockDelete mocks a Delete function
+func MockDelete(err error) Delete {
+	return func(ctx context.Context, token string) error {
+		return err
+	}
+}
+
 // MockUserSessionDAO mocks a session DAO
 func MockUserSessionDAO() DAO {
 	return DAO{
