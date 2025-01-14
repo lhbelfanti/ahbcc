@@ -16,6 +16,9 @@ var (
 )
 
 const (
-	InvalidRequestBody = "Invalid request body"
-	FailedToSignUp     = "Failed to sign up"
+	InvalidRequestBody         = "Invalid request body"
+	FailedToSignUp             = "Failed to sign up"
+	FailedToLogIn              = "Failed to log in"
+	FailedToLogOut             = "Failed to log out"
+	AuthorizationTokenRequired = "Authorization token is required"
 )

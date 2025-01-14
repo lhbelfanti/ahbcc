@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	
+
 	"ahbcc/cmd/api/user"
 	"ahbcc/internal/log"
 )
@@ -42,8 +42,8 @@ func SignUpHandlerV1(signUp SignUp) http.HandlerFunc {
 	}
 }
 
-// LogInV1 HTTP Handler of the endpoint /auth/login/v1
-func LogInV1(logIn LogIn) http.HandlerFunc {
+// LogInHandlerV1 HTTP Handler of the endpoint /auth/login/v1
+func LogInHandlerV1(logIn LogIn) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
@@ -67,10 +67,10 @@ func LogInV1(logIn LogIn) http.HandlerFunc {
 
 			switch {
 			case errors.Is(err, FailedToLoginDueWrongPassword):
-				http.Error(w, FailedToSignUp, http.StatusUnauthorized)
+				http.Error(w, FailedToLogIn, http.StatusUnauthorized)
 				return
 			default:
-				http.Error(w, FailedToSignUp, http.StatusInternalServerError)
+				http.Error(w, FailedToLogIn, http.StatusInternalServerError)
 				return
 			}
 		}
@@ -84,6 +84,30 @@ func LogInV1(logIn LogIn) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(loginResponse)
+	}
+}
+
+// LogOutHandlerV1 HTTP Handler of the endpoint /auth/logout/v1
+func LogOutHandlerV1(logOut LogOut) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		token := r.Header.Get("X-Session-Token")
+		if token == "" {
+			log.Error(ctx, AuthorizationTokenRequired)
+			http.Error(w, AuthorizationTokenRequired, http.StatusUnauthorized)
+			return
+		}
+
+		err := logOut(ctx, token)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			http.Error(w, FailedToLogOut, http.StatusInternalServerError)
+		}
+
+		log.Info(ctx, "User successfully logged out")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("User successfully logged out"))
 	}
 }
 

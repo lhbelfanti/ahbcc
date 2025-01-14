@@ -20,3 +20,10 @@ func MockLogIn(token string, expiresAt time.Time, err error) LogIn {
 		return token, expiresAt, err
 	}
 }
+
+// MockLogout mocks LogOut function
+func MockLogout(err error) LogOut {
+	return func(ctx context.Context, user string) error {
+		return err
+	}
+}
