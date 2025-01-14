@@ -16,7 +16,7 @@ import (
 type LogIn func(ctx context.Context, user user.DTO) (string, time.Time, error)
 
 // MakeLogIn creates a new LogIn
-func MakeLogIn(selectUserByUsername user.SelectByUsername, createSessionToken session.CreateToken) LogIn {
+func MakeLogIn(selectUserByUsername user.SelectByUsername, deleteExpiredUserSessions session.DeleteExpiredSessions, createSessionToken session.CreateToken) LogIn {
 	return func(ctx context.Context, user user.DTO) (string, time.Time, error) {
 		userDAO, err := selectUserByUsername(ctx, user.Username)
 		if err != nil {
@@ -28,6 +28,12 @@ func MakeLogIn(selectUserByUsername user.SelectByUsername, createSessionToken se
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return "", time.Time{}, FailedToLoginDueWrongPassword
+		}
+
+		err = deleteExpiredUserSessions(ctx, userDAO.ID)
+		if err != nil {
+			log.Warn(ctx, err.Error())
+			// We don't want abort login due this cleanup
 		}
 
 		token, expiresAt, err := createSessionToken(ctx, userDAO.ID)
