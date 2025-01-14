@@ -12,6 +12,7 @@ var (
 	FailedToSelectUserByUsername              = errors.New("failed to execute select user by username")
 	FailedToLoginDueWrongPassword             = errors.New("failed to login due wrong password")
 	FailedToCreateUserSession                 = errors.New("failed to create user session")
+	FailedToDeleteUserSession                 = errors.New("failed to delete user session")
 )
 
 const (
