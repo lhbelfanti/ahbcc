@@ -13,7 +13,7 @@ type Insert func(ctx context.Context, user DTO) error
 // MakeInsert creates a new Insert
 func MakeInsert(db database.Connection) Insert {
 	const query string = `
-		INSERT INTO user(username, password_hash) 
+		INSERT INTO users(username, password_hash) 
 		VALUES ($1, $2)
 		ON CONFLICT (username, password_hash) DO NOTHING;
 	`
