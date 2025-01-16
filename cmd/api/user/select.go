@@ -23,7 +23,7 @@ func MakeExists(db database.Connection) Exists {
 	const query string = `
 		SELECT EXISTS (
 			SELECT 1 
-			FROM user 
+			FROM users 
 			WHERE username = $1
 		)
 	`
@@ -45,7 +45,7 @@ func MakeExists(db database.Connection) Exists {
 func MakeSelectByUsername(db database.Connection) SelectByUsername {
 	const query string = `
 		SELECT id, username, password_hash, created_at
-		FROM user
+		FROM users
 		WHERE username = $1
 	`
 

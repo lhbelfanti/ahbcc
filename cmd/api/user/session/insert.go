@@ -13,7 +13,7 @@ type Insert func(ctx context.Context, session DAO) error
 // MakeInsert creates a new Insert function
 func MakeInsert(db database.Connection) Insert {
 	const query string = `
-		INSERT INTO user(user_id, token, expires_at) 
+		INSERT INTO users_sessions(user_id, token, expires_at) 
 		VALUES ($1, $2, $3)
 	`
 
