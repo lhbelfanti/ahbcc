@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"ahbcc/cmd/api/search/criteria"
+	"ahbcc/internal/http/response"
 )
 
 func TestEnqueueHandlerV1_success(t *testing.T) {
@@ -151,10 +152,22 @@ func TestGetExecutionByIDHandlerV1_success(t *testing.T) {
 	}
 
 	want := mockExecutionDAO
-	var got criteria.ExecutionDAO
-	err = json.Unmarshal(body, &got)
+
+	var responseDTO response.DTO
+	err = json.Unmarshal(body, &responseDTO)
 	if err != nil {
 		t.Fatalf("Failed to parse response body as JSON: %v", err)
+	}
+
+	var got criteria.ExecutionDAO
+	dataBytes, err := json.Marshal(responseDTO.Data)
+	if err != nil {
+		t.Fatalf("Failed to marshal Data field: %v", err)
+	}
+
+	err = json.Unmarshal(dataBytes, &got)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal Data field into ExecutionDAO: %v", err)
 	}
 
 	assert.Equal(t, want, got)

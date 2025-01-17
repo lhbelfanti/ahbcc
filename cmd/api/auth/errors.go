@@ -13,6 +13,7 @@ var (
 	FailedToLoginDueWrongPassword             = errors.New("failed to login due wrong password")
 	FailedToCreateUserSession                 = errors.New("failed to create user session")
 	FailedToDeleteUserSession                 = errors.New("failed to delete user session")
+	AuthorizationTokenIsRequired              = errors.New("authorization token is required")
 )
 
 const (

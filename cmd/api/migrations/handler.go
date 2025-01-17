@@ -2,8 +2,8 @@ package migrations
 
 import (
 	"net/http"
-
-	"ahbcc/internal/log"
+	
+	"ahbcc/internal/http/response"
 )
 
 const migrationsDir string = "./migrations"
@@ -12,13 +12,13 @@ const migrationsDir string = "./migrations"
 func RunHandlerV1(runMigrations Run) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+
 		err := runMigrations(ctx, migrationsDir)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToRunMigrations, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToRunMigrations, nil, err)
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
+		response.Send(ctx, w, http.StatusOK, "Migrations successfully run", nil, nil)
 	}
 }

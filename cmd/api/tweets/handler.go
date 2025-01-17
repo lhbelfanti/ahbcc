@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"ahbcc/internal/http/response"
 	"ahbcc/internal/log"
 )
 
@@ -15,27 +16,24 @@ func InsertHandlerV1(insertTweets Insert) http.HandlerFunc {
 		var tweets []TweetDTO
 		err := json.NewDecoder(r.Body).Decode(&tweets)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("tweets", tweets))
 
 		err = validateBody(tweets)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
+			return
 		}
 
 		err = insertTweets(ctx, tweets)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToInsertTweetsIntoDatabase, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToInsertTweetsIntoDatabase, nil, err)
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Tweets successfully inserted"))
+		response.Send(ctx, w, http.StatusOK, "Tweets successfully inserted", nil, nil)
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,6 +15,7 @@ import (
 
 	"ahbcc/cmd/api/auth"
 	"ahbcc/cmd/api/user"
+	"ahbcc/internal/http/response"
 )
 
 func TestSignUpHandlerV1_success(t *testing.T) {
@@ -91,8 +93,9 @@ func TestSignUpHandlerV1_failsWhenSignUpThrowsError(t *testing.T) {
 }
 
 func TestLoginHandlerV1_success(t *testing.T) {
+	mockToken := "abcd"
 	mockExpiresAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local)
-	mockLogIn := auth.MockLogIn("abcd", mockExpiresAt, nil)
+	mockLogIn := auth.MockLogIn(mockToken, mockExpiresAt, nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockUser := user.MockDTO()
 	mockBody, _ := json.Marshal(mockUser)
@@ -102,10 +105,33 @@ func TestLoginHandlerV1_success(t *testing.T) {
 
 	logInHandlerV1(mockResponseWriter, mockRequest)
 
-	want := http.StatusOK
-	got := mockResponseWriter.Result().StatusCode
+	body, err := io.ReadAll(mockResponseWriter.Result().Body)
+	if err != nil {
+		t.Fatalf("Failed to read response body: %v", err)
+	}
+
+	want := auth.LoginResponseDTO{Token: mockToken, ExpiresAt: mockExpiresAt}
+
+	var responseDTO response.DTO
+	err = json.Unmarshal(body, &responseDTO)
+	if err != nil {
+		t.Fatalf("Failed to parse response body as JSON: %v", err)
+	}
+
+	var got auth.LoginResponseDTO
+	dataBytes, err := json.Marshal(responseDTO.Data)
+	if err != nil {
+		t.Fatalf("Failed to marshal Data field: %v", err)
+	}
+
+	err = json.Unmarshal(dataBytes, &got)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal Data field into LoginResponseDTO: %v", err)
+	}
 
 	assert.Equal(t, want, got)
+	assert.Equal(t, "application/json", mockResponseWriter.Header().Get("Content-Type"))
+	assert.Equal(t, http.StatusOK, mockResponseWriter.Result().StatusCode)
 }
 
 func TestLoginHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
