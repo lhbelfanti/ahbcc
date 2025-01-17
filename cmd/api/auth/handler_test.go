@@ -94,7 +94,7 @@ func TestSignUpHandlerV1_failsWhenSignUpThrowsError(t *testing.T) {
 
 func TestLoginHandlerV1_success(t *testing.T) {
 	mockToken := "abcd"
-	mockExpiresAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local)
+	mockExpiresAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.UTC)
 	mockLogIn := auth.MockLogIn(mockToken, mockExpiresAt, nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockUser := user.MockDTO()
