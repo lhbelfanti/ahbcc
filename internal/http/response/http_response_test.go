@@ -1,7 +1,9 @@
 package response_test
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,7 +19,7 @@ func TestSend_success(t *testing.T) {
 		code    int
 		message string
 		data    interface{}
-		err     interface{}
+		err     error
 		want    response.DTO
 	}{
 		{
@@ -30,20 +32,20 @@ func TestSend_success(t *testing.T) {
 				Code:    http.StatusOK,
 				Message: "Request successful",
 				Data:    map[string]string{"key": "value"},
-				Error:   nil,
+				Error:   "",
 			},
 		},
 		{
-			name:    "Error response with details",
+			name:    "Error response with an error",
 			code:    http.StatusUnauthorized,
 			message: "Unauthorized access",
 			data:    nil,
-			err:     map[string]string{"details": "Invalid token"},
+			err:     errors.New("invalid token"),
 			want: response.DTO{
 				Code:    http.StatusUnauthorized,
 				Message: "Unauthorized access",
 				Data:    nil,
-				Error:   map[string]string{"details": "Invalid token"},
+				Error:   errors.New("invalid token").Error(),
 			},
 		},
 		{
@@ -56,7 +58,7 @@ func TestSend_success(t *testing.T) {
 				Code:    http.StatusNoContent,
 				Message: "No content",
 				Data:    nil,
-				Error:   nil,
+				Error:   "",
 			},
 		},
 	}
@@ -65,7 +67,7 @@ func TestSend_success(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 
-			response.Send(w, tt.code, tt.message, tt.data, tt.err)
+			response.Send(context.Background(), w, tt.code, tt.message, tt.data, tt.err)
 			resp := w.Result()
 			defer resp.Body.Close()
 

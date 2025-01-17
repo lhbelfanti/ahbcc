@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"ahbcc/cmd/api/user"
+	"ahbcc/internal/http/response"
 	"ahbcc/internal/log"
 )
 
@@ -17,28 +18,24 @@ func SignUpHandlerV1(signUp SignUp) http.HandlerFunc {
 		var userDTO user.DTO
 		err := json.NewDecoder(r.Body).Decode(&userDTO)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("username", userDTO.Username))
 
 		err = validateBody(userDTO)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
+			return
 		}
 
 		err = signUp(ctx, userDTO)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToSignUp, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToSignUp, nil, err)
 			return
 		}
 
-		log.Info(ctx, "User successfully signed up")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("User successfully signed up"))
+		response.Send(ctx, w, http.StatusOK, "User successfully signed up", nil, nil)
 	}
 }
 
@@ -50,40 +47,34 @@ func LogInHandlerV1(logIn LogIn) http.HandlerFunc {
 		var userDTO user.DTO
 		err := json.NewDecoder(r.Body).Decode(&userDTO)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
 			return
 		}
 
 		err = validateBody(userDTO)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
+			return
 		}
 
 		token, expiresAt, err := logIn(ctx, userDTO)
 		if err != nil {
-			log.Error(ctx, err.Error())
-
 			switch {
 			case errors.Is(err, FailedToLoginDueWrongPassword):
-				http.Error(w, FailedToLogIn, http.StatusUnauthorized)
+				response.Send(ctx, w, http.StatusUnauthorized, FailedToLogIn, nil, err)
 				return
 			default:
-				http.Error(w, FailedToLogIn, http.StatusInternalServerError)
+				response.Send(ctx, w, http.StatusInternalServerError, FailedToLogIn, nil, err)
 				return
 			}
 		}
 
-		loginResponse := LoginResponse{
+		loginResponse := LoginResponseDTO{
 			Token:     token,
 			ExpiresAt: expiresAt,
 		}
 
-		log.Info(ctx, "User successfully logged in")
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(loginResponse)
+		response.Send(ctx, w, http.StatusOK, "User successfully logged in", loginResponse, nil)
 	}
 }
 
@@ -94,20 +85,17 @@ func LogOutHandlerV1(logOut LogOut) http.HandlerFunc {
 
 		token := r.Header.Get("X-Session-Token")
 		if token == "" {
-			log.Error(ctx, AuthorizationTokenRequired)
-			http.Error(w, AuthorizationTokenRequired, http.StatusUnauthorized)
+			response.Send(ctx, w, http.StatusUnauthorized, AuthorizationTokenRequired, nil, AuthorizationTokenIsRequired)
 			return
 		}
 
 		err := logOut(ctx, token)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToLogOut, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToLogOut, nil, err)
+			return
 		}
 
-		log.Info(ctx, "User successfully logged out")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("User successfully logged out"))
+		response.Send(ctx, w, http.StatusOK, "User successfully logged out", nil, nil)
 	}
 }
 

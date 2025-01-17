@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"ahbcc/internal/http/response"
 	"ahbcc/internal/log"
 )
 
@@ -17,8 +18,7 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 		criteriaIDParam := r.PathValue("criteria_id")
 		criteriaID, err := strconv.Atoi(criteriaIDParam)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("criteria_id", criteriaIDParam))
@@ -26,8 +26,7 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 		forcedQueryParamStr := r.URL.Query().Get("forced")
 		forcedQueryParam, err := strconv.ParseBool(forcedQueryParamStr)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidQueryParameterFormat, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("forced", forcedQueryParamStr))
@@ -36,19 +35,15 @@ func EnqueueHandlerV1(enqueueCriteria Enqueue) http.HandlerFunc {
 		if err != nil {
 			switch {
 			case errors.Is(err, AnExecutionOfThisCriteriaIDIsAlreadyEnqueued):
-				log.Error(ctx, err.Error())
-				http.Error(w, ExecutionWithSameCriteriaIDAlreadyEnqueued, http.StatusConflict)
+				response.Send(ctx, w, http.StatusConflict, ExecutionWithSameCriteriaIDAlreadyEnqueued, nil, err)
 				return
 			default:
-				log.Error(ctx, err.Error())
-				http.Error(w, FailedToEnqueueCriteria, http.StatusInternalServerError)
+				response.Send(ctx, w, http.StatusInternalServerError, FailedToEnqueueCriteria, nil, err)
 				return
 			}
 		}
 
-		log.Info(ctx, "Criteria successfully sent to enqueue")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Criteria successfully sent to enqueue"))
+		response.Send(ctx, w, http.StatusOK, "Criteria successfully sent to enqueue", nil, nil)
 	}
 }
 
@@ -59,14 +54,11 @@ func InitHandlerV1(init Init) http.HandlerFunc {
 
 		err := init(ctx)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToExecuteInitCriteria, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToExecuteInitCriteria, nil, err)
 			return
 		}
 
-		log.Info(ctx, "Criteria successfully initialized and enqueued")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Criteria successfully initialized and enqueued"))
+		response.Send(ctx, w, http.StatusOK, "Criteria successfully initialized and enqueued", nil, nil)
 	}
 }
 
@@ -78,23 +70,18 @@ func GetExecutionByIDHandlerV1(selectExecutionByID SelectExecutionByID) http.Han
 		executionIDParam := r.PathValue("execution_id")
 		executionID, err := strconv.Atoi(executionIDParam)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("execution_id", executionIDParam))
 
 		executions, err := selectExecutionByID(ctx, executionID)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToExecuteGetExecutionsByStatuses, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToExecuteGetExecutionsByStatuses, nil, err)
 			return
 		}
 
-		log.Info(ctx, "Executions successfully obtained")
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(executions)
+		response.Send(ctx, w, http.StatusOK, "Execution successfully obtained", executions, nil)
 	}
 }
 
@@ -106,8 +93,7 @@ func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc 
 		executionIDParam := r.PathValue("execution_id")
 		executionID, err := strconv.Atoi(executionIDParam)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("execution_id", executionIDParam))
@@ -115,22 +101,18 @@ func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc 
 		var execution ExecutionDTO
 		err = json.NewDecoder(r.Body).Decode(&execution)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("execution", execution))
 
 		err = updateExecution(ctx, executionID, execution.Status)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToExecuteUpdateCriteriaExecution, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToExecuteUpdateCriteriaExecution, nil, err)
 			return
 		}
 
-		log.Info(ctx, "Criteria execution successfully updated")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Criteria execution successfully updated"))
+		response.Send(ctx, w, http.StatusOK, "Criteria execution successfully updated", nil, nil)
 	}
 }
 
@@ -142,8 +124,7 @@ func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.Han
 		executionIDParam := r.PathValue("execution_id")
 		executionID, err := strconv.Atoi(executionIDParam)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidURLParameter, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("execution_id", executionIDParam))
@@ -151,8 +132,7 @@ func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.Han
 		var executionDay ExecutionDayDTO
 		err = json.NewDecoder(r.Body).Decode(&executionDay)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, InvalidRequestBody, http.StatusBadRequest)
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
 			return
 		}
 		ctx = log.With(ctx, log.Param("execution_day", executionDay))
@@ -161,13 +141,10 @@ func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.Han
 
 		err = insertExecutionDay(ctx, executionDay)
 		if err != nil {
-			log.Error(ctx, err.Error())
-			http.Error(w, FailedToExecuteInsertCriteriaExecution, http.StatusInternalServerError)
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToExecuteInsertCriteriaExecution, nil, err)
 			return
 		}
 
-		log.Info(ctx, "Criteria execution day successfully inserted")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Criteria execution day successfully inserted"))
+		response.Send(ctx, w, http.StatusOK, "Criteria execution day successfully inserted", nil, nil)
 	}
 }
