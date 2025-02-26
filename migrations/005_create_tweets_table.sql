@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS tweets (
     quote_id            INTEGER NULL,
     search_criteria_id  INTEGER NOT NULL,
 
-    CONSTRAINT uq_id_search_criteria UNIQUE (id, search_criteria_id),
+    CONSTRAINT uq_id_posted_at_search_criteria UNIQUE (id, posted_at, search_criteria_id),
     CONSTRAINT fk_quote_id FOREIGN KEY(quote_id) REFERENCES tweets_quotes(id),
     CONSTRAINT fk_search_criteria_id FOREIGN KEY(search_criteria_id) REFERENCES search_criteria(id)
 );
