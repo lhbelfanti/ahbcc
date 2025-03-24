@@ -1,5 +1,5 @@
 -- Create the enum type for status
-CREATE TYPE execution_status AS ENUM ('PENDING', 'IN PROGRESS', 'DONE');
+SELECT create_enum_type_if_not_exists('execution_status', ARRAY['PENDING', 'IN PROGRESS', 'DONE']);
 
 -- Create the search_criteria_executions table
 CREATE TABLE IF NOT EXISTS search_criteria_executions (
