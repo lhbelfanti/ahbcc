@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tweets_counts (
     tweets_month                 INTEGER NOT NULL,
     total_tweets                 INTEGER NOT NULL,
 
-    CONSTRAINT valid_month CHECK (tweets_month BETWEEN 1 AND 12),
+    CONSTRAINT tweets_counts_valid_month CHECK (tweets_month BETWEEN 1 AND 12),
     CONSTRAINT fk_search_criteria_id FOREIGN KEY(search_criteria_id) REFERENCES search_criteria(id)
 );
 
@@ -16,9 +16,8 @@ CREATE INDEX IF NOT EXISTS idx_tweets_counts_search_criteria_id_tweets_year ON t
 
 -- Table comments
 COMMENT ON TABLE tweets_counts IS 'Records the result of each search criteria execution in a summarized format';
-COMMENT ON COLUMN tweets_counts.id IS 'Auto-incrementing ID of the tweets availability, agnostic to business logic';
-
+COMMENT ON COLUMN tweets_counts.id IS 'Auto-incrementing ID of the tweets counts, agnostic to business logic';
 COMMENT ON COLUMN tweets_counts.search_criteria_id IS 'ID of the search criteria from where the tweets where obtained';
-COMMENT ON COLUMN tweets_counts.tweets_year IS 'Year when the tweets where published';
-COMMENT ON COLUMN tweets_counts.tweets_month IS 'Month when the tweets where published';
+COMMENT ON COLUMN tweets_counts.tweets_year IS 'Year when the tweets were published';
+COMMENT ON COLUMN tweets_counts.tweets_month IS 'Month when the tweets were published';
 COMMENT ON COLUMN tweets_counts.total_tweets IS 'The amount of tweets retrieved';
