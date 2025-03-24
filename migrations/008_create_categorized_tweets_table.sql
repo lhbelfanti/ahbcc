@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS categorized_tweets (
 );
 
 -- Table indexes
-CREATE INDEX idx_categorized_tweets_tweet_id ON categorized_tweets(tweet_id);
-CREATE INDEX idx_categorized_tweets_user_id ON categorized_tweets(user_id);
+CREATE INDEX IF NOT EXISTS idx_categorized_tweets_tweet_id ON categorized_tweets(tweet_id);
+CREATE INDEX IF NOT EXISTS idx_categorized_tweets_user_id ON categorized_tweets(user_id);
 
 -- Table comments
 COMMENT ON TABLE categorized_tweets                     IS 'Contains the categorization of tweets by user for adverse behavior';

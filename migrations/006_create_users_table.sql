@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Table indexes
-SELECT create_index_if_not_exists('idx_users_username', 'users', 'username');
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
 -- Table comments
 COMMENT ON TABLE users                  IS 'Stores user credentials and metadata';

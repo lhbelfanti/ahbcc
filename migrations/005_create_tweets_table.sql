@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS tweets (
 );
 
 -- Table indexes
-SELECT create_index_if_not_exists('idx_tweets_quote_id', 'tweets', 'quote_id');
-SELECT create_index_if_not_exists('idx_tweets_search_criteria', 'tweets', 'search_criteria_id');
+CREATE INDEX IF NOT EXISTS idx_tweets_quote_id ON tweets(quote_id);
+CREATE INDEX IF NOT EXISTS idx_tweets_quote_id ON tweets(search_criteria_id);
 
 -- Table comments
 COMMENT ON TABLE tweets                         IS 'Contains the tweets scrapped by GoXCrap';

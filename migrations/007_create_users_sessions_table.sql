@@ -1,7 +1,7 @@
 -- Create the tweets table
 CREATE TABLE IF NOT EXISTS users_sessions (
     id          SERIAL PRIMARY KEY,
-    user_id     INT,
+    user_id     INTEGER,
     token TEXT  NOT NULL,
     expires_at  TIMESTAMP NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS users_sessions (
 );
 
 -- Table indexes
-SELECT create_index_if_not_exists('idx_users_sessions_user_id', 'users_sessions', 'user_id');
-SELECT create_index_if_not_exists('idx_users_sessions_token', 'users_sessions', 'token');
+CREATE INDEX IF NOT EXISTS idx_users_sessions_user_id ON users_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_users_sessions_token ON users_sessions(token);
 
 -- Table comments
 COMMENT ON TABLE users_sessions             IS 'Stores active sessions with token information';
