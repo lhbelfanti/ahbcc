@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS users_sessions (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER,
-    token TEXT  NOT NULL,
+    token       TEXT NOT NULL,
     expires_at  TIMESTAMP NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 

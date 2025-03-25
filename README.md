@@ -91,7 +91,7 @@ erDiagram
     search_criteria_executions ||--o{ search_criteria_execution_days : ""
     search_criteria_executions {
         INTEGER id PK
-        ENUM status
+        ENUM status "'PENDING', 'IN PROGRESS', 'DONE'"
         INTEGER search_criteria_id FK
     }
     search_criteria_execution_days {
@@ -105,23 +105,35 @@ erDiagram
         INTEGER id PK
         TEXT username
         TEXT password_hash
-        DATE created_at
+        TIMESTAMP created_at
     }
+    categorized_tweets ||--|{ search_criteria : ""
     categorized_tweets ||--|{ tweets : ""
     categorized_tweets ||--|{ users : ""
     categorized_tweets {
         INTEGER id PK
+        INTEGER search_criteria_id FK "Intentional redundancy"
         INTEGER tweet_id FK
+        INTEGER tweet_year "Intentional redundancy"
+        INTEGER tweet_month "Intentional redundancy"
         INTEGER user_id FK
-        BOOLEAN adverse_behavior
+        ENUM categorization "'POSITIVE', 'INDETERMINATE', 'NEGATIVE'"
     }
     users_sessions ||--|{ users : ""
     users_sessions {
         INTEGER id PK
         INTEGER user_id FK
         TEXT token
-        DATE expires_at
-        DATE created_at
+        TIMESTAMP expires_at
+        TIMESTAMP created_at
+    }
+    tweets_counts ||--|{ search_criteria : ""
+    tweets_counts {
+        INTEGER id PK
+        INTEGER search_criteria_id FK
+        INTEGER tweets_year
+        INTEGER tweets_month
+        INTEGER total_tweets
     }
 ```
 
