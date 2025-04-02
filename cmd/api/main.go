@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ahbcc/cmd/api/search/criteria/executions"
 	"context"
 	"flag"
 	"fmt"
@@ -73,21 +74,21 @@ func main() {
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
 
 	selectCriteriaByID := criteria.MakeSelectByID(db)
-	collectExecutionDAORows := database.MakeCollectRows[criteria.ExecutionDAO]()
-	selectExecutionsByStatuses := criteria.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
-	insertCriteriaExecution := criteria.MakeInsertExecution(db)
+	collectExecutionDAORows := database.MakeCollectRows[executions.ExecutionDAO]()
+	selectExecutionsByStatuses := executions.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
+	insertCriteriaExecution := executions.MakeInsertExecution(db)
 	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
 	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, insertCriteriaExecution, scrapperEnqueueCriteria)
 
-	selectLastDayExecutedByCriteriaID := criteria.MakeSelectLastDayExecutedByCriteriaID(db)
+	selectLastDayExecutedByCriteriaID := executions.MakeSelectLastDayExecutedByCriteriaID(db)
 	resumeCriteria := criteria.MakeResume(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, resumeCriteria)
 
-	selectExecutionByID := criteria.MakeSelectExecutionByID(db)
+	selectExecutionByID := executions.MakeSelectExecutionByID(db)
 
-	updateCriteriaExecution := criteria.MakeUpdateExecution(db)
+	updateCriteriaExecution := executions.MakeUpdateExecution(db)
 
-	insertCriteriaExecutionDay := criteria.MakeInsertExecutionDay(db)
+	insertCriteriaExecutionDay := executions.MakeInsertExecutionDay(db)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
@@ -100,9 +101,9 @@ func main() {
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
-	router.HandleFunc("GET /criteria/executions/{execution_id}/v1", criteria.GetExecutionByIDHandlerV1(selectExecutionByID))
-	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", criteria.UpdateExecutionHandlerV1(updateCriteriaExecution))
-	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", criteria.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
+	router.HandleFunc("GET /criteria/executions/{execution_id}/v1", executions.GetExecutionByIDHandlerV1(selectExecutionByID))
+	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
+	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */

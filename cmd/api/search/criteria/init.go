@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"ahbcc/cmd/api/search/criteria/executions"
 	"ahbcc/internal/log"
 )
 
@@ -11,9 +12,9 @@ import (
 type Init func(ctx context.Context) error
 
 // MakeInit creates a new Init
-func MakeInit(selectExecutionsByStatuses SelectExecutionsByStatuses, resume Resume) Init {
+func MakeInit(selectExecutionsByStatuses executions.SelectExecutionsByStatuses, resume Resume) Init {
 	return func(ctx context.Context) error {
-		executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
+		executionsDAO, err := selectExecutionsByStatuses(ctx, []string{executions.PendingStatus, executions.InProgressStatus})
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return FailedToExecuteSelectExecutionsByStatuses
