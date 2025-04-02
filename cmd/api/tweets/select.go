@@ -1,18 +1,18 @@
 package tweets
 
 import (
+	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"context"
 
-	"ahbcc/cmd/api/tweets/counts"
 	"ahbcc/internal/database"
 	"ahbcc/internal/log"
 )
 
 // SelectMonthlyTweetsCountsByYearByCriteriaID returns the count of all the tweets (using the `tweets` table) for each year and month, seeking by search criteria ID
-type SelectMonthlyTweetsCountsByYearByCriteriaID func(ctx context.Context, criteriaID int) ([]counts.DAO, error)
+type SelectMonthlyTweetsCountsByYearByCriteriaID func(ctx context.Context, criteriaID int) ([]summary.DAO, error)
 
 // MakeSelectMonthlyTweetsCountsByYearByCriteriaID creates a new SelectMonthlyTweetCountByYearByCriteriaID
-func MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db database.Connection, collectRows database.CollectRows[counts.DAO]) SelectMonthlyTweetsCountsByYearByCriteriaID {
+func MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db database.Connection, collectRows database.CollectRows[summary.DAO]) SelectMonthlyTweetsCountsByYearByCriteriaID {
 	const query string = `
 		SELECT 
 			EXTRACT(YEAR FROM posted_at) AS posted_at_year,
@@ -30,7 +30,7 @@ func MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db database.Connection, col
 			posted_at_month DESC;
 	`
 
-	return func(ctx context.Context, criteriaID int) ([]counts.DAO, error) {
+	return func(ctx context.Context, criteriaID int) ([]summary.DAO, error) {
 		rows, err := db.Query(ctx, query, criteriaID)
 		if err != nil {
 			log.Error(ctx, err.Error())

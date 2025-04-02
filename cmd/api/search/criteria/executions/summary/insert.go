@@ -1,4 +1,4 @@
-package counts
+package summary
 
 import (
 	"context"
@@ -16,7 +16,7 @@ type Insert func(ctx context.Context, dao DAO) (int, error)
 // MakeInsert creates a new Insert
 func MakeInsert(db database.Connection) Insert {
 	const query string = `
-		INSERT INTO tweets_count (search_criteria_id, tweets_year, tweets_month, total_tweets)
+		INSERT INTO search_criteria_executions_summary (search_criteria_id, tweets_year, tweets_month, total_tweets)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id;
 	`
@@ -26,7 +26,7 @@ func MakeInsert(db database.Connection) Insert {
 		err := db.QueryRow(ctx, query, dao.SearchCriteriaID, dao.Year, dao.Month, dao.Total).Scan(&tweetsCountsID)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
-			return -1, FailedToInsertTweetCounts
+			return -1, FailedToInsertExecutionSummary
 		}
 
 		return tweetsCountsID, nil

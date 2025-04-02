@@ -1,6 +1,7 @@
 package tweets_test
 
 import (
+	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"context"
 	"errors"
 	"testing"
@@ -9,7 +10,6 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"ahbcc/cmd/api/tweets"
-	"ahbcc/cmd/api/tweets/counts"
 	"ahbcc/internal/database"
 )
 
@@ -17,8 +17,8 @@ func TestSelectMonthlyTweetsCountsByYearByCriteriaID_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
-	mockTweetsCountsDAOSlice := counts.MockTweetsCountsDAOSlice()
-	mockCollectRows := database.MockCollectRows[counts.DAO](mockTweetsCountsDAOSlice, nil)
+	mockTweetsCountsDAOSlice := summary.MockExecutionsSummaryDAOSlice()
+	mockCollectRows := database.MockCollectRows[summary.DAO](mockTweetsCountsDAOSlice, nil)
 
 	selectMonthlyTweetsCountsByYearByCriteriaID := tweets.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(mockPostgresConnection, mockCollectRows)
 
@@ -35,8 +35,8 @@ func TestSelectMonthlyTweetsCountsByYearByCriteriaID_failsWhenSelectOperationThr
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, errors.New("failed to select monthly tweets counts by year"))
-	mockTweetsCountsDAOSlice := counts.MockTweetsCountsDAOSlice()
-	mockCollectRows := database.MockCollectRows[counts.DAO](mockTweetsCountsDAOSlice, nil)
+	mockTweetsCountsDAOSlice := summary.MockExecutionsSummaryDAOSlice()
+	mockCollectRows := database.MockCollectRows[summary.DAO](mockTweetsCountsDAOSlice, nil)
 
 	selectMonthlyTweetsCountsByYearByCriteriaID := tweets.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(mockPostgresConnection, mockCollectRows)
 
@@ -52,8 +52,8 @@ func TestSelectMonthlyTweetsCountsByYearByCriteriaID_failsWhenCollectRowsThrowsE
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
-	mockTweetsCountsDAOSlice := counts.MockTweetsCountsDAOSlice()
-	mockCollectRows := database.MockCollectRows[counts.DAO](mockTweetsCountsDAOSlice, errors.New("failed to collect rows"))
+	mockTweetsCountsDAOSlice := summary.MockExecutionsSummaryDAOSlice()
+	mockCollectRows := database.MockCollectRows[summary.DAO](mockTweetsCountsDAOSlice, errors.New("failed to collect rows"))
 
 	selectMonthlyTweetsCountsByYearByCriteriaID := tweets.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(mockPostgresConnection, mockCollectRows)
 
