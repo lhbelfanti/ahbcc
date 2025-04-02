@@ -2,13 +2,16 @@ package counts
 
 import (
 	"context"
+	"errors"
+
+	"github.com/jackc/pgx/v5"
 
 	"ahbcc/internal/database"
 	"ahbcc/internal/log"
 )
 
 // Insert inserts a new row into tweets_counts table
-type Insert func(ctx context.Context, tweetsCounts DAO) (int, error)
+type Insert func(ctx context.Context, dao DAO) (int, error)
 
 // MakeInsert creates a new Insert
 func MakeInsert(db database.Connection) Insert {
@@ -18,12 +21,12 @@ func MakeInsert(db database.Connection) Insert {
 		RETURNING id;
 	`
 
-	return func(ctx context.Context, tweetsCounts DAO) (int, error) {
+	return func(ctx context.Context, dao DAO) (int, error) {
 		var tweetsCountsID int
-		err := db.QueryRow(ctx, query).Scan(&tweetsCountsID)
-		if err != nil {
+		err := db.QueryRow(ctx, query, dao.SearchCriteriaID, dao.Year, dao.Month, dao.Total).Scan(&tweetsCountsID)
+		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
-			return -1, FailedToInsertTweetsCounts
+			return -1, FailedToInsertTweetCounts
 		}
 
 		return tweetsCountsID, nil

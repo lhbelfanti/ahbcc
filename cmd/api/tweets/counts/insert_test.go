@@ -39,7 +39,7 @@ func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 
 	insertTweetCounts := counts.MakeInsert(mockPostgresConnection)
 
-	want := counts.FailedToInsertTweetsCounts
+	want := counts.FailedToInsertTweetCounts
 	_, got := insertTweetCounts(context.Background(), mockTweetsCountsDAO)
 
 	assert.Equal(t, want, got)
