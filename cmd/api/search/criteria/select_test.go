@@ -103,7 +103,7 @@ func TestSelectAll_failsWhenCollectRowsThrowsError(t *testing.T) {
 
 	selectAllCriteria := criteria.MakeSelectAll(mockPostgresConnection, mockCollectRows)
 
-	want := criteria.FailedToExecuteSelectCollectRowsInSelectAll
+	want := criteria.FailedToExecuteCollectRowsInSelectAll
 	_, got := selectAllCriteria(context.Background())
 
 	assert.Equal(t, want, got)
@@ -199,7 +199,7 @@ func TestSelectExecutionsByStatuses_failsWhenCollectRowsThrowsError(t *testing.T
 
 	selectExecutionsByState := criteria.MakeSelectExecutionsByStatuses(mockPostgresConnection, mockCollectRows)
 
-	want := criteria.FailedToExecuteSelectCollectRowsInSelectExecutionByState
+	want := criteria.FailedToExecuteCollectRowsInSelectExecutionByState
 	_, got := selectExecutionsByState(context.Background(), []string{criteria.PendingStatus, criteria.InProgressStatus, criteria.DoneStatus})
 
 	assert.Equal(t, want, got)

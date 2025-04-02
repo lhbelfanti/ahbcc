@@ -80,7 +80,7 @@ func MakeSelectAll(db database.Connection, collectRows database.CollectRows[DAO]
 		searchCriteria, err := collectRows(rows)
 		if err != nil {
 			log.Error(ctx, err.Error())
-			return nil, FailedToExecuteSelectCollectRowsInSelectAll
+			return nil, FailedToExecuteCollectRowsInSelectAll
 		}
 
 		return searchCriteria, nil
@@ -141,7 +141,7 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 		executions, err := collectRows(rows)
 		if err != nil {
 			log.Error(ctx, err.Error())
-			return nil, FailedToExecuteSelectCollectRowsInSelectExecutionByState
+			return nil, FailedToExecuteCollectRowsInSelectExecutionByState
 		}
 
 		return executions, nil
