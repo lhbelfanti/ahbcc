@@ -1,4 +1,4 @@
-package counts_test
+package summary_test
 
 import (
 	"context"
@@ -8,22 +8,22 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/tweets/counts"
+	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/internal/database"
 )
 
 func TestInsert_success(t *testing.T) {
-	tweetsCountsID := 1
+	executionSummaryID := 1
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRow := new(database.MockPgxRow)
-	database.MockScan(mockPgxRow, []any{tweetsCountsID}, t)
+	database.MockScan(mockPgxRow, []any{executionSummaryID}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
-	mockTweetsCountsDAO := counts.MockTweetsCountsDAO(1, 2025, 1, 1000)
+	mockTweetsCountsDAO := summary.MockExecutionSummaryDAO(1, 2025, 1, 1000)
 
-	insertTweetCounts := counts.MakeInsert(mockPostgresConnection)
+	insertExecutionSummary := summary.MakeInsert(mockPostgresConnection)
 
-	want := tweetsCountsID
-	got, err := insertTweetCounts(context.Background(), mockTweetsCountsDAO)
+	want := executionSummaryID
+	got, err := insertExecutionSummary(context.Background(), mockTweetsCountsDAO)
 
 	assert.Equal(t, want, got)
 	assert.Nil(t, err)
@@ -35,12 +35,12 @@ func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPgxRow := new(database.MockPgxRow)
 	mockPgxRow.On("Scan", mock.Anything).Return(pgx.ErrNoRows)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
-	mockTweetsCountsDAO := counts.MockTweetsCountsDAO(1, 2025, 1, 1000)
+	mockTweetsCountsDAO := summary.MockExecutionSummaryDAO(1, 2025, 1, 1000)
 
-	insertTweetCounts := counts.MakeInsert(mockPostgresConnection)
+	insertExecutionSummary := summary.MakeInsert(mockPostgresConnection)
 
-	want := counts.FailedToInsertTweetCounts
-	_, got := insertTweetCounts(context.Background(), mockTweetsCountsDAO)
+	want := summary.FailedToInsertExecutionSummary
+	_, got := insertExecutionSummary(context.Background(), mockTweetsCountsDAO)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

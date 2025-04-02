@@ -1,4 +1,4 @@
-package counts_test
+package summary_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/tweets/counts"
+	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/internal/database"
 )
 
@@ -19,7 +19,7 @@ func TestSelectIDBySearchCriteriaIDYearAndMonth_success(t *testing.T) {
 	database.MockScan(mockPgxRow, []any{1}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-	selectIDBySearchCriteriaIDYearAndMonth := counts.MakeSelectIDBySearchCriteriaIDYearAndMonth(mockPostgresConnection)
+	selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(mockPostgresConnection)
 
 	want := 1
 	got, err := selectIDBySearchCriteriaIDYearAndMonth(context.Background(), 1, 2025, 1)
@@ -35,8 +35,8 @@ func TestSelectIDBySearchCriteriaIDYearAndMonth_failsWhenSelectOperationThrowsEr
 		err      error
 		expected error
 	}{
-		{err: pgx.ErrNoRows, expected: counts.NoTweetsCountsFoundForTheGivenCriteria},
-		{err: errors.New("failed to execute select operation"), expected: counts.FailedToExecuteQueryToRetrieveTweetsCounts},
+		{err: pgx.ErrNoRows, expected: summary.NoExecutionSummaryFoundForTheGivenCriteria},
+		{err: errors.New("failed to execute select operation"), expected: summary.FailedToExecuteQueryToRetrieveExecutionsSummary},
 	}
 
 	for _, tt := range tests {
@@ -45,7 +45,7 @@ func TestSelectIDBySearchCriteriaIDYearAndMonth_failsWhenSelectOperationThrowsEr
 		mockPgxRow.On("Scan", mock.Anything).Return(tt.err)
 		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-		selectIDBySearchCriteriaIDYearAndMonth := counts.MakeSelectIDBySearchCriteriaIDYearAndMonth(mockPostgresConnection)
+		selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(mockPostgresConnection)
 
 		want := tt.expected
 		_, got := selectIDBySearchCriteriaIDYearAndMonth(context.Background(), 1, 2025, 1)

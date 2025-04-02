@@ -1,4 +1,4 @@
-package counts
+package summary
 
 import (
 	"context"
@@ -13,7 +13,7 @@ type UpdateTotalTweets func(ctx context.Context, id, totalTweets int) error
 // MakeUpdateTotalTweets creates a new UpdateTotalTweets
 func MakeUpdateTotalTweets(db database.Connection) UpdateTotalTweets {
 	const query string = `
-		UPDATE tweets_counts
+		UPDATE search_criteria_executions_summary
 		SET total_tweets = $2
 		WHERE id = $1
 	`

@@ -1,4 +1,4 @@
-package counts
+package summary
 
 import (
 	"context"
@@ -17,21 +17,21 @@ type SelectIDBySearchCriteriaIDYearAndMonth func(ctx context.Context, searchCrit
 func MakeSelectIDBySearchCriteriaIDYearAndMonth(db database.Connection) SelectIDBySearchCriteriaIDYearAndMonth {
 	const query string = `
 		SELECT id
-		FROM tweets_counts
+		FROM search_criteria_executions_summary
 		WHERE search_criteria_id = $1 AND year = $2 AND month = $3;
 	`
 
 	return func(ctx context.Context, searchCriteriaID, year, month int) (int, error) {
-		var tweetsCountsID int
-		err := db.QueryRow(ctx, query, searchCriteriaID, year, month).Scan(&tweetsCountsID)
+		var searchCriteriaExecutionSummaryID int
+		err := db.QueryRow(ctx, query, searchCriteriaID, year, month).Scan(&searchCriteriaExecutionSummaryID)
 		if errors.Is(err, pgx.ErrNoRows) {
 			log.Error(ctx, err.Error())
-			return 0, NoTweetsCountsFoundForTheGivenCriteria
+			return 0, NoExecutionSummaryFoundForTheGivenCriteria
 		} else if err != nil {
 			log.Error(ctx, err.Error())
-			return 0, FailedToExecuteQueryToRetrieveTweetsCounts
+			return 0, FailedToExecuteQueryToRetrieveExecutionsSummary
 		}
 
-		return tweetsCountsID, nil
+		return searchCriteriaExecutionSummaryID, nil
 	}
 }

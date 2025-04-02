@@ -1,4 +1,4 @@
-package counts_test
+package summary_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/tweets/counts"
+	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/internal/database"
 )
 
@@ -17,7 +17,7 @@ func TestUpdateTotalTweets_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 
-	updateTotalTweets := counts.MakeUpdateTotalTweets(mockPostgresConnection)
+	updateTotalTweets := summary.MakeUpdateTotalTweets(mockPostgresConnection)
 
 	got := updateTotalTweets(context.Background(), 1, 1234567)
 
@@ -29,9 +29,9 @@ func TestUpdateTotalTweets_failsWhenUpdateOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to update execution"))
 
-	updateTotalTweets := counts.MakeUpdateTotalTweets(mockPostgresConnection)
+	updateTotalTweets := summary.MakeUpdateTotalTweets(mockPostgresConnection)
 
-	want := counts.FailedToUpdateTotalTweets
+	want := summary.FailedToUpdateTotalTweets
 	got := updateTotalTweets(context.Background(), 1, 1234567)
 
 	assert.Equal(t, want, got)

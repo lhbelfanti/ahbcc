@@ -127,8 +127,8 @@ erDiagram
         TIMESTAMP expires_at
         TIMESTAMP created_at
     }
-    tweets_counts ||--|{ search_criteria : ""
-    tweets_counts {
+    search_criteria_executions_summary ||--|{ search_criteria : ""
+    search_criteria_executions_summary {
         INTEGER id PK
         INTEGER search_criteria_id FK
         INTEGER tweets_year
