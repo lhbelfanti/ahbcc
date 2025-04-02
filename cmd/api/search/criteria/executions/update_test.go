@@ -1,4 +1,4 @@
-package criteria_test
+package executions_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/search/criteria"
+	"ahbcc/cmd/api/search/criteria/executions"
 	"ahbcc/internal/database"
 )
 
@@ -17,9 +17,9 @@ func TestUpdateExecution_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
 
-	updateExecution := criteria.MakeUpdateExecution(mockPostgresConnection)
+	updateExecution := executions.MakeUpdateExecution(mockPostgresConnection)
 
-	got := updateExecution(context.Background(), 1, criteria.DoneStatus)
+	got := updateExecution(context.Background(), 1, executions.DoneStatus)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
@@ -29,10 +29,10 @@ func TestUpdateExecution_failsWhenUpdateOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to update execution"))
 
-	updateExecution := criteria.MakeUpdateExecution(mockPostgresConnection)
+	updateExecution := executions.MakeUpdateExecution(mockPostgresConnection)
 
-	want := criteria.FailedToUpdateSearchCriteriaExecution
-	got := updateExecution(context.Background(), 1, criteria.DoneStatus)
+	want := executions.FailedToUpdateSearchCriteriaExecution
+	got := updateExecution(context.Background(), 1, executions.DoneStatus)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)

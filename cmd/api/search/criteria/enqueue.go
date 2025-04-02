@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"ahbcc/cmd/api/search/criteria/executions"
 	"ahbcc/internal/log"
 	"ahbcc/internal/scrapper"
 )
@@ -19,7 +20,7 @@ type (
 )
 
 // MakeEnqueue creates a new Enqueue
-func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses SelectExecutionsByStatuses, insertExecution InsertExecution, enqueueCriteria scrapper.EnqueueCriteria) Enqueue {
+func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses executions.SelectExecutionsByStatuses, insertExecution executions.InsertExecution, enqueueCriteria scrapper.EnqueueCriteria) Enqueue {
 	return func(ctx context.Context, criteriaID int, forced bool) error {
 		criteriaDAO, err := selectCriteriaByID(ctx, criteriaID)
 		if err != nil {
@@ -28,7 +29,7 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 		}
 
 		if !forced {
-			executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
+			executionsDAO, err := selectExecutionsByStatuses(ctx, []string{executions.PendingStatus, executions.InProgressStatus})
 			if err != nil {
 				log.Error(ctx, err.Error())
 				return FailedToExecuteSelectExecutionsByStatuses
@@ -49,7 +50,7 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 
 		err = enqueueCriteria(ctx, criteriaDAO.toCriteriaDTO(), executionID)
 		if err != nil {
-			// TODO: if the criteria was inserted but the enqueue failed, the criteria should be removed from the DB
+			// TODO: Implement transaction: if the criteria was inserted but the enqueue failed, the criteria should be removed from the DB
 			// to avoid `AnExecutionOfThisCriteriaIDIsAlreadyEnqueued` if it is needed to enqueue the same criteria again
 
 			log.Error(ctx, err.Error())
@@ -61,7 +62,7 @@ func MakeEnqueue(selectCriteriaByID SelectByID, selectExecutionsByStatuses Selec
 }
 
 // MakeResume creates a new Resume
-func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria SelectLastDayExecutedByCriteriaID, selectExecutionsByStatuses SelectExecutionsByStatuses, enqueueCriteria scrapper.EnqueueCriteria) Resume {
+func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria executions.SelectLastDayExecutedByCriteriaID, selectExecutionsByStatuses executions.SelectExecutionsByStatuses, enqueueCriteria scrapper.EnqueueCriteria) Resume {
 	return func(ctx context.Context, criteriaID int) error {
 		criteriaDAO, err := selectCriteriaByID(ctx, criteriaID)
 		if err != nil {
@@ -77,7 +78,7 @@ func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria S
 				return FailedToExecuteSelectLastDayExecutedByCriteriaID
 			} else {
 				// The criteria hasn't started yet, but it was enqueued once before (it is in a PENDING state for example)
-				executionsDAO, err := selectExecutionsByStatuses(ctx, []string{PendingStatus, InProgressStatus})
+				executionsDAO, err := selectExecutionsByStatuses(ctx, []string{executions.PendingStatus, executions.InProgressStatus})
 				if err != nil {
 					log.Error(ctx, err.Error())
 					return FailedToExecuteSelectExecutionsByStatuses
@@ -91,7 +92,7 @@ func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria S
 				}
 			}
 		} else {
-			// The criteria has been executed once before and is needed to start from the next day of the last day it was executed
+			// The search criteria has been executed once before and is needed to start from the next day of the last day it was executed
 			criteriaDAO.Since = lastExecutionDayExecuted.ExecutionDate.Add(24 * time.Hour)
 			searchCriteriaExecutionID = lastExecutionDayExecuted.SearchCriteriaExecutionID
 		}

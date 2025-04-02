@@ -1,4 +1,4 @@
-package criteria_test
+package executions_test
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/search/criteria"
+	"ahbcc/cmd/api/search/criteria/executions"
 	"ahbcc/internal/database"
 )
 
@@ -29,7 +29,7 @@ func TestInsertExecution_success(t *testing.T) {
 		database.MockScan(mockPgxRow, []any{searchCriteriaExecutionID}, t)
 		mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-		insertExecution := criteria.MakeInsertExecution(mockPostgresConnection)
+		insertExecution := executions.MakeInsertExecution(mockPostgresConnection)
 
 		want := searchCriteriaExecutionID
 		got, err := insertExecution(context.Background(), 5, tt.forced)
@@ -46,9 +46,9 @@ func TestInsertExecution_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPgxRow.On("Scan", mock.Anything).Return(pgx.ErrNoRows)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
 
-	insertExecution := criteria.MakeInsertExecution(mockPostgresConnection)
+	insertExecution := executions.MakeInsertExecution(mockPostgresConnection)
 
-	want := criteria.FailedToInsertSearchCriteriaExecution
+	want := executions.FailedToInsertSearchCriteriaExecution
 	_, got := insertExecution(context.Background(), 5, false)
 
 	assert.Equal(t, want, got)
@@ -68,9 +68,9 @@ func TestInsertExecutionDay_success(t *testing.T) {
 	for _, tt := range tests {
 		mockPostgresConnection := new(database.MockPostgresConnection)
 		mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
-		mockExecutionDayDTO := criteria.MockExecutionDayDTO(tt.errorReason)
+		mockExecutionDayDTO := executions.MockExecutionDayDTO(tt.errorReason)
 
-		insertExecutionDay := criteria.MakeInsertExecutionDay(mockPostgresConnection)
+		insertExecutionDay := executions.MakeInsertExecutionDay(mockPostgresConnection)
 
 		got := insertExecutionDay(context.Background(), mockExecutionDayDTO)
 
@@ -82,11 +82,11 @@ func TestInsertExecutionDay_success(t *testing.T) {
 func TestInsertExecutionDay_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert execution day"))
-	mockExecutionDayDTO := criteria.MockExecutionDayDTO(nil)
+	mockExecutionDayDTO := executions.MockExecutionDayDTO(nil)
 
-	insertExecutionDay := criteria.MakeInsertExecutionDay(mockPostgresConnection)
+	insertExecutionDay := executions.MakeInsertExecutionDay(mockPostgresConnection)
 
-	want := criteria.FailedToInsertSearchCriteriaExecutionDay
+	want := executions.FailedToInsertSearchCriteriaExecutionDay
 	got := insertExecutionDay(context.Background(), mockExecutionDayDTO)
 
 	assert.Equal(t, want, got)
