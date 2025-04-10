@@ -55,3 +55,55 @@ func TestSelectIDBySearchCriteriaIDYearAndMonth_failsWhenSelectOperationThrowsEr
 		mockPgxRow.AssertExpectations(t)
 	}
 }
+
+func TestSelectMonthlyTweetsCountsByYearByCriteriaID_success(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
+	mockTweetsCountsDAOSlice := summary.MockExecutionsSummaryDAOSlice()
+	mockCollectRows := database.MockCollectRows[summary.DAO](mockTweetsCountsDAOSlice, nil)
+
+	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(mockPostgresConnection, mockCollectRows)
+
+	want := mockTweetsCountsDAOSlice
+	got, err := selectMonthlyTweetsCountsByYearByCriteriaID(context.Background(), 1)
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectMonthlyTweetsCountsByYearByCriteriaID_failsWhenSelectOperationThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, errors.New("failed to select monthly tweets counts by year"))
+	mockTweetsCountsDAOSlice := summary.MockExecutionsSummaryDAOSlice()
+	mockCollectRows := database.MockCollectRows[summary.DAO](mockTweetsCountsDAOSlice, nil)
+
+	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(mockPostgresConnection, mockCollectRows)
+
+	want := summary.FailedToRetrieveMonthlyTweetsCountsByYear
+	_, got := selectMonthlyTweetsCountsByYearByCriteriaID(context.Background(), 1)
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectMonthlyTweetsCountsByYearByCriteriaID_failsWhenCollectRowsThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
+	mockTweetsCountsDAOSlice := summary.MockExecutionsSummaryDAOSlice()
+	mockCollectRows := database.MockCollectRows[summary.DAO](mockTweetsCountsDAOSlice, errors.New("failed to collect rows"))
+
+	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(mockPostgresConnection, mockCollectRows)
+
+	want := summary.FailedToExecuteCollectRowsInSelectMonthlyTweetsCountsByYear
+	_, got := selectMonthlyTweetsCountsByYearByCriteriaID(context.Background(), 1)
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
