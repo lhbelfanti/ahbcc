@@ -23,7 +23,7 @@ func TestSummarizeExecutions_success(t *testing.T) {
 	mockSelectMonthlyTweetsCountsByYear := summary.MockSelectMonthlyTweetsCountsByYearByCriteriaID(summary.MockExecutionsSummaryDAOSlice(), nil)
 	mockUpsert := summary.MockUpsert(nil)
 
-	summarizeExecutions := executions.MakeSummarizeExecutions(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
+	summarizeExecutions := executions.MakeSummarize(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
 
 	got := summarizeExecutions(context.Background())
 
@@ -38,7 +38,7 @@ func TestSummarizeExecutions_failsWhenSelectExecutionsByStatusesThrowsError(t *t
 	mockSelectMonthlyTweetsCountsByYear := summary.MockSelectMonthlyTweetsCountsByYearByCriteriaID(summary.MockExecutionsSummaryDAOSlice(), nil)
 	mockUpsert := summary.MockUpsert(nil)
 
-	summarizeExecutions := executions.MakeSummarizeExecutions(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
+	summarizeExecutions := executions.MakeSummarize(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
 
 	want := executions.FailedToExecuteSelectSearchCriteriaExecutionByState
 	got := summarizeExecutions(context.Background())
@@ -55,7 +55,7 @@ func TestSummarizeExecutions_failsWhenBeginTransactionThrowsError(t *testing.T) 
 	mockSelectMonthlyTweetsCountsByYear := summary.MockSelectMonthlyTweetsCountsByYearByCriteriaID(summary.MockExecutionsSummaryDAOSlice(), nil)
 	mockUpsert := summary.MockUpsert(nil)
 
-	summarizeExecutions := executions.MakeSummarizeExecutions(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
+	summarizeExecutions := executions.MakeSummarize(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
 
 	want := executions.FailedToBeginTransaction
 	got := summarizeExecutions(context.Background())
@@ -73,7 +73,7 @@ func TestSummarizeExecutions_failsWhenSelectMonthlyTweetsCountsByYearThrowsError
 	mockSelectMonthlyTweetsCountsByYear := summary.MockSelectMonthlyTweetsCountsByYearByCriteriaID([]summary.DAO{}, errors.New("failed to execute select monthly tweets count by year"))
 	mockUpsert := summary.MockUpsert(nil)
 
-	summarizeExecutions := executions.MakeSummarizeExecutions(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
+	summarizeExecutions := executions.MakeSummarize(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
 
 	want := executions.FailedToExecuteSelectMonthlyTweetsCountsByYear
 	got := summarizeExecutions(context.Background())
@@ -92,7 +92,7 @@ func TestSummarizeExecutions_failsWhenUpsertExecutionSummaryThrowsError(t *testi
 	mockSelectMonthlyTweetsCountsByYear := summary.MockSelectMonthlyTweetsCountsByYearByCriteriaID(summary.MockExecutionsSummaryDAOSlice(), nil)
 	mockUpsert := summary.MockUpsert(errors.New("failed to execute upsert execution summary"))
 
-	summarizeExecutions := executions.MakeSummarizeExecutions(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
+	summarizeExecutions := executions.MakeSummarize(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
 
 	want := executions.FailedToExecuteUpsertExecutionSummary
 	got := summarizeExecutions(context.Background())
@@ -112,7 +112,7 @@ func TestSummarizeExecutions_failsWhenCommitTransactionThrowsError(t *testing.T)
 	mockSelectMonthlyTweetsCountsByYear := summary.MockSelectMonthlyTweetsCountsByYearByCriteriaID(summary.MockExecutionsSummaryDAOSlice(), nil)
 	mockUpsert := summary.MockUpsert(nil)
 
-	summarizeExecutions := executions.MakeSummarizeExecutions(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
+	summarizeExecutions := executions.MakeSummarize(mockPostgresConnection, mockSelectExecutionsByStatuses, mockSelectMonthlyTweetsCountsByYear, mockUpsert)
 
 	want := executions.FailedToCommitTransaction
 	got := summarizeExecutions(context.Background())

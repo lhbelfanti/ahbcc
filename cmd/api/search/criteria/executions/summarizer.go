@@ -8,12 +8,12 @@ import (
 	"ahbcc/internal/log"
 )
 
-// SummarizeExecutions creates a summary of the search criteria executions. The summary is saved for each month of each year
+// Summarize creates a summary of the search criteria executions. The summary is saved for each month of each year
 // from where the tweets were retrieved
-type SummarizeExecutions func(ctx context.Context) error
+type Summarize func(ctx context.Context) error
 
-// MakeSummarizeExecutions creates a new SummarizeExecutions
-func MakeSummarizeExecutions(db database.Connection, selectExecutionsByStatuses SelectExecutionsByStatuses, selectMonthlyTweetsCountsByYear summary.SelectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary summary.Upsert) SummarizeExecutions {
+// MakeSummarize creates a new Summarize
+func MakeSummarize(db database.Connection, selectExecutionsByStatuses SelectExecutionsByStatuses, selectMonthlyTweetsCountsByYear summary.SelectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary summary.Upsert) Summarize {
 	return func(ctx context.Context) error {
 		searchCriteriaExecutions, err := selectExecutionsByStatuses(ctx, []string{"DONE"})
 		if err != nil {
