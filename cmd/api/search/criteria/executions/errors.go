@@ -20,4 +20,8 @@ var (
 	NoExecutionDaysFoundForTheGivenCriteriaID           = errors.New("no execution days found for the given criteria id")
 	NoExecutionFoundForTheGivenID                       = errors.New("no execution found for the given id")
 	FailedToExecuteQueryToRetrieveExecutionData         = errors.New("failed to execute query to retrieve execution data")
+	FailedToBeginTransaction                            = errors.New("failed to begin transaction")
+	FailedToExecuteSelectMonthlyTweetsCountsByYear      = errors.New("failed to execute select monthly tweets count by year")
+	FailedToExecuteUpsertExecutionSummary               = errors.New("failed to execute upsert execution summary")
+	FailedToCommitTransaction                           = errors.New("failed to commit transaction")
 )
