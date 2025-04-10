@@ -19,7 +19,23 @@ func TestUpdateTotalTweets_success(t *testing.T) {
 
 	updateTotalTweets := summary.MakeUpdateTotalTweets(mockPostgresConnection)
 
-	got := updateTotalTweets(context.Background(), 1, 1234567)
+	got := updateTotalTweets(nil, context.Background(), 1, 1234567)
+
+	assert.Nil(t, got)
+	mockPostgresConnection.AssertExpectations(t)
+}
+
+func TestUpdateTotalTweets_successWithATransaction(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPostgresTx := new(database.MockPgxTx)
+	mockPostgresConnection.On("Begin", mock.Anything).Return(mockPostgresTx, nil)
+	mockPostgresTx.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
+
+	ctx := context.Background()
+	tx, _ := mockPostgresConnection.Begin(ctx)
+	updateTotalTweets := summary.MakeUpdateTotalTweets(mockPostgresConnection)
+
+	got := updateTotalTweets(tx, ctx, 1, 1234567)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
@@ -32,7 +48,7 @@ func TestUpdateTotalTweets_failsWhenUpdateOperationThrowsError(t *testing.T) {
 	updateTotalTweets := summary.MakeUpdateTotalTweets(mockPostgresConnection)
 
 	want := summary.FailedToUpdateTotalTweets
-	got := updateTotalTweets(context.Background(), 1, 1234567)
+	got := updateTotalTweets(nil, context.Background(), 1, 1234567)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
