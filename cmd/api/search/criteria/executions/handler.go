@@ -95,3 +95,18 @@ func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.Han
 		response.Send(ctx, w, http.StatusOK, "Criteria execution day successfully inserted", nil, nil)
 	}
 }
+
+// SummarizeV1 HTTP Handler of the endpoint /criteria/executions/summarize/v1
+func SummarizeV1(summarize Summarize) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		err := summarize(ctx)
+		if err != nil {
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToExecuteSummarize, nil, err)
+			return
+		}
+
+		response.Send(ctx, w, http.StatusOK, "Criteria executions summarization successfully run", nil, nil)
+	}
+}

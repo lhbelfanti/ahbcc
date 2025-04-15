@@ -8,6 +8,7 @@ const (
 	FailedToExecuteInsertCriteriaExecution string = "Failed to execute insert criteria execution"
 	FailedToExecuteUpdateCriteriaExecution string = "Failed to execute update criteria execution"
 	FailedToExecuteGetExecutionsByStatuses string = "Failed to execute get criteria executions by statuses"
+	FailedToExecuteSummarize               string = "Failed to execute summarize criteria executions"
 )
 
 var (

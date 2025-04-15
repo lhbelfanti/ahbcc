@@ -1,7 +1,6 @@
 package main
 
 import (
-	"ahbcc/cmd/api/search/criteria/executions"
 	"context"
 	"flag"
 	"fmt"
@@ -14,6 +13,8 @@ import (
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
 	"ahbcc/cmd/api/search/criteria"
+	"ahbcc/cmd/api/search/criteria/executions"
+	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/tweets/quotes"
 	"ahbcc/cmd/api/user"
@@ -90,6 +91,14 @@ func main() {
 
 	insertCriteriaExecutionDay := executions.MakeInsertExecutionDay(db)
 
+	collectSummaryDAORows := database.MakeCollectRows[summary.DAO]()
+	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db, collectSummaryDAORows)
+	selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(db)
+	insertExecutionSummary := summary.MakeInsert(db)
+	updateSummaryTotalTweets := summary.MakeUpdateTotalTweets(db)
+	upsertExecutionSummary := summary.MakeUpsert(selectIDBySearchCriteriaIDYearAndMonth, insertExecutionSummary, updateSummaryTotalTweets)
+	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, selectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -104,6 +113,7 @@ func main() {
 	router.HandleFunc("GET /criteria/executions/{execution_id}/v1", executions.GetExecutionByIDHandlerV1(selectExecutionByID))
 	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
+	router.HandleFunc("POST /criteria/executions/summarize/v1", executions.SummarizeV1(summarizeCriteriaExecutions))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */
