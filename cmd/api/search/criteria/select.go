@@ -23,7 +23,7 @@ func MakeSelectByID(db database.Connection) SelectByID {
 	const query string = `
 		SELECT id, name, all_of_these_words, this_exact_phrase, any_of_these_words, none_of_these_words, these_hashtags, language, since_date, until_date
 		FROM search_criteria
-		WHERE id = $1
+		WHERE id = $1;
 	`
 
 	return func(ctx context.Context, id int) (DAO, error) {
@@ -56,7 +56,7 @@ func MakeSelectByID(db database.Connection) SelectByID {
 func MakeSelectAll(db database.Connection, collectRows database.CollectRows[DAO]) SelectAll {
 	const query string = `
 		SELECT id, name, all_of_these_words, this_exact_phrase, any_of_these_words, none_of_these_words, these_hashtags, language, since_date, until_date
-		FROM search_criteria
+		FROM search_criteria;
 	`
 
 	return func(ctx context.Context) ([]DAO, error) {

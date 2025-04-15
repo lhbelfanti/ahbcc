@@ -25,7 +25,7 @@ func MakeExists(db database.Connection) Exists {
 			SELECT 1 
 			FROM users 
 			WHERE username = $1
-		)
+		);
 	`
 
 	return func(ctx context.Context, username string) (bool, error) {
@@ -46,7 +46,7 @@ func MakeSelectByUsername(db database.Connection) SelectByUsername {
 	const query string = `
 		SELECT id, username, password_hash, created_at
 		FROM users
-		WHERE username = $1
+		WHERE username = $1;
 	`
 
 	return func(ctx context.Context, username string) (DAO, error) {

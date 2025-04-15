@@ -19,7 +19,7 @@ func MakeInsertSingle(db database.Connection) InsertSingle {
 	const query string = `
 			INSERT INTO tweets_quotes(is_a_reply, author, avatar, posted_at, text_content, images) 
 			VALUES ($1, $2, $3, $4, $5, $6)
-			RETURNING id
+			RETURNING id;
 		`
 
 	return func(ctx context.Context, quote *QuoteDTO) (int, error) {
