@@ -28,7 +28,7 @@ func MakeSelectExecutionByID(db database.Connection) SelectExecutionByID {
 	const query string = `
 		SELECT id, status, search_criteria_id
 		FROM search_criteria_executions
-		WHERE id = $1
+		WHERE id = $1;
 	`
 
 	return func(ctx context.Context, id int) (ExecutionDAO, error) {
@@ -55,7 +55,7 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 	const query string = `
 		SELECT id, status, search_criteria_id
 		FROM search_criteria_executions
-		WHERE status IN (%s)
+		WHERE status IN (%s);
 	`
 
 	return func(ctx context.Context, statuses []string) ([]ExecutionDAO, error) {

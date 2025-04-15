@@ -15,7 +15,7 @@ func MakeUpdateExecution(db database.Connection) UpdateExecution {
 	const query string = `
 		UPDATE search_criteria_executions
 		SET status = $2
-		WHERE id = $1
+		WHERE id = $1;
 	`
 	return func(ctx context.Context, id int, status string) error {
 		_, err := db.Exec(ctx, query, id, status)

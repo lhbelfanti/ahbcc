@@ -17,7 +17,7 @@ func MakeUpdateTotalTweets(db database.Connection) UpdateTotalTweets {
 	const query string = `
 		UPDATE search_criteria_executions_summary
 		SET total_tweets = $2
-		WHERE id = $1
+		WHERE id = $1;
 	`
 
 	return func(tx pgx.Tx, ctx context.Context, id, totalTweets int) error {

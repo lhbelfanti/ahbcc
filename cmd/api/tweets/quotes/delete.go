@@ -24,7 +24,7 @@ func MakeDeleteOrphans(db database.Connection) DeleteOrphans {
 					SELECT quote_id
 					FROM tweets
 					WHERE quote_id IS NOT NULL
-				)
+				);
 	`
 
 	return func(ctx context.Context, ids []int) error {
