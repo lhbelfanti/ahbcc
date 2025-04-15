@@ -23,7 +23,7 @@ func MakeSelectIDBySearchCriteriaIDYearAndMonth(db database.Connection) SelectID
 	const query string = `
 		SELECT id
 		FROM search_criteria_executions_summary
-		WHERE search_criteria_id = $1 AND year = $2 AND month = $3;
+		WHERE search_criteria_id = $1 AND tweets_year = $2 AND tweets_month = $3;
 	`
 
 	return func(ctx context.Context, searchCriteriaID, year, month int) (int, error) {
@@ -45,19 +45,21 @@ func MakeSelectIDBySearchCriteriaIDYearAndMonth(db database.Connection) SelectID
 func MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db database.Connection, collectRows database.CollectRows[DAO]) SelectMonthlyTweetsCountsByYearByCriteriaID {
 	const query string = `
 		SELECT 
-			EXTRACT(YEAR FROM posted_at) AS posted_at_year,
-			LPAD(EXTRACT(MONTH FROM posted_at)::text, 2, '0') AS posted_at_month,
-			COUNT(*) AS quantity
+		    search_criteria_id,
+			EXTRACT(YEAR FROM posted_at) AS tweets_year,
+			LPAD(EXTRACT(MONTH FROM posted_at)::text, 2, '0')::int AS tweets_month,
+			COUNT(*) AS total
 		FROM 
 			tweets
 		WHERE 
 			search_criteria_id = $1
-		GROUP BY 
-			posted_at_year,
-			posted_at_month
+		GROUP BY
+		    search_criteria_id,
+			tweets_year,
+			tweets_month
 		ORDER BY 
-			posted_at_year DESC,
-			posted_at_month DESC;
+			tweets_year DESC,
+			tweets_month DESC;
 	`
 
 	return func(ctx context.Context, criteriaID int) ([]DAO, error) {
