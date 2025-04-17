@@ -2,7 +2,7 @@ package summary
 
 import (
 	"context"
-	
+
 	"github.com/jackc/pgx/v5"
 )
 
@@ -16,6 +16,13 @@ func MockSelectIDBySearchCriteriaIDYearAndMonth(id int, err error) SelectIDBySea
 // MockSelectMonthlyTweetsCountsByYearByCriteriaID mocks SelectMonthlyTweetsCountsByYearByCriteriaID function
 func MockSelectMonthlyTweetsCountsByYearByCriteriaID(daos []DAO, err error) SelectMonthlyTweetsCountsByYearByCriteriaID {
 	return func(ctx context.Context, criteriaID int) ([]DAO, error) {
+		return daos, err
+	}
+}
+
+// MockSelectAll mocks SelectAll function
+func MockSelectAll(daos []DAO, err error) SelectAll {
+	return func(ctx context.Context) ([]DAO, error) {
 		return daos, err
 	}
 }
@@ -54,8 +61,10 @@ func MockExecutionSummaryDAO(searchCriteriaID, year, month, total int) DAO {
 // MockExecutionsSummaryDAOSlice mocks a []summary.DAO
 func MockExecutionsSummaryDAOSlice() []DAO {
 	return []DAO{
+		MockExecutionSummaryDAO(2, 2025, 5, 105),
+		MockExecutionSummaryDAO(2, 2025, 2, 333),
+		MockExecutionSummaryDAO(1, 2025, 2, 500),
 		MockExecutionSummaryDAO(1, 2024, 9, 350),
 		MockExecutionSummaryDAO(1, 2025, 1, 1000),
-		MockExecutionSummaryDAO(1, 2025, 2, 500),
 	}
 }
