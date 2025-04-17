@@ -16,6 +16,9 @@ type (
 
 	// SelectMonthlyTweetsCountsByYearByCriteriaID returns the count of all the tweets (using the `tweets` table) for each year and month, seeking by search criteria ID
 	SelectMonthlyTweetsCountsByYearByCriteriaID func(ctx context.Context, criteriaID int) ([]DAO, error)
+
+	// SelectAll returns the summarization of the tweets retrieved for each month and year, for all the criteria
+	SelectAll func(ctx context.Context) ([]DAO, error)
 )
 
 // MakeSelectIDBySearchCriteriaIDYearAndMonth creates a new SelectIDBySearchCriteriaIDYearAndMonth
@@ -76,5 +79,29 @@ func MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db database.Connection, col
 		}
 
 		return tweetsCounts, nil
+	}
+}
+
+// MakeSelectAll creates a new SelectAll
+func MakeSelectAll(db database.Connection, collectRows database.CollectRows[DAO]) SelectAll {
+	const query string = `
+		SELECT * 
+		FROM search_criteria_executions_summary;
+	`
+
+	return func(ctx context.Context) ([]DAO, error) {
+		rows, err := db.Query(ctx, query)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return nil, FailedToRetrieveExecutionsSummary
+		}
+
+		searchCriteriaExecutionsSummary, err := collectRows(rows)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return nil, FailedToExecuteCollectRowsInSelectAll
+		}
+
+		return searchCriteriaExecutionsSummary, nil
 	}
 }
