@@ -27,6 +27,6 @@ func InformationV1(information Information) http.HandlerFunc {
 			return
 		}
 
-		response.Send(ctx, w, http.StatusOK, "Criteria successfully initialized and enqueued", criteriaInformation, nil)
+		response.Send(ctx, w, http.StatusOK, "Criteria successfully obtained", criteriaInformation, nil)
 	}
 }

@@ -1,25 +1,29 @@
 package categorized
 
-// MockCategorizedTweetsDAOSlice mocks an []DAO
+import "context"
+
+// MockSelectAllByUserID mocks a SelectAllByUserID function
+func MockSelectAllByUserID(daos []DAO, err error) SelectAllByUserID {
+	return func(ctx context.Context, userID int) ([]DAO, error) {
+		return daos, err
+	}
+}
+
+// MockCategorizedTweetsDAO mocks a DAO
+func MockCategorizedTweetsDAO(searchCriteriaID, year, month, analyzed int) DAO {
+	return DAO{
+		SearchCriteriaID: searchCriteriaID,
+		Year:             year,
+		Month:            month,
+		Analyzed:         analyzed,
+	}
+}
+
+// MockCategorizedTweetsDAOSlice mocks a []categorized.DAO
 func MockCategorizedTweetsDAOSlice() []DAO {
 	return []DAO{
-		{
-			SearchCriteriaID: 1,
-			Year:             2025,
-			Month:            4,
-			Analyzed:         15,
-		},
-		{
-			SearchCriteriaID: 1,
-			Year:             2020,
-			Month:            3,
-			Analyzed:         10,
-		},
-		{
-			SearchCriteriaID: 2,
-			Year:             2010,
-			Month:            12,
-			Analyzed:         1,
-		},
+		MockCategorizedTweetsDAO(1, 2024, 9, 15),
+		MockCategorizedTweetsDAO(1, 2025, 1, 10),
+		MockCategorizedTweetsDAO(2, 2025, 2, 33),
 	}
 }

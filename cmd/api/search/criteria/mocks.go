@@ -12,6 +12,13 @@ func MockSelectByID(dao DAO, err error) SelectByID {
 	}
 }
 
+// MockSelectAll mocks SelectAll function
+func MockSelectAll(daos []DAO, err error) SelectAll {
+	return func(ctx context.Context) ([]DAO, error) {
+		return daos, err
+	}
+}
+
 // MockEnqueue mocks Enqueue function
 func MockEnqueue(err error) Enqueue {
 	return func(ctx context.Context, criteriaID int, forced bool) error {
@@ -70,7 +77,7 @@ func MockCriteriaDAOSlice() []DAO {
 	return []DAO{
 		{
 			ID:               1,
-			Name:             "Example",
+			Name:             "Example1",
 			AllOfTheseWords:  []string{"word1", "word2"},
 			ThisExactPhrase:  "exact phrase",
 			AnyOfTheseWords:  []string{"any1", "any2"},
@@ -82,7 +89,7 @@ func MockCriteriaDAOSlice() []DAO {
 		},
 		{
 			ID:               2,
-			Name:             "Example",
+			Name:             "Example2",
 			AllOfTheseWords:  []string{"word1", "word2"},
 			ThisExactPhrase:  "exact phrase",
 			AnyOfTheseWords:  []string{"any1", "any2"},
@@ -91,6 +98,44 @@ func MockCriteriaDAOSlice() []DAO {
 			Language:         "es",
 			Since:            time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local),
 			Until:            time.Date(2024, time.January, 1, 0, 0, 0, 0, time.Local),
+		},
+	}
+}
+
+// MockInformationDTOs mocks a criteria.InformationDTOs
+func MockInformationDTOs() InformationDTOs {
+	return InformationDTOs{
+		{
+			Name: "Example1",
+			ID:   1,
+			Years: YearDataDTOs{
+				{
+					Year: 2024,
+					Months: MonthDataDTOs{
+						{Month: 9, AnalyzedTweets: 15, TotalTweets: 350},
+					},
+				},
+				{
+					Year: 2025,
+					Months: MonthDataDTOs{
+						{Month: 1, AnalyzedTweets: 10, TotalTweets: 1000},
+						{Month: 2, AnalyzedTweets: 0, TotalTweets: 500},
+					},
+				},
+			},
+		},
+		{
+			Name: "Example2",
+			ID:   2,
+			Years: YearDataDTOs{
+				{
+					Year: 2025,
+					Months: MonthDataDTOs{
+						{Month: 2, AnalyzedTweets: 33, TotalTweets: 333},
+						{Month: 5, AnalyzedTweets: 0, TotalTweets: 105},
+					},
+				},
+			},
 		},
 	}
 }

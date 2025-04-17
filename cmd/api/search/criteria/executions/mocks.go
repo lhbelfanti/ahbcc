@@ -44,6 +44,13 @@ func MockSelectExecutionByID(executionDAO ExecutionDAO, err error) SelectExecuti
 	}
 }
 
+// MockSummarize mocks Summarize function
+func MockSummarize(err error) Summarize {
+	return func(ctx context.Context) error {
+		return err
+	}
+}
+
 // MockExecutionDAOValues mocks the properties of ExecutionDAO to be used in the Scan function
 func MockExecutionDAOValues(dao ExecutionDAO) []any {
 	return []any{
