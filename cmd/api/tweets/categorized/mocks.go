@@ -1,14 +1,15 @@
 package categorized
 
-// MockAnalyzedTweetsDAOSlice mocks an []AnalyzedTweetsDAO
-func MockAnalyzedTweetsDAOSlice() []AnalyzedTweetsDAO {
-	return []AnalyzedTweetsDAO{
+// MockCategorizedTweetsDAOSlice mocks an []DAO
+func MockCategorizedTweetsDAOSlice() []DAO {
+	return []DAO{
 		{
 			SearchCriteriaID: 1,
 			Year:             2025,
 			Month:            4,
 			Analyzed:         15,
-		}, {
+		},
+		{
 			SearchCriteriaID: 1,
 			Year:             2020,
 			Month:            3,

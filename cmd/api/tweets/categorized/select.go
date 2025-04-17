@@ -8,10 +8,10 @@ import (
 )
 
 // SelectAllByUserID returns a struct with all the analyzed tweets divided by year and month
-type SelectAllByUserID func(ctx context.Context, userID int) ([]AnalyzedTweetsDAO, error)
+type SelectAllByUserID func(ctx context.Context, userID int) ([]DAO, error)
 
 // MakeSelectAllByUserID creates a new SelectAllByUserID
-func MakeSelectAllByUserID(db database.Connection, collectRows database.CollectRows[AnalyzedTweetsDAO]) SelectAllByUserID {
+func MakeSelectAllByUserID(db database.Connection, collectRows database.CollectRows[DAO]) SelectAllByUserID {
 	const query string = `
 		SELECT search_criteria_id, tweet_year, tweet_month, COUNT(*) AS analyzed_tweets
 		FROM categorized_tweets
@@ -20,7 +20,7 @@ func MakeSelectAllByUserID(db database.Connection, collectRows database.CollectR
 		ORDER BY search_criteria_id, tweet_year, tweet_month;
 	`
 
-	return func(ctx context.Context, userID int) ([]AnalyzedTweetsDAO, error) {
+	return func(ctx context.Context, userID int) ([]DAO, error) {
 		rows, err := db.Query(ctx, query, userID)
 		if err != nil {
 			log.Error(ctx, err.Error())
