@@ -138,8 +138,8 @@ func TestInformationV1_success(t *testing.T) {
 	mockInformation := criteria.MockInformation(mockInformationDTOs, nil)
 	mockBody, _ := json.Marshal(mockInformation)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/users/{user_id}/criteria/v1", bytes.NewReader(mockBody))
-	mockRequest.SetPathValue("user_id", "1")
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/v1", bytes.NewReader(mockBody))
+	mockRequest.Header.Set("X-Session-Token", "token")
 
 	handlerV1 := criteria.InformationV1(mockInformation)
 
@@ -151,18 +151,18 @@ func TestInformationV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInformationV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
+func TestInformationV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	mockInformationDTOs := criteria.MockInformationDTOs()
 	mockInformation := criteria.MockInformation(mockInformationDTOs, nil)
 	mockBody, _ := json.Marshal(mockInformation)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/users/{user_id}/criteria/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/v1", bytes.NewReader(mockBody))
 
 	handlerV1 := criteria.InformationV1(mockInformation)
 
 	handlerV1(mockResponseWriter, mockRequest)
 
-	want := http.StatusBadRequest
+	want := http.StatusUnauthorized
 	got := mockResponseWriter.Result().StatusCode
 
 	assert.Equal(t, want, got)
@@ -173,8 +173,8 @@ func TestInformationV1_failsWhenInformationThrowsError(t *testing.T) {
 	mockInformation := criteria.MockInformation(mockInformationDTOs, errors.New("failed to retrieve information"))
 	mockBody, _ := json.Marshal(mockInformation)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/users/{user_id}/criteria/v1", bytes.NewReader(mockBody))
-	mockRequest.SetPathValue("user_id", "1")
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/v1", bytes.NewReader(mockBody))
+	mockRequest.Header.Set("X-Session-Token", "token")
 
 	handlerV1 := criteria.InformationV1(mockInformation)
 

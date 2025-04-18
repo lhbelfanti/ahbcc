@@ -33,6 +33,13 @@ func MockDeleteExpiredSessions(err error) DeleteExpiredSessions {
 	}
 }
 
+// MockSelectUserIDByToken mocks a SelectUserIDByToken function
+func MockSelectUserIDByToken(userID int, err error) SelectUserIDByToken {
+	return func(ctx context.Context, token string) (int, error) {
+		return userID, err
+	}
+}
+
 // MockUserSessionDAO mocks a session DAO
 func MockUserSessionDAO() DAO {
 	return DAO{

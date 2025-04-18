@@ -112,13 +112,14 @@ func main() {
 	upsertExecutionSummary := summary.MakeUpsert(selectIDBySearchCriteriaIDYearAndMonth, insertExecutionSummary, updateSummaryTotalTweets)
 	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, selectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary)
 
-	// POST /users/{user_id}/criteria/v1
+	// POST /criteria/v1
+	selectUserIDByToken := session.MakeSelectUserIDByToken(db)
 	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO]()
 	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
 	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
 	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO]()
 	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
-	information := criteria.MakeInformation(selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
+	information := criteria.MakeInformation(selectUserIDByToken, selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
@@ -129,13 +130,13 @@ func main() {
 	router.HandleFunc("POST /auth/login/v1", auth.LogInHandlerV1(logIn))
 	router.HandleFunc("POST /auth/logout/v1", auth.LogOutHandlerV1(logOut))
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
+	router.HandleFunc("GET /criteria/v1", criteria.InformationV1(information))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
 	router.HandleFunc("GET /criteria/executions/{execution_id}/v1", executions.GetExecutionByIDHandlerV1(selectExecutionByID))
 	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	router.HandleFunc("POST /criteria/executions/summarize/v1", executions.SummarizeV1(summarizeCriteriaExecutions))
-	router.HandleFunc("GET /users/{user_id}/criteria/v1", criteria.InformationV1(information))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */
