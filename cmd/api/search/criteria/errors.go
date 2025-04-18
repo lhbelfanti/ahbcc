@@ -9,6 +9,7 @@ const (
 	ExecutionWithSameCriteriaIDAlreadyEnqueued string = "An execution with the same criteria id is already enqueued"
 	FailedToExecuteInitCriteria                string = "Failed to execute init criteria"
 	FailedToExecuteCriteriaInformation         string = "Failed to execute criteria information"
+	AuthorizationTokenRequired                 string = "Authorization token is required"
 )
 
 var (
@@ -24,7 +25,9 @@ var (
 	FailedToRetrieveSearchCriteriaExecutionID         = errors.New("failed to retrieve search criteria execution id")
 	FailedToInsertSearchCriteriaExecution             = errors.New("failed to insert search criteria execution")
 	NoExecutionDaysFoundForTheGivenCriteriaID         = errors.New("no execution days found for the given criteria id")
+	FailedToRetrieveUserID                            = errors.New("failed to retrieve user id")
 	FailedToRetrieveSearchCriteriaExecutionsSummaries = errors.New("failed to retrieve search criteria executions summaries")
 	FailedToRetrieveSearchCriteria                    = errors.New("failed to retrieve search criteria")
 	FailedToRetrieveCategorizedTweetsByUserID         = errors.New("failed to retrieve categorized tweets by user id")
+	AuthorizationTokenIsRequired                      = errors.New("authorization token is required")
 )

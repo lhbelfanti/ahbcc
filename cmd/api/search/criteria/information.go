@@ -6,16 +6,23 @@ import (
 
 	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/cmd/api/tweets/categorized"
+	"ahbcc/cmd/api/user/session"
 	"ahbcc/internal/log"
 )
 
 // Information returns all the search criteria executions information for a given user ID. It includes
 // the number of tweets retrieved and the number of tweets analyzed by the user, ordered by month and year.
-type Information func(ctx context.Context, userID int) (InformationDTOs, error)
+type Information func(ctx context.Context, token string) (InformationDTOs, error)
 
 // MakeInformation creates a new Information
-func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, selectAllSearchCriteria SelectAll, selectAllCategorizedTweets categorized.SelectAllByUserID) Information {
-	return func(ctx context.Context, userID int) (InformationDTOs, error) {
+func MakeInformation(selectUserIDByToken session.SelectUserIDByToken, selectAllCriteriaExecutionsSummaries summary.SelectAll, selectAllSearchCriteria SelectAll, selectAllCategorizedTweets categorized.SelectAllByUserID) Information {
+	return func(ctx context.Context, token string) (InformationDTOs, error) {
+		userID, err := selectUserIDByToken(ctx, token)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return nil, FailedToRetrieveUserID
+		}
+
 		criteriaExecutionsSummaries, err := selectAllCriteriaExecutionsSummaries(ctx)
 		if err != nil {
 			log.Error(ctx, err.Error())
