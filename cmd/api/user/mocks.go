@@ -1,7 +1,6 @@
 package user
 
 import (
-	"ahbcc/cmd/api/search/criteria"
 	"context"
 	"time"
 )
@@ -24,13 +23,6 @@ func MockSelectByUsername(userDAO DAO, err error) SelectByUsername {
 func MockInsert(err error) Insert {
 	return func(ctx context.Context, user DTO) error {
 		return err
-	}
-}
-
-// MockInformation mocks Information function
-func MockInformation(informationDTOs criteria.InformationDTOs, err error) Information {
-	return func(ctx context.Context, userID int) (criteria.InformationDTOs, error) {
-		return informationDTOs, err
 	}
 }
 

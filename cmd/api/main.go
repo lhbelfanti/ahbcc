@@ -118,7 +118,7 @@ func main() {
 	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
 	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO]()
 	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
-	information := user.MakeInformation(selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
+	information := criteria.MakeInformation(selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
@@ -135,7 +135,7 @@ func main() {
 	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	router.HandleFunc("POST /criteria/executions/summarize/v1", executions.SummarizeV1(summarizeCriteriaExecutions))
-	router.HandleFunc("GET /users/{user_id}/criteria/v1", user.InformationV1(information))
+	router.HandleFunc("GET /users/{user_id}/criteria/v1", criteria.InformationV1(information))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */

@@ -1,4 +1,4 @@
-package user_test
+package criteria_test
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"ahbcc/cmd/api/search/criteria"
 	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/user"
 )
 
 func TestInformation_success(t *testing.T) {
@@ -21,7 +20,7 @@ func TestInformation_success(t *testing.T) {
 	mockCategorizedTweetsDAOSlice := categorized.MockCategorizedTweetsDAOSlice()
 	mockSelectAllByUserID := categorized.MockSelectAllByUserID(mockCategorizedTweetsDAOSlice, nil)
 
-	information := user.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
+	information := criteria.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
 
 	want := criteria.MockInformationDTOs()
 	got, err := information(context.Background(), 1)
@@ -38,9 +37,9 @@ func TestInformation_failsWhenSelectAllCriteriaExecutionsSummariesThrowsError(t 
 	mockCategorizedTweetsDAOSlice := categorized.MockCategorizedTweetsDAOSlice()
 	mockSelectAllByUserID := categorized.MockSelectAllByUserID(mockCategorizedTweetsDAOSlice, nil)
 
-	information := user.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
+	information := criteria.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
 
-	want := user.FailedToRetrieveSearchCriteriaExecutionsSummaries
+	want := criteria.FailedToRetrieveSearchCriteriaExecutionsSummaries
 	_, got := information(context.Background(), 1)
 
 	assert.Equal(t, want, got)
@@ -54,9 +53,9 @@ func TestInformation_failsWhenSelectAllSearchCriteriaThrowsError(t *testing.T) {
 	mockCategorizedTweetsDAOSlice := categorized.MockCategorizedTweetsDAOSlice()
 	mockSelectAllByUserID := categorized.MockSelectAllByUserID(mockCategorizedTweetsDAOSlice, nil)
 
-	information := user.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
+	information := criteria.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
 
-	want := user.FailedToRetrieveSearchCriteria
+	want := criteria.FailedToRetrieveSearchCriteria
 	_, got := information(context.Background(), 1)
 
 	assert.Equal(t, want, got)
@@ -70,9 +69,9 @@ func TestInformation_failsWhenSelectAllCategorizedTweetsThrowsError(t *testing.T
 	mockCategorizedTweetsDAOSlice := categorized.MockCategorizedTweetsDAOSlice()
 	mockSelectAllByUserID := categorized.MockSelectAllByUserID(mockCategorizedTweetsDAOSlice, errors.New("failed to execute select all categorized tweets"))
 
-	information := user.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
+	information := criteria.MakeInformation(mockSelectAllCriteriaExecutionsSummaries, mockSelectAllSearchCriteria, mockSelectAllByUserID)
 
-	want := user.FailedToRetrieveCategorizedTweetsByUserID
+	want := criteria.FailedToRetrieveCategorizedTweetsByUserID
 	_, got := information(context.Background(), 1)
 
 	assert.Equal(t, want, got)

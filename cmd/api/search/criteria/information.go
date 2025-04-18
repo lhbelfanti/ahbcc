@@ -1,10 +1,9 @@
-package user
+package criteria
 
 import (
 	"context"
 	"sort"
 
-	"ahbcc/cmd/api/search/criteria"
 	"ahbcc/cmd/api/search/criteria/executions/summary"
 	"ahbcc/cmd/api/tweets/categorized"
 	"ahbcc/internal/log"
@@ -12,11 +11,11 @@ import (
 
 // Information returns all the search criteria executions information for a given user ID. It includes
 // the number of tweets retrieved and the number of tweets analyzed by the user, ordered by month and year.
-type Information func(ctx context.Context, userID int) (criteria.InformationDTOs, error)
+type Information func(ctx context.Context, userID int) (InformationDTOs, error)
 
 // MakeInformation creates a new Information
-func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, selectAllSearchCriteria criteria.SelectAll, selectAllCategorizedTweets categorized.SelectAllByUserID) Information {
-	return func(ctx context.Context, userID int) (criteria.InformationDTOs, error) {
+func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, selectAllSearchCriteria SelectAll, selectAllCategorizedTweets categorized.SelectAllByUserID) Information {
+	return func(ctx context.Context, userID int) (InformationDTOs, error) {
 		criteriaExecutionsSummaries, err := selectAllCriteriaExecutionsSummaries(ctx)
 		if err != nil {
 			log.Error(ctx, err.Error())
@@ -40,21 +39,21 @@ func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, sel
 			executionsMap[executionSummary.SearchCriteriaID] = append(executionsMap[executionSummary.SearchCriteriaID], executionSummary)
 		}
 
-		information := make(criteria.InformationDTOs, 0, len(criteriaExecutionsSummaries))
+		information := make(InformationDTOs, 0, len(criteriaExecutionsSummaries))
 		for searchCriteriaID, executionsSummaries := range executionsMap {
 			yearMap := make(map[int][]summary.DAO)
 			for _, executionSummary := range executionsSummaries {
 				yearMap[executionSummary.Year] = append(yearMap[executionSummary.Year], executionSummary)
 			}
 
-			years := make(criteria.YearDataDTOs, 0, len(yearMap))
+			years := make(YearDataDTOs, 0, len(yearMap))
 			for year, summaries := range yearMap {
 				monthMap := make(map[int]summary.DAO)
 				for _, s := range summaries {
 					monthMap[s.Month] = s
 				}
 
-				months := make(criteria.MonthDataDTOs, 0, len(monthMap))
+				months := make(MonthDataDTOs, 0, len(monthMap))
 				for month, s := range monthMap {
 					analyzedTweets := 0
 					for _, ct := range categorizedTweets {
@@ -64,7 +63,7 @@ func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, sel
 						}
 					}
 
-					months = append(months, criteria.MonthDataDTO{
+					months = append(months, MonthDataDTO{
 						Month:          month,
 						AnalyzedTweets: analyzedTweets,
 						TotalTweets:    s.Total,
@@ -73,7 +72,7 @@ func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, sel
 
 				sort.Sort(months)
 
-				years = append(years, criteria.YearDataDTO{
+				years = append(years, YearDataDTO{
 					Year:   year,
 					Months: months,
 				})
@@ -88,7 +87,7 @@ func MakeInformation(selectAllCriteriaExecutionsSummaries summary.SelectAll, sel
 
 			sort.Sort(years)
 
-			information = append(information, criteria.InformationDTO{
+			information = append(information, InformationDTO{
 				Name:  criteriaName,
 				ID:    searchCriteriaID,
 				Years: years,

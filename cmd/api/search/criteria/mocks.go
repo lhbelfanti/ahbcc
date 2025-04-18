@@ -40,6 +40,13 @@ func MockInit(err error) Init {
 	}
 }
 
+// MockInformation mocks Information function
+func MockInformation(informationDTOs InformationDTOs, err error) Information {
+	return func(ctx context.Context, userID int) (InformationDTOs, error) {
+		return informationDTOs, err
+	}
+}
+
 // MockCriteriaDAO mocks a criteria.DAO
 func MockCriteriaDAO() DAO {
 	return DAO{
