@@ -12,7 +12,7 @@ type SelectUserIDByToken func(ctx context.Context, token string) (int, error)
 
 func MakeSelectUserIDByToken(db database.Connection) SelectUserIDByToken {
 	const query string = `
-		SELECT id
+		SELECT user_id
 		FROM users_sessions
 		WHERE token = $1;
 	`

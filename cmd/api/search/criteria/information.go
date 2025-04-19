@@ -22,6 +22,7 @@ func MakeInformation(selectUserIDByToken session.SelectUserIDByToken, selectAllC
 			log.Error(ctx, err.Error())
 			return nil, FailedToRetrieveUserID
 		}
+		ctx = log.With(ctx, log.Param("user_id", userID))
 
 		criteriaExecutionsSummaries, err := selectAllCriteriaExecutionsSummaries(ctx)
 		if err != nil {
