@@ -85,7 +85,7 @@ func MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db database.Connection, col
 // MakeSelectAll creates a new SelectAll
 func MakeSelectAll(db database.Connection, collectRows database.CollectRows[DAO]) SelectAll {
 	const query string = `
-		SELECT * 
+		SELECT search_criteria_id, tweets_year, tweets_month, total_tweets 
 		FROM search_criteria_executions_summary;
 	`
 
