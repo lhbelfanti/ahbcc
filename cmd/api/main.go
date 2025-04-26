@@ -108,7 +108,7 @@ func main() {
 	// GET /criteria/{criteria_id}/tweets/v1 dependencies
 	selectBySearchCriteriaIDYearAndMonth := tweets.MakeSelectBySearchCriteriaIDYearAndMonth(db, collectTweetsDTORows, selectUserIDByToken)
 
-	// POST /criteria/executions/summarize/v1 dependencies
+	// POST /criteria-executions/summarize/v1 dependencies
 	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db, collectSummaryDAORows)
 	selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(db)
 	insertExecutionSummary := summary.MakeInsert(db)
@@ -116,13 +116,13 @@ func main() {
 	upsertExecutionSummary := summary.MakeUpsert(selectIDBySearchCriteriaIDYearAndMonth, insertExecutionSummary, updateSummaryTotalTweets)
 	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, selectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary)
 
-	// GET /criteria/executions/{execution_id}/v1 dependencies
+	// GET /criteria-executions/{execution_id}/v1 dependencies
 	selectExecutionByID := executions.MakeSelectExecutionByID(db)
 
-	// PUT /criteria/executions/{execution_id}/v1 dependencies
+	// PUT /criteria-executions/{execution_id}/v1 dependencies
 	updateCriteriaExecution := executions.MakeUpdateExecution(db)
 
-	// POST /criteria/executions/{execution_id}/day/v1 dependencies
+	// POST /criteria-executions/{execution_id}/day/v1 dependencies
 	insertCriteriaExecutionDay := executions.MakeInsertExecutionDay(db)
 
 	/* --- Router --- */

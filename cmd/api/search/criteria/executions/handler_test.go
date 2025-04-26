@@ -20,7 +20,7 @@ func TestGetExecutionByIDHandlerV1_success(t *testing.T) {
 	mockExecutionDAO := executions.MockExecutionDAO()
 	mockSelectExecutionByID := executions.MockSelectExecutionByID(mockExecutionDAO, nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/executions/{execution_id}/v1", http.NoBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria-executions/{execution_id}/v1", http.NoBody)
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.GetExecutionByIDHandlerV1(mockSelectExecutionByID)
@@ -60,7 +60,7 @@ func TestGetExecutionByIDHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
 	mockExecutionDAO := executions.MockExecutionDAO()
 	mockSelectExecutionByID := executions.MockSelectExecutionByID(mockExecutionDAO, nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/executions/{execution_id}/v1", http.NoBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria-executions/{execution_id}/v1", http.NoBody)
 
 	handlerV1 := executions.GetExecutionByIDHandlerV1(mockSelectExecutionByID)
 
@@ -75,7 +75,7 @@ func TestGetExecutionByIDHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
 func TestGetExecutionByIDHandlerV1_failsWhenSelectExecutionByIDThrowsError(t *testing.T) {
 	mockSelectExecutionByID := executions.MockSelectExecutionByID(executions.ExecutionDAO{}, errors.New("failed to select execution by id"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/executions/{execution_id}/v1", http.NoBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria-executions/{execution_id}/v1", http.NoBody)
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.GetExecutionByIDHandlerV1(mockSelectExecutionByID)
@@ -93,7 +93,7 @@ func TestUpdateExecutionHandlerV1_success(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecution := executions.MockExecutionDTO()
 	mockBody, _ := json.Marshal(mockExecution)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria-executions/{execution_id}/v1", bytes.NewReader(mockBody))
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.UpdateExecutionHandlerV1(mockUpdateExecution)
@@ -111,7 +111,7 @@ func TestUpdateExecutionHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecution := executions.MockExecutionDTO()
 	mockBody, _ := json.Marshal(mockExecution)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria-executions/{execution_id}/v1", bytes.NewReader(mockBody))
 
 	handlerV1 := executions.UpdateExecutionHandlerV1(mockUpdateExecution)
 
@@ -127,7 +127,7 @@ func TestUpdateExecutionHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockUpdateExecution := executions.MockUpdateExecution(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria-executions/{execution_id}/v1", bytes.NewReader(mockBody))
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.UpdateExecutionHandlerV1(mockUpdateExecution)
@@ -145,7 +145,7 @@ func TestUpdateExecutionHandlerV1_failsWhenUpdateExecutionThrowsError(t *testing
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecution := executions.MockExecutionDTO()
 	mockBody, _ := json.Marshal(mockExecution)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria/executions/{execution_id}/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPut, "/criteria-executions/{execution_id}/v1", bytes.NewReader(mockBody))
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.UpdateExecutionHandlerV1(mockUpdateExecution)
@@ -163,7 +163,7 @@ func TestCreateExecutionDayHandlerV1_success(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecutionDay := executions.MockExecutionDayDTO(nil)
 	mockBody, _ := json.Marshal(mockExecutionDay)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.CreateExecutionDayHandlerV1(mockInsertExecutionDay)
@@ -181,7 +181,7 @@ func TestCreateExecutionDayHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecutionDay := executions.MockExecutionDayDTO(nil)
 	mockBody, _ := json.Marshal(mockExecutionDay)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
 
 	handlerV1 := executions.CreateExecutionDayHandlerV1(mockInsertExecutionDay)
 
@@ -197,7 +197,7 @@ func TestCreateExecutionDayHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T
 	mockInsertExecutionDay := executions.MockInsertExecutionDay(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.CreateExecutionDayHandlerV1(mockInsertExecutionDay)
@@ -215,7 +215,7 @@ func TestCreateExecutionDayHandlerV1_failsWhenInsertExecutionDayThrowsError(t *t
 	mockResponseWriter := httptest.NewRecorder()
 	mockExecutionDay := executions.MockExecutionDayDTO(nil)
 	mockBody, _ := json.Marshal(mockExecutionDay)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/{execution_id}/day/v1", bytes.NewReader(mockBody))
 	mockRequest.SetPathValue("execution_id", "1")
 
 	handlerV1 := executions.CreateExecutionDayHandlerV1(mockInsertExecutionDay)
@@ -231,7 +231,7 @@ func TestCreateExecutionDayHandlerV1_failsWhenInsertExecutionDayThrowsError(t *t
 func TestSummarizeV1_success(t *testing.T) {
 	mockSummarize := executions.MockSummarize(nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/summarize/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/summarize/v1", nil)
 
 	handlerV1 := executions.SummarizeHandlerV1(mockSummarize)
 
@@ -246,7 +246,7 @@ func TestSummarizeV1_success(t *testing.T) {
 func TestSummarizeV1_failsWhenSummarizeThrowsError(t *testing.T) {
 	mockSummarize := executions.MockSummarize(errors.New("failed to execute summarize"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/summarize/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/summarize/v1", nil)
 
 	handlerV1 := executions.SummarizeHandlerV1(mockSummarize)
 
