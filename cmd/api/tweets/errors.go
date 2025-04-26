@@ -8,7 +8,7 @@ const (
 	InvalidQueryParameterFormat      string = "Invalid query parameter format"
 	AuthorizationTokenRequired       string = "Authorization token is required"
 	FailedToInsertTweetsIntoDatabase string = "Failed to insert tweets into database"
-	FailedToRetrieveTweets           string = "Failed to insert tweets"
+	FailedToRetrieveTweets           string = "Failed to retrieve tweets"
 )
 
 var (
