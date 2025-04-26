@@ -9,7 +9,7 @@ import (
 	"ahbcc/internal/log"
 )
 
-// GetExecutionByIDHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/v1
+// GetExecutionByIDHandlerV1 HTTP Handler of the endpoint /criteria-executions/{execution_id}/v1
 func GetExecutionByIDHandlerV1(selectExecutionByID SelectExecutionByID) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -32,7 +32,7 @@ func GetExecutionByIDHandlerV1(selectExecutionByID SelectExecutionByID) http.Han
 	}
 }
 
-// UpdateExecutionHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/v1
+// UpdateExecutionHandlerV1 HTTP Handler of the endpoint /criteria-executions/{execution_id}/v1
 func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -63,7 +63,7 @@ func UpdateExecutionHandlerV1(updateExecution UpdateExecution) http.HandlerFunc 
 	}
 }
 
-// CreateExecutionDayHandlerV1 HTTP Handler of the endpoint /criteria/executions/{execution_id}/day/v1
+// CreateExecutionDayHandlerV1 HTTP Handler of the endpoint /criteria-executions/{execution_id}/day/v1
 func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -96,7 +96,7 @@ func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.Han
 	}
 }
 
-// SummarizeHandlerV1 HTTP Handler of the endpoint /criteria/executions/summarize/v1
+// SummarizeHandlerV1 HTTP Handler of the endpoint /criteria-executions/summarize/v1
 func SummarizeHandlerV1(summarize Summarize) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
