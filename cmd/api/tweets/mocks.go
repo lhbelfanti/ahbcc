@@ -13,6 +13,13 @@ func MockInsert(err error) Insert {
 	}
 }
 
+// MockSelectBySearchCriteriaIDYearAndMonth mocks SelectBySearchCriteriaIDYearAndMonth function
+func MockSelectBySearchCriteriaIDYearAndMonth(tweets []TweetDTO, err error) SelectBySearchCriteriaIDYearAndMonth {
+	return func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]TweetDTO, error) {
+		return tweets, err
+	}
+}
+
 // MockTweetDTO mocks a TweetDTO
 func MockTweetDTO() TweetDTO {
 	avatar := "https://testuseravatar.com"

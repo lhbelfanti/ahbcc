@@ -31,7 +31,7 @@ func TestInsertHandlerV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInsertHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
+func TestInsertHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockInsert := tweets.MockInsert(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
@@ -93,6 +93,158 @@ func TestInsertHandlerV1_failsWhenInsertTweetsThrowsError(t *testing.T) {
 	insertHandlerV1 := tweets.InsertHandlerV1(mockInsert)
 
 	insertHandlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusInternalServerError
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestGetTweetsV1_success(t *testing.T) {
+	mockTweets := tweets.MockTweetsDTOs()
+	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest.SetPathValue("criteria_id", "1")
+	mockRequest.Header.Set("X-Session-Token", "token")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockURLQuery.Add("limit", "2")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+
+	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusOK
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *testing.T) {
+	tests := []struct {
+		params map[string]string
+	}{
+		{params: map[string]string{}},
+		{params: map[string]string{"limit": "wrong"}},
+	}
+
+	mockTweets := tweets.MockTweetsDTOs()
+	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
+	mockResponseWriter := httptest.NewRecorder()
+
+	for _, tt := range tests {
+		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+		mockRequest.SetPathValue("criteria_id", "1")
+		mockRequest.Header.Set("X-Session-Token", "token")
+		mockURLQuery := mockRequest.URL.Query()
+		for k, v := range tt.params {
+			mockURLQuery.Add(k, v)
+		}
+		mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+
+		getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+
+		want := http.StatusOK
+		got := mockResponseWriter.Result().StatusCode
+
+		assert.Equal(t, want, got)
+	}
+}
+
+func TestGetTweetsV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
+	mockTweets := tweets.MockTweetsDTOs()
+	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest.SetPathValue("criteria_id", "1")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockURLQuery.Add("limit", "2")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+
+	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusUnauthorized
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestGetTweetsV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
+	mockTweets := tweets.MockTweetsDTOs()
+	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest.SetPathValue("criteria_id", "wrong")
+	mockRequest.Header.Set("X-Session-Token", "token")
+
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+
+	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusBadRequest
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T) {
+	tests := []struct {
+		params map[string]string
+	}{
+		{params: map[string]string{"year": "wrong", "month": "1"}},
+		{params: map[string]string{"year": "2025", "month": "wrong"}},
+	}
+
+	mockTweets := tweets.MockTweetsDTOs()
+	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
+	mockResponseWriter := httptest.NewRecorder()
+
+	for _, tt := range tests {
+		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+		mockRequest.SetPathValue("criteria_id", "1")
+		mockRequest.Header.Set("X-Session-Token", "token")
+		mockURLQuery := mockRequest.URL.Query()
+		for k, v := range tt.params {
+			mockURLQuery.Add(k, v)
+		}
+		mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+
+		getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+
+		want := http.StatusBadRequest
+		got := mockResponseWriter.Result().StatusCode
+
+		assert.Equal(t, want, got)
+	}
+}
+
+func TestGetTweetsV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t *testing.T) {
+	mockTweets := tweets.MockTweetsDTOs()
+	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, errors.New("failed to retrieve tweets"))
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest.SetPathValue("criteria_id", "1")
+	mockRequest.Header.Set("X-Session-Token", "token")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockURLQuery.Add("limit", "2")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+
+	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusInternalServerError
 	got := mockResponseWriter.Result().StatusCode

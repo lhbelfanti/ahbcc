@@ -81,18 +81,40 @@ func main() {
 	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
 
-	// POST /criteria/{criteria_id}/enqueue/v1 dependencies
+	// POST /criteria/v1
+	collectTweetsDTORows := database.MakeCollectRows[tweets.TweetDTO]()
+	selectUserIDByToken := session.MakeSelectUserIDByToken(db)
+	collectSummaryDAORows := database.MakeCollectRows[summary.DAO]()
+	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
+	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO]()
+	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
+	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO]()
+	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
+	information := criteria.MakeInformation(selectUserIDByToken, selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
+
+	// POST /criteria/init/v1 dependencies
 	selectCriteriaByID := criteria.MakeSelectByID(db)
 	collectExecutionDAORows := database.MakeCollectRows[executions.ExecutionDAO]()
 	selectExecutionsByStatuses := executions.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
-	insertCriteriaExecution := executions.MakeInsertExecution(db)
-	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
-	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, insertCriteriaExecution, scrapperEnqueueCriteria)
-
-	// POST /criteria/init/v1 dependencies
 	selectLastDayExecutedByCriteriaID := executions.MakeSelectLastDayExecutedByCriteriaID(db)
+	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
 	resumeCriteria := criteria.MakeResume(selectCriteriaByID, selectLastDayExecutedByCriteriaID, selectExecutionsByStatuses, scrapperEnqueueCriteria)
 	initCriteria := criteria.MakeInit(selectExecutionsByStatuses, resumeCriteria)
+
+	// POST /criteria/{criteria_id}/enqueue/v1 dependencies
+	insertCriteriaExecution := executions.MakeInsertExecution(db)
+	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, insertCriteriaExecution, scrapperEnqueueCriteria)
+
+	// GET /criteria/{criteria_id}/tweets/v1 dependencies
+	selectBySearchCriteriaIDYearAndMonth := tweets.MakeSelectBySearchCriteriaIDYearAndMonth(db, collectTweetsDTORows, selectUserIDByToken)
+
+	// POST /criteria/executions/summarize/v1 dependencies
+	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db, collectSummaryDAORows)
+	selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(db)
+	insertExecutionSummary := summary.MakeInsert(db)
+	updateSummaryTotalTweets := summary.MakeUpdateTotalTweets(db)
+	upsertExecutionSummary := summary.MakeUpsert(selectIDBySearchCriteriaIDYearAndMonth, insertExecutionSummary, updateSummaryTotalTweets)
+	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, selectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary)
 
 	// GET /criteria/executions/{execution_id}/v1 dependencies
 	selectExecutionByID := executions.MakeSelectExecutionByID(db)
@@ -102,24 +124,6 @@ func main() {
 
 	// POST /criteria/executions/{execution_id}/day/v1 dependencies
 	insertCriteriaExecutionDay := executions.MakeInsertExecutionDay(db)
-
-	// POST /criteria/executions/summarize/v1 dependencies
-	collectSummaryDAORows := database.MakeCollectRows[summary.DAO]()
-	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db, collectSummaryDAORows)
-	selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(db)
-	insertExecutionSummary := summary.MakeInsert(db)
-	updateSummaryTotalTweets := summary.MakeUpdateTotalTweets(db)
-	upsertExecutionSummary := summary.MakeUpsert(selectIDBySearchCriteriaIDYearAndMonth, insertExecutionSummary, updateSummaryTotalTweets)
-	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, selectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary)
-
-	// POST /criteria/v1
-	selectUserIDByToken := session.MakeSelectUserIDByToken(db)
-	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO]()
-	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
-	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
-	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO]()
-	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
-	information := criteria.MakeInformation(selectUserIDByToken, selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
 
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
@@ -131,12 +135,13 @@ func main() {
 	router.HandleFunc("POST /auth/logout/v1", auth.LogOutHandlerV1(logOut))
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
 	router.HandleFunc("GET /criteria/v1", criteria.InformationV1(information))
-	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
+	router.HandleFunc("GET /criteria/{criteria_id}/tweets/v1", tweets.GetCriteriaTweetsV1(selectBySearchCriteriaIDYearAndMonth))
+	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
+	router.HandleFunc("POST /criteria/executions/summarize/v1", executions.SummarizeV1(summarizeCriteriaExecutions))
 	router.HandleFunc("GET /criteria/executions/{execution_id}/v1", executions.GetExecutionByIDHandlerV1(selectExecutionByID))
 	router.HandleFunc("PUT /criteria/executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria/executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
-	router.HandleFunc("POST /criteria/executions/summarize/v1", executions.SummarizeV1(summarizeCriteriaExecutions))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Server --- */
