@@ -61,8 +61,8 @@ func InitHandlerV1(init Init) http.HandlerFunc {
 	}
 }
 
-// InformationV1 HTTP Handler of the endpoint /criteria/v1
-func InformationV1(information Information) http.HandlerFunc {
+// InformationHandlerV1 HTTP Handler of the endpoint /criteria/v1
+func InformationHandlerV1(information Information) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

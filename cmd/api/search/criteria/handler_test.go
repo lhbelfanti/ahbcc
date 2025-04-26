@@ -141,7 +141,7 @@ func TestInformationV1_success(t *testing.T) {
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/v1", bytes.NewReader(mockBody))
 	mockRequest.Header.Set("X-Session-Token", "token")
 
-	handlerV1 := criteria.InformationV1(mockInformation)
+	handlerV1 := criteria.InformationHandlerV1(mockInformation)
 
 	handlerV1(mockResponseWriter, mockRequest)
 
@@ -158,7 +158,7 @@ func TestInformationV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/v1", bytes.NewReader(mockBody))
 
-	handlerV1 := criteria.InformationV1(mockInformation)
+	handlerV1 := criteria.InformationHandlerV1(mockInformation)
 
 	handlerV1(mockResponseWriter, mockRequest)
 
@@ -176,7 +176,7 @@ func TestInformationV1_failsWhenInformationThrowsError(t *testing.T) {
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/v1", bytes.NewReader(mockBody))
 	mockRequest.Header.Set("X-Session-Token", "token")
 
-	handlerV1 := criteria.InformationV1(mockInformation)
+	handlerV1 := criteria.InformationHandlerV1(mockInformation)
 
 	handlerV1(mockResponseWriter, mockRequest)
 
