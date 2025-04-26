@@ -61,7 +61,7 @@ func TestEnqueueHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestEnqueueHandlerV1_failsWhenTheQueryParamCantBeParsed(t *testing.T) {
+func TestEnqueueHandlerV1_failsWhenTheQueryParamCannotBeParsed(t *testing.T) {
 	mockEnqueueCriteria := criteria.MockEnqueue(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/{criteria_id}/enqueue/v1", http.NoBody)

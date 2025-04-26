@@ -35,7 +35,7 @@ func TestSignUpHandlerV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestSignUpHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
+func TestSignUpHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockSignUp := auth.MockSignUp(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
@@ -134,7 +134,7 @@ func TestLoginHandlerV1_success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, mockResponseWriter.Result().StatusCode)
 }
 
-func TestLoginHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
+func TestLoginHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockExpiresAt := time.Date(2006, time.January, 1, 0, 0, 0, 0, time.Local)
 	mockLogIn := auth.MockLogIn("abcd", mockExpiresAt, nil)
 	mockResponseWriter := httptest.NewRecorder()

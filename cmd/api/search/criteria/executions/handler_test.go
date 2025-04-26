@@ -123,7 +123,7 @@ func TestUpdateExecutionHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestUpdateExecutionHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
+func TestUpdateExecutionHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockUpdateExecution := executions.MockUpdateExecution(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
@@ -193,7 +193,7 @@ func TestCreateExecutionDayHandlerV1_failsWhenTheURLParamIsEmpty(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestCreateExecutionDayHandlerV1_failsWhenTheBodyCantBeParsed(t *testing.T) {
+func TestCreateExecutionDayHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockInsertExecutionDay := executions.MockInsertExecutionDay(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
