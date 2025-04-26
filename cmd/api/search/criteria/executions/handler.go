@@ -96,8 +96,8 @@ func CreateExecutionDayHandlerV1(insertExecutionDay InsertExecutionDay) http.Han
 	}
 }
 
-// SummarizeV1 HTTP Handler of the endpoint /criteria/executions/summarize/v1
-func SummarizeV1(summarize Summarize) http.HandlerFunc {
+// SummarizeHandlerV1 HTTP Handler of the endpoint /criteria/executions/summarize/v1
+func SummarizeHandlerV1(summarize Summarize) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 

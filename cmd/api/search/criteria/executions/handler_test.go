@@ -233,7 +233,7 @@ func TestSummarizeV1_success(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/summarize/v1", nil)
 
-	handlerV1 := executions.SummarizeV1(mockSummarize)
+	handlerV1 := executions.SummarizeHandlerV1(mockSummarize)
 
 	handlerV1(mockResponseWriter, mockRequest)
 
@@ -248,7 +248,7 @@ func TestSummarizeV1_failsWhenSummarizeThrowsError(t *testing.T) {
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria/executions/summarize/v1", nil)
 
-	handlerV1 := executions.SummarizeV1(mockSummarize)
+	handlerV1 := executions.SummarizeHandlerV1(mockSummarize)
 
 	handlerV1(mockResponseWriter, mockRequest)
 

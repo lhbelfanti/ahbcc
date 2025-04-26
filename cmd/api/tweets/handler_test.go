@@ -113,7 +113,7 @@ func TestGetTweetsV1_success(t *testing.T) {
 	mockURLQuery.Add("limit", "2")
 	mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
 	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
@@ -145,7 +145,7 @@ func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *test
 		}
 		mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
 		getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
@@ -168,7 +168,7 @@ func TestGetTweetsV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	mockURLQuery.Add("limit", "2")
 	mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
 	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
@@ -186,7 +186,7 @@ func TestGetTweetsV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
 	mockRequest.SetPathValue("criteria_id", "wrong")
 	mockRequest.Header.Set("X-Session-Token", "token")
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
 	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
@@ -218,7 +218,7 @@ func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T)
 		}
 		mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
 		getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
@@ -242,7 +242,7 @@ func TestGetTweetsV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t 
 	mockURLQuery.Add("limit", "2")
 	mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
 	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
 
