@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS search_criteria_execution_days (
 
 -- Table indexes
 CREATE INDEX IF NOT EXISTS idx_search_criteria_execution_days_execution_date ON search_criteria_execution_days(execution_date);
-CREATE INDEX IF NOT EXISTS idx_search_criteria_execution_days_execution_date ON search_criteria_execution_days(search_criteria_execution_id);
+CREATE INDEX IF NOT EXISTS idx_search_criteria_execution_days_sce_id ON search_criteria_execution_days(search_criteria_execution_id);
 
 -- Table comments
 COMMENT ON TABLE search_criteria_execution_days IS 'Records daily results of each criteria execution';

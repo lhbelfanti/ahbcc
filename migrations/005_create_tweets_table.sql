@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS tweets (
 
 -- Table indexes
 CREATE INDEX IF NOT EXISTS idx_tweets_quote_id ON tweets(quote_id);
-CREATE INDEX IF NOT EXISTS idx_tweets_quote_id ON tweets(search_criteria_id);
+CREATE INDEX IF NOT EXISTS idx_tweets_search_criteria_id ON tweets(search_criteria_id);
 CREATE INDEX IF NOT EXISTS idx_tweets_criteria_posted ON tweets(search_criteria_id, posted_at);
 
 -- Table comments
