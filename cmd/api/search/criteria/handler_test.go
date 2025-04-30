@@ -133,7 +133,7 @@ func TestInitHandlerV1_failsWhenInitThrowsError(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInformationV1_success(t *testing.T) {
+func TestInformationHandlerV1_success(t *testing.T) {
 	mockInformationDTOs := criteria.MockInformationDTOs()
 	mockInformation := criteria.MockInformation(mockInformationDTOs, nil)
 	mockBody, _ := json.Marshal(mockInformation)
@@ -151,7 +151,7 @@ func TestInformationV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInformationV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
+func TestInformationHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	mockInformationDTOs := criteria.MockInformationDTOs()
 	mockInformation := criteria.MockInformation(mockInformationDTOs, nil)
 	mockBody, _ := json.Marshal(mockInformation)
@@ -168,7 +168,7 @@ func TestInformationV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInformationV1_failsWhenInformationThrowsError(t *testing.T) {
+func TestInformationHandlerV1_failsWhenInformationThrowsError(t *testing.T) {
 	mockInformationDTOs := criteria.MockInformationDTOs()
 	mockInformation := criteria.MockInformation(mockInformationDTOs, errors.New("failed to retrieve information"))
 	mockBody, _ := json.Marshal(mockInformation)
