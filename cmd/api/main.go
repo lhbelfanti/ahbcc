@@ -106,7 +106,7 @@ func main() {
 
 	// GET /criteria/{criteria_id}/tweets/v1 dependencies
 	tweetsCustomScanner := tweets.CustomScanner()
-	collectTweetsDTORows := database.MakeCollectRows[tweets.TweetDTO](tweetsCustomScanner)
+	collectTweetsDTORows := database.MakeCollectRows[tweets.CustomTweetDTO](tweetsCustomScanner)
 	selectBySearchCriteriaIDYearAndMonth := tweets.MakeSelectBySearchCriteriaIDYearAndMonth(db, collectTweetsDTORows, selectUserIDByToken)
 
 	// POST /criteria-executions/summarize/v1 dependencies

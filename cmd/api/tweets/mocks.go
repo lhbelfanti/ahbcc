@@ -2,6 +2,7 @@ package tweets
 
 import (
 	"context"
+	"time"
 
 	"ahbcc/cmd/api/tweets/quotes"
 )
@@ -14,8 +15,8 @@ func MockInsert(err error) Insert {
 }
 
 // MockSelectBySearchCriteriaIDYearAndMonth mocks SelectBySearchCriteriaIDYearAndMonth function
-func MockSelectBySearchCriteriaIDYearAndMonth(tweets []TweetDTO, err error) SelectBySearchCriteriaIDYearAndMonth {
-	return func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]TweetDTO, error) {
+func MockSelectBySearchCriteriaIDYearAndMonth(tweets []CustomTweetDTO, err error) SelectBySearchCriteriaIDYearAndMonth {
+	return func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]CustomTweetDTO, error) {
 		return tweets, err
 	}
 }
@@ -25,7 +26,6 @@ func MockTweetDTO() TweetDTO {
 	avatar := "https://testuseravatar.com"
 
 	textContent := "test"
-	quoteID := 3
 	searchCriteriaID := 1
 	quote := quotes.MockQuoteDTO()
 
@@ -37,7 +37,6 @@ func MockTweetDTO() TweetDTO {
 		PostedAt:         "2024-11-18T15:04:05Z",
 		TextContent:      &textContent,
 		Images:           []string{"test1", "test2"},
-		QuoteID:          &quoteID,
 		SearchCriteriaID: &searchCriteriaID,
 		Quote:            &quote,
 	}
@@ -51,8 +50,39 @@ func MockTweetsDTOs() []TweetDTO {
 	}
 }
 
+// MockCustomTweetDTO mocks a CustomTweetDTO
+func MockCustomTweetDTO() CustomTweetDTO {
+	avatar := "https://testuseravatar.com"
+
+	textContent := "test"
+	quoteID := 3
+	searchCriteriaID := 1
+	quote := quotes.MockCustomQuoteDTO()
+
+	return CustomTweetDTO{
+		ID:               "1234567890987654321",
+		IsAReply:         true,
+		Author:           "TestAuthor",
+		Avatar:           &avatar,
+		PostedAt:         time.Now(),
+		TextContent:      &textContent,
+		Images:           []string{"test1", "test2"},
+		QuoteID:          &quoteID,
+		SearchCriteriaID: &searchCriteriaID,
+		Quote:            &quote,
+	}
+}
+
+// MockCustomTweetDTOs mocks a slice of CustomTweetDTO
+func MockCustomTweetDTOs() []CustomTweetDTO {
+	return []CustomTweetDTO{
+		MockCustomTweetDTO(),
+		MockCustomTweetDTO(),
+	}
+}
+
 // MockTweetCollectedRow mocks a row with the Tweet, and its Quote, information, obtained from a select
-func MockTweetCollectedRow(tweet TweetDTO) []any {
+func MockTweetCollectedRow(tweet CustomTweetDTO) []any {
 	row := []any{
 		tweet.ID,
 		tweet.Author,

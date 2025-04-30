@@ -11,18 +11,19 @@ import (
 
 // SelectBySearchCriteriaIDYearAndMonth retrieves the user's uncategorized tweets from a criteria, seeking by year and month.
 // It also limits the number of tweets retrieved to the limit param.
-type SelectBySearchCriteriaIDYearAndMonth func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]TweetDTO, error)
+type SelectBySearchCriteriaIDYearAndMonth func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]CustomTweetDTO, error)
 
 // MakeSelectBySearchCriteriaIDYearAndMonth creates a new SelectBySearchCriteriaIDYearAndMonth
-func MakeSelectBySearchCriteriaIDYearAndMonth(db database.Connection, collectRows database.CollectRows[TweetDTO], selectUserIDByToken session.SelectUserIDByToken) SelectBySearchCriteriaIDYearAndMonth {
-	const query string = `SELECT t.id, t.author, t.avatar, t.posted_at, t.is_a_reply, t.text_content, t.images, t.quote_id, t.search_criteria_id
-						  FROM tweets as t
-						  WHERE t.uuid 
-							NOT IN (SELECT c.tweet_id FROM categorized_tweets as c WHERE c.user_id = $1)
+func MakeSelectBySearchCriteriaIDYearAndMonth(db database.Connection, collectRows database.CollectRows[CustomTweetDTO], selectUserIDByToken session.SelectUserIDByToken) SelectBySearchCriteriaIDYearAndMonth {
+	const query string = `SELECT t.id, t.author, t.avatar, t.posted_at, t.is_a_reply, t.text_content, t.images, t.quote_id, t.search_criteria_id,
+         							q.author, q.avatar, q.posted_at, q.is_a_reply, q.text_content, q.images
+						  FROM tweets AS t
+						  LEFT JOIN tweets_quotes AS q ON t.quote_id = q.id
+						  WHERE t.uuid NOT IN (SELECT c.tweet_id FROM categorized_tweets AS c WHERE c.user_id = $1)
 						    AND t.search_criteria_id = $2`
 
-	return func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]TweetDTO, error) {
-		var queryToExecute string
+	return func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]CustomTweetDTO, error) {
+		queryToExecute := query
 
 		userID, err := selectUserIDByToken(ctx, token)
 		if err != nil {
@@ -37,17 +38,17 @@ func MakeSelectBySearchCriteriaIDYearAndMonth(db database.Connection, collectRow
 		args = append(args, userID, searchCriteriaID)
 
 		if year != 0 {
-			queryToExecute = query + fmt.Sprintf(" AND year = $%d", currentParamNum)
+			queryToExecute = queryToExecute + fmt.Sprintf(" AND EXTRACT(YEAR FROM t.posted_at) = $%d", currentParamNum)
 			currentParamNum++
 			args = append(args, year)
 			if month != 0 {
-				queryToExecute = query + fmt.Sprintf(" AND month = $%d", currentParamNum)
+				queryToExecute = queryToExecute + fmt.Sprintf(" AND EXTRACT(MONTH FROM t.posted_at) = $%d", currentParamNum)
 				currentParamNum++
 				args = append(args, month)
 			}
 		}
 
-		queryToExecute = query + fmt.Sprintf(" LIMIT $%d", currentParamNum)
+		queryToExecute = queryToExecute + fmt.Sprintf(" LIMIT $%d", currentParamNum)
 		currentParamNum++
 		args = append(args, limit)
 
