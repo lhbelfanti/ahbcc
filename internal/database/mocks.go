@@ -30,6 +30,11 @@ type (
 	MockPgxTx struct {
 		mock.Mock
 	}
+
+	// MockPgxCollectableRow mock implementation of pgx.CollectableRow
+	MockPgxCollectableRow struct {
+		mock.Mock
+	}
 )
 
 // MockPostgresConnection
@@ -164,6 +169,28 @@ func (t *MockPgxTx) Conn() *pgx.Conn {
 	return args.Get(0).(*pgx.Conn)
 }
 
+// MockPgxCollectableRow
+
+func (m *MockPgxCollectableRow) Scan(dest ...any) error {
+	args := m.Called(dest)
+	return args.Error(0)
+}
+
+func (m *MockPgxCollectableRow) FieldDescriptions() []pgconn.FieldDescription {
+	args := m.Called()
+	return args.Get(0).([]pgconn.FieldDescription)
+}
+
+func (m *MockPgxCollectableRow) Values() ([]any, error) {
+	args := m.Called()
+	return args.Get(0).([]any), args.Error(1)
+}
+
+func (m *MockPgxCollectableRow) RawValues() [][]byte {
+	args := m.Called()
+	return args.Get(0).([][]byte)
+}
+
 // MockScan mocks the "Scan" func
 func MockScan(mockPgxRow *MockPgxRow, values []any, t *testing.T) {
 	mockPgxRow.On("Scan", mock.Anything).Return(nil).Run(
@@ -197,4 +224,57 @@ func MockCollectRows[T any](slice []T, err error) CollectRows[T] {
 	return func(rows pgx.Rows) ([]T, error) {
 		return slice, err
 	}
+}
+
+// MockFieldDescriptions mocks field descriptions of a MockPgxCollectableRow
+func MockFieldDescriptions(fields []string) []pgconn.FieldDescription {
+	descriptions := make([]pgconn.FieldDescription, len(fields))
+	for i, name := range fields {
+		descriptions[i] = pgconn.FieldDescription{
+			Name:                 name,
+			TableOID:             0,
+			TableAttributeNumber: 0,
+			DataTypeOID:          0,
+			DataTypeSize:         0,
+			TypeModifier:         0,
+			Format:               0,
+		}
+	}
+	return descriptions
+}
+
+// MockPgxCollectableRowMethods mocks all the methods of a MockPgxCollectableRow
+func MockPgxCollectableRowMethods(m *MockPgxCollectableRow, values []any, t *testing.T) {
+	m.On("Scan", mock.Anything).Return(nil).Run(func(args mock.Arguments) {
+		dest := args.Get(0).([]interface{})
+		if len(dest) != len(values) {
+			t.Errorf("Expected %d destination arguments but got %d", len(values), len(dest))
+			return
+		}
+
+		for i, val := range values {
+			if val == nil {
+				continue // Let the zero value remain
+			}
+
+			switch d := dest[i].(type) {
+			case *int:
+				*d = val.(int)
+			case **int:
+				*d = val.(*int)
+			case *string:
+				*d = val.(string)
+			case **string:
+				*d = val.(*string)
+			case *time.Time:
+				*d = val.(time.Time)
+			case *bool:
+				*d = val.(bool)
+			case *[]string:
+				*d = val.([]string)
+			default:
+				t.Errorf("Unsupported type %T", d)
+			}
+		}
+	})
 }

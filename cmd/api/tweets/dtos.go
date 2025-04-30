@@ -11,6 +11,7 @@ type TweetDTO struct {
 	IsAReply         bool             `json:"is_a_reply"`
 	TextContent      *string          `json:"text_content,omitempty"`
 	Images           []string         `json:"images,omitempty"`
-	Quote            *quotes.QuoteDTO `json:"quote,omitempty"`
+	QuoteID          *int             `json:"quote_id,omitempty"`
 	SearchCriteriaID *int             `json:"search_criteria_id,omitempty"`
+	Quote            *quotes.QuoteDTO `json:"quote,omitempty"`
 }

@@ -82,19 +82,18 @@ func main() {
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
 
 	// POST /criteria/v1
-	collectTweetsDTORows := database.MakeCollectRows[tweets.TweetDTO]()
 	selectUserIDByToken := session.MakeSelectUserIDByToken(db)
-	collectSummaryDAORows := database.MakeCollectRows[summary.DAO]()
+	collectSummaryDAORows := database.MakeCollectRows[summary.DAO](nil)
 	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
-	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO]()
+	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO](nil)
 	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
-	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO]()
+	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO](nil)
 	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
 	information := criteria.MakeInformation(selectUserIDByToken, selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
 
 	// POST /criteria/init/v1 dependencies
 	selectCriteriaByID := criteria.MakeSelectByID(db)
-	collectExecutionDAORows := database.MakeCollectRows[executions.ExecutionDAO]()
+	collectExecutionDAORows := database.MakeCollectRows[executions.ExecutionDAO](nil)
 	selectExecutionsByStatuses := executions.MakeSelectExecutionsByStatuses(db, collectExecutionDAORows)
 	selectLastDayExecutedByCriteriaID := executions.MakeSelectLastDayExecutedByCriteriaID(db)
 	scrapperEnqueueCriteria := scrapper.MakeEnqueueCriteria(httpClient, os.Getenv("ENQUEUE_CRITERIA_API_URL"))
@@ -106,6 +105,8 @@ func main() {
 	enqueueCriteria := criteria.MakeEnqueue(selectCriteriaByID, selectExecutionsByStatuses, insertCriteriaExecution, scrapperEnqueueCriteria)
 
 	// GET /criteria/{criteria_id}/tweets/v1 dependencies
+	tweetsCustomScanner := tweets.CustomScanner()
+	collectTweetsDTORows := database.MakeCollectRows[tweets.TweetDTO](tweetsCustomScanner)
 	selectBySearchCriteriaIDYearAndMonth := tweets.MakeSelectBySearchCriteriaIDYearAndMonth(db, collectTweetsDTORows, selectUserIDByToken)
 
 	// POST /criteria-executions/summarize/v1 dependencies

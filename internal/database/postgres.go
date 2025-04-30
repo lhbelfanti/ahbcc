@@ -30,8 +30,12 @@ func (pg *Postgres) Close() {
 }
 
 // MakeCollectRows creates a new CollectRows
-func MakeCollectRows[T any]() CollectRows[T] {
+func MakeCollectRows[T any](fn pgx.RowToFunc[T]) CollectRows[T] {
 	return func(rows pgx.Rows) ([]T, error) {
-		return pgx.CollectRows(rows, pgx.RowToStructByPos[T])
+		if fn == nil {
+			return pgx.CollectRows(rows, pgx.RowToStructByPos[T])
+		}
+
+		return pgx.CollectRows(rows, fn)
 	}
 }
