@@ -25,8 +25,9 @@ func MockTweetDTO() TweetDTO {
 	avatar := "https://testuseravatar.com"
 
 	textContent := "test"
-	quote := quotes.MockQuoteDTO()
+	quoteID := 3
 	searchCriteriaID := 1
+	quote := quotes.MockQuoteDTO()
 
 	return TweetDTO{
 		ID:               "1234567890987654321",
@@ -36,8 +37,9 @@ func MockTweetDTO() TweetDTO {
 		PostedAt:         "2024-11-18T15:04:05Z",
 		TextContent:      &textContent,
 		Images:           []string{"test1", "test2"},
-		Quote:            &quote,
+		QuoteID:          &quoteID,
 		SearchCriteriaID: &searchCriteriaID,
+		Quote:            &quote,
 	}
 }
 
@@ -47,4 +49,34 @@ func MockTweetsDTOs() []TweetDTO {
 		MockTweetDTO(),
 		MockTweetDTO(),
 	}
+}
+
+// MockTweetCollectedRow mocks a row with the Tweet, and its Quote, information, obtained from a select
+func MockTweetCollectedRow(tweet TweetDTO) []any {
+	row := []any{
+		tweet.ID,
+		tweet.Author,
+		tweet.Avatar,
+		tweet.PostedAt,
+		tweet.IsAReply,
+		tweet.TextContent,
+		tweet.Images,
+		tweet.QuoteID,
+		tweet.SearchCriteriaID,
+	}
+
+	if tweet.Quote != nil {
+		row = append(row,
+			tweet.Quote.Author,
+			tweet.Quote.Avatar,
+			tweet.Quote.PostedAt,
+			tweet.Quote.IsAReply,
+			tweet.Quote.TextContent,
+			tweet.Quote.Images,
+		)
+	} else {
+		row = append(row, nil, nil, nil, nil, nil, nil)
+	}
+
+	return row
 }
