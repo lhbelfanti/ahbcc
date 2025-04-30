@@ -6,21 +6,11 @@ import (
 	"ahbcc/cmd/api/tweets/quotes"
 )
 
-/*// MakeCollectTweetWithQuote is a custom CollectRows implementation to handle the information obtained from the
-// SELECT used in the function SelectBySearchCriteriaIDYearAndMonth
-func MakeCollectTweetWithQuote() database.CollectRows[TweetDTO] {
-	return func(rows pgx.Rows) ([]TweetDTO, error) {
-		return pgx.CollectRows(rows, func(row pgx.CollectableRow) (TweetDTO, error) {
-			return ScanTweetWithQuote(row)
-		})
-	}
-}*/
-
-// CustomScanner is a custom scanner to parse the row obtained and return a TweetDTO which also contains a quotes.QuoteDTO
-func CustomScanner() pgx.RowToFunc[TweetDTO] {
-	return func(row pgx.CollectableRow) (TweetDTO, error) {
-		var tweetDTO TweetDTO
-		var quoteDTO quotes.QuoteDTO
+// CustomScanner is a custom scanner to parse the row retrieved and return a TweetDTO which also contains a quotes.QuoteDTO
+func CustomScanner() pgx.RowToFunc[CustomTweetDTO] {
+	return func(row pgx.CollectableRow) (CustomTweetDTO, error) {
+		var tweetDTO CustomTweetDTO
+		var quoteDTO quotes.CustomQuoteDTO
 
 		err := row.Scan(
 			&tweetDTO.ID,
@@ -40,7 +30,7 @@ func CustomScanner() pgx.RowToFunc[TweetDTO] {
 			&quoteDTO.Images,
 		)
 		if err != nil {
-			return TweetDTO{}, err
+			return CustomTweetDTO{}, err
 		}
 
 		if tweetDTO.QuoteID != nil {

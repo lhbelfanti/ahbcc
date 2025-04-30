@@ -101,7 +101,7 @@ func TestInsertHandlerV1_failsWhenInsertTweetsThrowsError(t *testing.T) {
 }
 
 func TestGetTweetsV1_success(t *testing.T) {
-	mockTweets := tweets.MockTweetsDTOs()
+	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
@@ -131,7 +131,7 @@ func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *test
 		{params: map[string]string{"limit": "wrong"}},
 	}
 
-	mockTweets := tweets.MockTweetsDTOs()
+	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
 
@@ -157,7 +157,7 @@ func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *test
 }
 
 func TestGetTweetsV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
-	mockTweets := tweets.MockTweetsDTOs()
+	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
@@ -179,7 +179,7 @@ func TestGetTweetsV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 }
 
 func TestGetTweetsV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
-	mockTweets := tweets.MockTweetsDTOs()
+	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
@@ -204,7 +204,7 @@ func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T)
 		{params: map[string]string{"year": "2025", "month": "wrong"}},
 	}
 
-	mockTweets := tweets.MockTweetsDTOs()
+	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
 
@@ -230,7 +230,7 @@ func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T)
 }
 
 func TestGetTweetsV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t *testing.T) {
-	mockTweets := tweets.MockTweetsDTOs()
+	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, errors.New("failed to retrieve tweets"))
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)

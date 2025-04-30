@@ -13,7 +13,7 @@ import (
 
 func TestCustomScanner_success(t *testing.T) {
 	mockPgxCollectableRow := new(database.MockPgxCollectableRow)
-	mockTweetDTO := tweets.MockTweetDTO()
+	mockTweetDTO := tweets.MockCustomTweetDTO()
 	mockTweetQuoteCollectedRow := tweets.MockTweetCollectedRow(mockTweetDTO)
 	database.MockPgxCollectableRowMethods(mockPgxCollectableRow, mockTweetQuoteCollectedRow, t)
 
@@ -29,7 +29,7 @@ func TestCustomScanner_success(t *testing.T) {
 
 func TestCustomScanner_successWithNilQuote(t *testing.T) {
 	mockPgxCollectableRow := new(database.MockPgxCollectableRow)
-	mockTweetDTO := tweets.MockTweetDTO()
+	mockTweetDTO := tweets.MockCustomTweetDTO()
 	mockTweetDTO.QuoteID = nil
 	mockTweetDTO.Quote = nil
 	mockTweetQuoteCollectedRow := tweets.MockTweetCollectedRow(mockTweetDTO)

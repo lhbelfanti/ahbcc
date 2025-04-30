@@ -1,6 +1,9 @@
 package quotes
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // MockInsertSingle mocks InsertSingle function
 func MockInsertSingle(quoteID int, err error) InsertSingle {
@@ -26,6 +29,21 @@ func MockQuoteDTO() QuoteDTO {
 		Author:      "TestQuoteAuthor",
 		Avatar:      &avatar,
 		PostedAt:    "2022-11-18T15:04:05Z",
+		TextContent: &textContent,
+		Images:      []string{"test1", "test2"},
+	}
+}
+
+// MockCustomQuoteDTO mocks a CustomQuoteDTO
+func MockCustomQuoteDTO() CustomQuoteDTO {
+	textContent := "test"
+	avatar := "https://testquoteavatar.com"
+
+	return CustomQuoteDTO{
+		IsAReply:    true,
+		Author:      "TestQuoteAuthor",
+		Avatar:      &avatar,
+		PostedAt:    time.Now(),
 		TextContent: &textContent,
 		Images:      []string{"test1", "test2"},
 	}
