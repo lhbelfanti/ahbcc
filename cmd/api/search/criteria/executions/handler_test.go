@@ -228,7 +228,7 @@ func TestCreateExecutionDayHandlerV1_failsWhenInsertExecutionDayThrowsError(t *t
 	assert.Equal(t, want, got)
 }
 
-func TestSummarizeV1_success(t *testing.T) {
+func TestSummarizeHandlerV1_success(t *testing.T) {
 	mockSummarize := executions.MockSummarize(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/summarize/v1", nil)
@@ -243,7 +243,7 @@ func TestSummarizeV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestSummarizeV1_failsWhenSummarizeThrowsError(t *testing.T) {
+func TestSummarizeHandlerV1_failsWhenSummarizeThrowsError(t *testing.T) {
 	mockSummarize := executions.MockSummarize(errors.New("failed to execute summarize"))
 	mockResponseWriter := httptest.NewRecorder()
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/criteria-executions/summarize/v1", nil)
