@@ -95,7 +95,7 @@ func MockTweetCollectedRow(tweet CustomTweetDTO) []any {
 		tweet.SearchCriteriaID,
 	}
 
-	if tweet.Quote != nil {
+	if tweet.QuoteID != nil {
 		row = append(row,
 			tweet.Quote.Author,
 			tweet.Quote.Avatar,

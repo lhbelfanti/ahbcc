@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -263,7 +264,11 @@ func MockPgxCollectableRowMethods(m *MockPgxCollectableRow, values []any, t *tes
 			case **int:
 				*d = val.(*int)
 			case *string:
-				*d = val.(string)
+				if s, ok := val.(*string); ok {
+					*d = *s
+				} else {
+					*d = val.(string)
+				}
 			case **string:
 				*d = val.(*string)
 			case *time.Time:
@@ -272,6 +277,35 @@ func MockPgxCollectableRowMethods(m *MockPgxCollectableRow, values []any, t *tes
 				*d = val.(bool)
 			case *[]string:
 				*d = val.([]string)
+			case *pgtype.Text:
+				switch v := val.(type) {
+				case *string:
+					if v != nil {
+						d.String = *v
+						d.Valid = true
+					} else {
+						d.Valid = false
+					}
+				case string:
+					d.String = v
+					d.Valid = true
+				default:
+					d.Valid = false
+				}
+			case *pgtype.Timestamp:
+				if v, ok := val.(time.Time); ok {
+					d.Time = v
+					d.Valid = true
+				} else {
+					d.Valid = false
+				}
+			case *pgtype.Bool:
+				if v, ok := val.(bool); ok {
+					d.Bool = v
+					d.Valid = true
+				} else {
+					d.Valid = false
+				}
 			default:
 				t.Errorf("Unsupported type %T", d)
 			}

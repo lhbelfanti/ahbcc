@@ -24,6 +24,7 @@ func TestCustomScanner_success(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
+
 	mockPgxCollectableRow.AssertExpectations(t)
 }
 
@@ -38,6 +39,30 @@ func TestCustomScanner_successWithNilQuote(t *testing.T) {
 	customScanner := tweets.CustomScanner()
 
 	want := mockTweetDTO
+	got, err := customScanner(mockPgxCollectableRow)
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPgxCollectableRow.AssertExpectations(t)
+}
+
+func TestCustomScanner_successWithNilOrEmptyQuoteValues(t *testing.T) {
+	mockPgxCollectableRow := new(database.MockPgxCollectableRow)
+	mockTweetDTO := tweets.MockCustomTweetDTO()
+	mockTweetDTO.Quote.Avatar = nil
+	emptyString := ""
+	mockTweetDTO.Quote.TextContent = &emptyString
+	mockTweetQuoteCollectedRow := tweets.MockTweetCollectedRow(mockTweetDTO)
+	database.MockPgxCollectableRowMethods(mockPgxCollectableRow, mockTweetQuoteCollectedRow, t)
+	mockTweetDTOWant := tweets.MockCustomTweetDTO()
+	mockTweetDTOWant.PostedAt = mockTweetDTO.PostedAt
+	mockTweetDTOWant.Quote.Avatar = nil
+	mockTweetDTOWant.Quote.TextContent = nil
+	mockTweetDTOWant.Quote.PostedAt = mockTweetDTO.Quote.PostedAt
+
+	customScanner := tweets.CustomScanner()
+
+	want := mockTweetDTOWant
 	got, err := customScanner(mockPgxCollectableRow)
 
 	assert.Nil(t, err)

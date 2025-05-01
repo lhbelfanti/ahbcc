@@ -2,6 +2,7 @@ package tweets
 
 import (
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"ahbcc/cmd/api/tweets/quotes"
 )
@@ -9,8 +10,17 @@ import (
 // CustomScanner is a custom scanner to parse the row retrieved and return a TweetDTO which also contains a quotes.QuoteDTO
 func CustomScanner() pgx.RowToFunc[CustomTweetDTO] {
 	return func(row pgx.CollectableRow) (CustomTweetDTO, error) {
-		var tweetDTO CustomTweetDTO
-		var quoteDTO quotes.CustomQuoteDTO
+		var (
+			tweetDTO CustomTweetDTO
+
+			// Nullable variables for scanning
+			quoteAuthor      pgtype.Text
+			quoteAvatar      pgtype.Text
+			quotePostedAt    pgtype.Timestamp
+			quoteIsAReply    pgtype.Bool
+			quoteTextContent pgtype.Text
+			quoteImages      []string
+		)
 
 		err := row.Scan(
 			&tweetDTO.ID,
@@ -22,21 +32,36 @@ func CustomScanner() pgx.RowToFunc[CustomTweetDTO] {
 			&tweetDTO.Images,
 			&tweetDTO.QuoteID,
 			&tweetDTO.SearchCriteriaID,
-			&quoteDTO.Author,
-			&quoteDTO.Avatar,
-			&quoteDTO.PostedAt,
-			&quoteDTO.IsAReply,
-			&quoteDTO.TextContent,
-			&quoteDTO.Images,
+			&quoteAuthor,
+			&quoteAvatar,
+			&quotePostedAt,
+			&quoteIsAReply,
+			&quoteTextContent,
+			&quoteImages,
 		)
 		if err != nil {
 			return CustomTweetDTO{}, err
 		}
 
 		if tweetDTO.QuoteID != nil {
-			tweetDTO.Quote = &quoteDTO
+			tweetDTO.Quote = &quotes.CustomQuoteDTO{
+				Author:      quoteAuthor.String,
+				Avatar:      pgTextToStringPtr(quoteAvatar),
+				PostedAt:    quotePostedAt.Time,
+				IsAReply:    quoteIsAReply.Bool,
+				TextContent: pgTextToStringPtr(quoteTextContent),
+				Images:      quoteImages,
+			}
 		}
 
 		return tweetDTO, nil
 	}
+}
+
+func pgTextToStringPtr(text pgtype.Text) *string {
+	if text.Valid && text.String != "" {
+		return &text.String
+	}
+
+	return nil
 }
