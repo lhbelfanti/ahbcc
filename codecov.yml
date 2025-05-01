@@ -1,4 +1,5 @@
 ignore:
   - "cmd/api/main.go"
+  - "cmd/api/search/criteria/dtos.go"
   - "internal/database/*"
   - "internal/http/*"
