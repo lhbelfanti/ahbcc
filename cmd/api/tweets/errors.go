@@ -2,15 +2,6 @@ package tweets
 
 import "errors"
 
-const (
-	InvalidURLParameter              string = "Invalid url parameter"
-	InvalidRequestBody               string = "Invalid request body"
-	InvalidQueryParameterFormat      string = "Invalid query parameter format"
-	AuthorizationTokenRequired       string = "Authorization token is required"
-	FailedToInsertTweetsIntoDatabase string = "Failed to insert tweets into database"
-	FailedToRetrieveTweets           string = "Failed to retrieve tweets"
-)
-
 var (
 	FailedToInsertTweets                                      = errors.New("failed to insert tweets")
 	MissingTweetID                                            = errors.New("missing tweet ID")
@@ -19,4 +10,13 @@ var (
 	FailedToExecuteCollectRowsInSelectUserUncategorizedTweets = errors.New("failed to execute collect rows in select user uncategorized tweets")
 	AuthorizationTokenIsRequired                              = errors.New("authorization token is required")
 	FailedToRetrieveUserID                                    = errors.New("failed to retrieve user id")
+)
+
+const (
+	InvalidURLParameter              string = "Invalid url parameter"
+	InvalidRequestBody               string = "Invalid request body"
+	InvalidQueryParameterFormat      string = "Invalid query parameter format"
+	AuthorizationTokenRequired       string = "Authorization token is required"
+	FailedToInsertTweetsIntoDatabase string = "Failed to insert tweets into database"
+	FailedToRetrieveTweets           string = "Failed to retrieve tweets"
 )

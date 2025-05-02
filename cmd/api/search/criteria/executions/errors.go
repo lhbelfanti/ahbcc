@@ -2,15 +2,6 @@ package executions
 
 import "errors"
 
-const (
-	InvalidURLParameter                    string = "Invalid url parameter"
-	InvalidRequestBody                     string = "Invalid request body"
-	FailedToExecuteInsertCriteriaExecution string = "Failed to execute insert criteria execution"
-	FailedToExecuteUpdateCriteriaExecution string = "Failed to execute update criteria execution"
-	FailedToExecuteGetExecutionsByStatuses string = "Failed to execute get criteria executions by statuses"
-	FailedToExecuteSummarize               string = "Failed to execute summarize criteria executions"
-)
-
 var (
 	FailedToInsertSearchCriteriaExecution               = errors.New("failed to insert search criteria execution")
 	FailedToUpdateSearchCriteriaExecution               = errors.New("failed to update search criteria execution")
@@ -25,4 +16,13 @@ var (
 	FailedToExecuteSelectMonthlyTweetsCountsByYear      = errors.New("failed to execute select monthly tweets count by year")
 	FailedToExecuteUpsertExecutionSummary               = errors.New("failed to execute upsert execution summary")
 	FailedToCommitTransaction                           = errors.New("failed to commit transaction")
+)
+
+const (
+	InvalidURLParameter                    string = "Invalid url parameter"
+	InvalidRequestBody                     string = "Invalid request body"
+	FailedToExecuteInsertCriteriaExecution string = "Failed to execute insert criteria execution"
+	FailedToExecuteUpdateCriteriaExecution string = "Failed to execute update criteria execution"
+	FailedToExecuteGetExecutionsByStatuses string = "Failed to execute get criteria executions by statuses"
+	FailedToExecuteSummarize               string = "Failed to execute summarize criteria executions"
 )

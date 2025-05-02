@@ -2,16 +2,6 @@ package criteria
 
 import "errors"
 
-const (
-	InvalidURLParameter                        string = "Invalid url parameter"
-	InvalidQueryParameterFormat                string = "Invalid query parameter format"
-	FailedToEnqueueCriteria                    string = "Failed to execute enqueue criteria"
-	ExecutionWithSameCriteriaIDAlreadyEnqueued string = "An execution with the same criteria id is already enqueued"
-	FailedToExecuteInitCriteria                string = "Failed to execute init criteria"
-	FailedToExecuteCriteriaInformation         string = "Failed to execute criteria information"
-	AuthorizationTokenRequired                 string = "Authorization token is required"
-)
-
 var (
 	NoCriteriaDataFoundForTheGivenCriteriaID          = errors.New("no criteria data found for given criteria id")
 	FailedExecuteQueryToRetrieveCriteriaData          = errors.New("failed to execute query to retrieve criteria data")
@@ -30,4 +20,14 @@ var (
 	FailedToRetrieveSearchCriteria                    = errors.New("failed to retrieve search criteria")
 	FailedToRetrieveCategorizedTweetsByUserID         = errors.New("failed to retrieve categorized tweets by user id")
 	AuthorizationTokenIsRequired                      = errors.New("authorization token is required")
+)
+
+const (
+	InvalidURLParameter                        string = "Invalid url parameter"
+	InvalidQueryParameterFormat                string = "Invalid query parameter format"
+	FailedToEnqueueCriteria                    string = "Failed to execute enqueue criteria"
+	ExecutionWithSameCriteriaIDAlreadyEnqueued string = "An execution with the same criteria id is already enqueued"
+	FailedToExecuteInitCriteria                string = "Failed to execute init criteria"
+	FailedToExecuteCriteriaInformation         string = "Failed to execute criteria information"
+	AuthorizationTokenRequired                 string = "Authorization token is required"
 )

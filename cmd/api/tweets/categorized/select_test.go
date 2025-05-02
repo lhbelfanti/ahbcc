@@ -17,7 +17,7 @@ func TestSelectAllByUserID_success(t *testing.T) {
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
 	mockCategorizedTweetsDAOSlice := categorized.MockCategorizedTweetsDAOSlice()
-	mockCollectRows := database.MockCollectRows[categorized.DAO](mockCategorizedTweetsDAOSlice, nil)
+	mockCollectRows := database.MockCollectRows[categorized.AnalyzedTweetsDTO](mockCategorizedTweetsDAOSlice, nil)
 
 	selectAllByUserID := categorized.MakeSelectAllByUserID(mockPostgresConnection, mockCollectRows)
 
@@ -35,7 +35,7 @@ func TestSelectAllByUserID_failsWhenSelectOperationThrowsError(t *testing.T) {
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, errors.New("failed to select all by user id"))
 	mockCategorizedTweetsDAOSlice := categorized.MockCategorizedTweetsDAOSlice()
-	mockCollectRows := database.MockCollectRows[categorized.DAO](mockCategorizedTweetsDAOSlice, nil)
+	mockCollectRows := database.MockCollectRows[categorized.AnalyzedTweetsDTO](mockCategorizedTweetsDAOSlice, nil)
 
 	selectAllByUserID := categorized.MakeSelectAllByUserID(mockPostgresConnection, mockCollectRows)
 
@@ -51,7 +51,7 @@ func TestSelectAllByUserID_failsWhenCollectRowsThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPgxRows := new(database.MockPgxRows)
 	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
-	mockCollectRows := database.MockCollectRows[categorized.DAO](nil, errors.New("failed to collect rows"))
+	mockCollectRows := database.MockCollectRows[categorized.AnalyzedTweetsDTO](nil, errors.New("failed to collect rows"))
 
 	selectAllByUserID := categorized.MakeSelectAllByUserID(mockPostgresConnection, mockCollectRows)
 
