@@ -87,7 +87,7 @@ func main() {
 	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
 	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO](nil)
 	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
-	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO](nil)
+	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.AnalyzedTweetsDTO](nil)
 	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
 	information := criteria.MakeInformation(selectUserIDByToken, selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
 
