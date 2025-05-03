@@ -10,6 +10,8 @@ var (
 	FailedToExecuteCollectRowsInSelectUserUncategorizedTweets = errors.New("failed to execute collect rows in select user uncategorized tweets")
 	AuthorizationTokenIsRequired                              = errors.New("authorization token is required")
 	FailedToRetrieveUserID                                    = errors.New("failed to retrieve user id")
+	NoTweetFoundForTheGivenTweetID                            = errors.New("no tweet found for the given tweet id")
+	FailedExecuteQueryToRetrieveTweetData                     = errors.New("failed to execute query to retrieve tweet data")
 )
 
 const (
