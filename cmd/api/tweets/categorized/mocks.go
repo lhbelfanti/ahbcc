@@ -30,14 +30,21 @@ func MockCategorizedTweetsDAOSlice() []AnalyzedTweetsDTO {
 
 // MockInsertSingle mocks an InsertSingle function
 func MockInsertSingle(id int, err error) InsertSingle {
-	return func(ctx context.Context, dto DAO) (int, error) {
+	return func(ctx context.Context, dto DTO) (int, error) {
 		return id, err
 	}
 }
 
-// MockDAO mocks a DAO
-func MockDAO() DAO {
-	return DAO{
+// MockInsertCategorizedTweet mocks an InsertCategorizedTweet function
+func MockInsertCategorizedTweet(id int, err error) InsertCategorizedTweet {
+	return func(ctx context.Context, token string, dto DTO) (int, error) {
+		return id, err
+	}
+}
+
+// MockDTO mocks a DTO
+func MockDTO() DTO {
+	return DTO{
 		SearchCriteriaID: 1,
 		TweetID:          123456,
 		TweetYear:        2024,

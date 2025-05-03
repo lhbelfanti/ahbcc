@@ -81,8 +81,12 @@ func main() {
 	deleteOrphanQuotes := quotes.MakeDeleteOrphans(db)
 	insertTweets := tweets.MakeInsert(db, insertSingleQuote, deleteOrphanQuotes)
 
-	// POST /criteria/v1
+	// POST /tweets/categorized/v1 dependencies
 	selectUserIDByToken := session.MakeSelectUserIDByToken(db)
+	insertSingle := categorized.MakeInsertSingle(db)
+	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(selectUserIDByToken, insertSingle)
+
+	// POST /criteria/v1
 	collectSummaryDAORows := database.MakeCollectRows[summary.DAO](nil)
 	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
 	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO](nil)
@@ -135,6 +139,7 @@ func main() {
 	router.HandleFunc("POST /auth/login/v1", auth.LogInHandlerV1(logIn))
 	router.HandleFunc("POST /auth/logout/v1", auth.LogOutHandlerV1(logOut))
 	router.HandleFunc("POST /tweets/v1", tweets.InsertHandlerV1(insertTweets))
+	router.HandleFunc("POST /tweets/categorized/v1", categorized.InsertSingleHandlerV1(insertCategorizedTweet))
 	router.HandleFunc("GET /criteria/v1", criteria.InformationHandlerV1(information))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
 	router.HandleFunc("GET /criteria/{criteria_id}/tweets/v1", tweets.GetCriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth))

@@ -17,12 +17,12 @@ func TestInsertSingle_success(t *testing.T) {
 	mockPgxRow := new(database.MockPgxRow)
 	database.MockScan(mockPgxRow, []any{1}, t)
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
-	mockDAO := categorized.MockDAO()
+	mockDTO := categorized.MockDTO()
 
 	insertSingle := categorized.MakeInsertSingle(mockPostgresConnection)
 
 	want := 1
-	got, err := insertSingle(context.Background(), mockDAO)
+	got, err := insertSingle(context.Background(), mockDTO)
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
@@ -35,12 +35,12 @@ func TestInsertSingle_failsWhenScanThrowsError(t *testing.T) {
 	mockPgxRow := new(database.MockPgxRow)
 	mockPgxRow.On("Scan", mock.Anything).Return(errors.New("failed to scan"))
 	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
-	mockDAO := categorized.MockDAO()
+	mockDTO := categorized.MockDTO()
 
 	insertSingle := categorized.MakeInsertSingle(mockPostgresConnection)
 
-	want := categorized.FailedToInsertCategorizedTweet
-	_, got := insertSingle(context.Background(), mockDAO)
+	want := categorized.FailedToExecuteInsertCategorizedTweet
+	_, got := insertSingle(context.Background(), mockDTO)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
