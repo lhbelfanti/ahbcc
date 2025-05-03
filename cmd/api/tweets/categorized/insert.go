@@ -7,8 +7,8 @@ import (
 	"ahbcc/internal/log"
 )
 
-// InsertSingle inserts a new categorized tweet DAO into 'categorized_tweets' table and returns the ID
-type InsertSingle func(ctx context.Context, dto DAO) (int, error)
+// InsertSingle inserts a new categorized tweet DTO into 'categorized_tweets' table and returns the ID
+type InsertSingle func(ctx context.Context, dto DTO) (int, error)
 
 // MakeInsertSingle creates a new InsertSingle
 func MakeInsertSingle(db database.Connection) InsertSingle {
@@ -18,7 +18,7 @@ func MakeInsertSingle(db database.Connection) InsertSingle {
 		RETURNING id;
 	`
 
-	return func(ctx context.Context, dto DAO) (int, error) {
+	return func(ctx context.Context, dto DTO) (int, error) {
 		var categorizedTweetID int
 
 		err := db.QueryRow(
@@ -33,7 +33,7 @@ func MakeInsertSingle(db database.Connection) InsertSingle {
 		).Scan(&categorizedTweetID)
 		if err != nil {
 			log.Error(ctx, err.Error())
-			return -1, FailedToInsertCategorizedTweet
+			return -1, FailedToExecuteInsertCategorizedTweet
 		}
 
 		return categorizedTweetID, nil
