@@ -110,3 +110,35 @@ func MockTweetCollectedRow(tweet CustomTweetDTO) []any {
 
 	return row
 }
+
+// MockTweetDAO mocks a DAO
+func MockTweetDAO() DAO {
+	return DAO{
+		UUID:             1,
+		ID:               "1234567890987654321",
+		Author:           "TestAuthor",
+		Avatar:           "https://testuseravatar.com",
+		PostedAt:         "2024-11-18T15:04:05Z",
+		IsAReply:         true,
+		TextContent:      "test",
+		Images:           []string{"test1", "test2"},
+		QuoteID:          2,
+		SearchCriteriaID: 1,
+	}
+}
+
+// MockScanTweetDAOValues mocks the properties of DAO to be used in the Scan function
+func MockScanTweetDAOValues(dao DAO) []any {
+	return []any{
+		dao.UUID,
+		dao.ID,
+		dao.Author,
+		dao.Avatar,
+		dao.PostedAt,
+		dao.IsAReply,
+		dao.TextContent,
+		dao.Images,
+		dao.QuoteID,
+		dao.SearchCriteriaID,
+	}
+}
