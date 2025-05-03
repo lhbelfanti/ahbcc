@@ -100,11 +100,11 @@ func TestInsertHandlerV1_failsWhenInsertTweetsThrowsError(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestGetTweetsV1_success(t *testing.T) {
+func TestGetCriteriaTweetsHandlerV1_success(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/tweets/v1", nil)
 	mockRequest.SetPathValue("criteria_id", "1")
 	mockRequest.Header.Set("X-Session-Token", "token")
 	mockURLQuery := mockRequest.URL.Query()
@@ -123,7 +123,7 @@ func TestGetTweetsV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *testing.T) {
+func TestGetCriteriaTweetsHandlerV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *testing.T) {
 	tests := []struct {
 		params map[string]string
 	}{
@@ -136,7 +136,7 @@ func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *test
 	mockResponseWriter := httptest.NewRecorder()
 
 	for _, tt := range tests {
-		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/tweets/v1", nil)
 		mockRequest.SetPathValue("criteria_id", "1")
 		mockRequest.Header.Set("X-Session-Token", "token")
 		mockURLQuery := mockRequest.URL.Query()
@@ -156,11 +156,11 @@ func TestGetTweetsV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *test
 	}
 }
 
-func TestGetTweetsV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
+func TestGetCriteriaTweetsHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/tweets/v1", nil)
 	mockRequest.SetPathValue("criteria_id", "1")
 	mockURLQuery := mockRequest.URL.Query()
 	mockURLQuery.Add("year", "2025")
@@ -178,11 +178,11 @@ func TestGetTweetsV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestGetTweetsV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
+func TestGetCriteriaTweetsHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/tweets/v1", nil)
 	mockRequest.SetPathValue("criteria_id", "wrong")
 	mockRequest.Header.Set("X-Session-Token", "token")
 
@@ -196,7 +196,7 @@ func TestGetTweetsV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T) {
+func TestGetCriteriaTweetsHandlerV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T) {
 	tests := []struct {
 		params map[string]string
 	}{
@@ -209,7 +209,7 @@ func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T)
 	mockResponseWriter := httptest.NewRecorder()
 
 	for _, tt := range tests {
-		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/tweets/v1", nil)
 		mockRequest.SetPathValue("criteria_id", "1")
 		mockRequest.Header.Set("X-Session-Token", "token")
 		mockURLQuery := mockRequest.URL.Query()
@@ -229,11 +229,11 @@ func TestGetTweetsV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T)
 	}
 }
 
-func TestGetTweetsV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t *testing.T) {
+func TestGetCriteriaTweetsHandlerV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, errors.New("failed to retrieve tweets"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/tweets/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/tweets/v1", nil)
 	mockRequest.SetPathValue("criteria_id", "1")
 	mockRequest.Header.Set("X-Session-Token", "token")
 	mockURLQuery := mockRequest.URL.Query()

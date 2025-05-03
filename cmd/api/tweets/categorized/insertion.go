@@ -2,26 +2,50 @@ package categorized
 
 import (
 	"context"
+	"time"
 
+	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/user/session"
 	"ahbcc/internal/log"
 )
 
-// InsertCategorizedTweet is a service function that validates the user token and inserts a categorized tweet
-type InsertCategorizedTweet func(ctx context.Context, token string, dto DTO) (int, error)
+// InsertCategorizedTweet inserts a categorized tweet
+type InsertCategorizedTweet func(ctx context.Context, token string, tweetID int, body InsertSingleBodyDTO) (int, error)
 
 // MakeInsertCategorizedTweet creates a new InsertCategorizedTweet service
-func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken, insertSingle InsertSingle) InsertCategorizedTweet {
-	return func(ctx context.Context, token string, dto DTO) (int, error) {
+func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken, selectTweetByID tweets.SelectByID, insertSingle InsertSingle) InsertCategorizedTweet {
+	return func(ctx context.Context, token string, tweetID int, body InsertSingleBodyDTO) (int, error) {
 		userID, err := selectUserIDByToken(ctx, token)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return -1, FailedToRetrieveUserID
 		}
 
-		dto.UserID = userID
+		tweetDAO, err := selectTweetByID(ctx, tweetID)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return -1, FailedToRetrieveTweetByID
+		}
 
-		categorizedTweetID, err := insertSingle(ctx, dto)
+		var year, month int
+		t, err := time.Parse(time.RFC3339, tweetDAO.PostedAt)
+		if err != nil {
+			log.Error(ctx, err.Error())
+		} else {
+			year = t.Year()
+			month = int(t.Month())
+		}
+
+		categorizedTweet := DTO{
+			SearchCriteriaID: tweetDAO.SearchCriteriaID,
+			TweetID:          tweetID,
+			TweetYear:        year,
+			TweetMonth:       month,
+			UserID:           userID,
+			Categorization:   body.Categorization,
+		}
+
+		categorizedTweetID, err := insertSingle(ctx, categorizedTweet)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return -1, FailedToInsertSingleCategorizedTweet
