@@ -3,12 +3,13 @@ package categorized
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"ahbcc/internal/http/response"
 	"ahbcc/internal/log"
 )
 
-// InsertSingleHandlerV1 HTTP Handler of the endpoint /tweets/categorized/v1
+// InsertSingleHandlerV1 HTTP Handler of the endpoint /tweets/{tweet_id}/categorize/v1
 func InsertSingleHandlerV1(insertCategorizedTweet InsertCategorizedTweet) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -20,21 +21,30 @@ func InsertSingleHandlerV1(insertCategorizedTweet InsertCategorizedTweet) http.H
 		}
 		ctx = log.With(ctx, log.Param("token", token))
 
-		var categorizedTweet DTO
-		err := json.NewDecoder(r.Body).Decode(&categorizedTweet)
+		tweetIDParam := r.PathValue("tweet_id")
+		tweetID, err := strconv.Atoi(tweetIDParam)
+		if err != nil {
+			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
+			return
+		}
+		ctx = log.With(ctx, log.Param("tweet_id", tweetIDParam))
+
+		var body InsertSingleBodyDTO
+		err = json.NewDecoder(r.Body).Decode(&body)
 		if err != nil {
 			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
 			return
 		}
-		ctx = log.With(ctx, log.Param("categorized_tweet", categorizedTweet))
+		ctx = log.With(ctx, log.Param("body", body))
 
-		err = validateBody(categorizedTweet)
-		if err != nil {
-			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, err)
+		if body.Categorization != VerdictPositive &&
+			body.Categorization != VerdictIndeterminate &&
+			body.Categorization != VerdictNegative {
+			response.Send(ctx, w, http.StatusBadRequest, InvalidRequestBody, nil, InvalidCategorization)
 			return
 		}
 
-		categorizedTweetID, err := insertCategorizedTweet(ctx, token, categorizedTweet)
+		categorizedTweetID, err := insertCategorizedTweet(ctx, token, tweetID, body)
 		if err != nil {
 			response.Send(ctx, w, http.StatusInternalServerError, FailedToInsertCategorizedTweet, nil, err)
 			return
@@ -42,23 +52,4 @@ func InsertSingleHandlerV1(insertCategorizedTweet InsertCategorizedTweet) http.H
 
 		response.Send(ctx, w, http.StatusOK, "Tweet successfully categorized", InsertSingleResponseDTO{ID: categorizedTweetID}, nil)
 	}
-}
-
-// validateBody validates that mandatory fields are present
-func validateBody(body DTO) error {
-	if body.SearchCriteriaID <= 0 {
-		return InvalidSearchCriteriaID
-	}
-
-	if body.TweetID <= 0 {
-		return InvalidTweetID
-	}
-
-	if body.Categorization != VerdictPositive &&
-		body.Categorization != VerdictIndeterminate &&
-		body.Categorization != VerdictNegative {
-		return InvalidCategorization
-	}
-
-	return nil
 }

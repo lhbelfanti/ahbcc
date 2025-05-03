@@ -37,7 +37,7 @@ func MockInsertSingle(id int, err error) InsertSingle {
 
 // MockInsertCategorizedTweet mocks an InsertCategorizedTweet function
 func MockInsertCategorizedTweet(id int, err error) InsertCategorizedTweet {
-	return func(ctx context.Context, token string, dto DTO) (int, error) {
+	return func(ctx context.Context, token string, tweetID int, body InsertSingleBodyDTO) (int, error) {
 		return id, err
 	}
 }
@@ -51,5 +51,12 @@ func MockDTO() DTO {
 		TweetMonth:       5,
 		UserID:           789,
 		Categorization:   VerdictPositive,
+	}
+}
+
+// MockInsertSingleBodyDTO mocks an InsertSingleBodyDTO
+func MockInsertSingleBodyDTO(verdict string) InsertSingleBodyDTO {
+	return InsertSingleBodyDTO{
+		Categorization: verdict,
 	}
 }

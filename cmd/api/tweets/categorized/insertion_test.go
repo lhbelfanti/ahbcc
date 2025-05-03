@@ -7,48 +7,68 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/tweets/categorized"
 	"ahbcc/cmd/api/user/session"
 )
 
 func TestInsertCategorizedTweet_success(t *testing.T) {
 	mockSelectUserIDByToken := session.MockSelectUserIDByToken(789, nil)
+	mockTweetDAO := tweets.MockTweetDAO()
+	mockSelectTweetByID := tweets.MockSelectByID(mockTweetDAO, nil)
 	mockInsertSingle := categorized.MockInsertSingle(1, nil)
-	mockDTO := categorized.MockDTO()
-	mockDTO.UserID = 0 // This should be overwritten by the service
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
 
-	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockInsertSingle)
+	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
-	id, err := insertCategorizedTweet(context.Background(), "valid-token", mockDTO)
+	want := 1
+	got, err := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
 
 	assert.NoError(t, err)
-	assert.Equal(t, 1, id)
+	assert.Equal(t, want, got)
 }
 
-func TestInsertCategorizedTweet_failsWhenSelectUserIDByTokenFails(t *testing.T) {
+func TestInsertCategorizedTweet_failsWhenSelectUserIDByTokenThrowsError(t *testing.T) {
 	mockSelectUserIDByToken := session.MockSelectUserIDByToken(789, errors.New("failed to select user id by token"))
+	mockTweetDAO := tweets.MockTweetDAO()
+	mockSelectTweetByID := tweets.MockSelectByID(mockTweetDAO, nil)
 	mockInsertSingle := categorized.MockInsertSingle(1, nil)
-	mockDTO := categorized.MockDTO()
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
 
-	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockInsertSingle)
+	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
 	want := categorized.FailedToRetrieveUserID
-	_, got := insertCategorizedTweet(context.Background(), "invalid-token", mockDTO)
+	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
 
 	assert.Equal(t, want, got)
 }
 
-func TestInsertCategorizedTweet_failsWhenInsertSingleFails(t *testing.T) {
-	mockSelectUserIDByToken := func(ctx context.Context, token string) (int, error) {
-		return 789, nil
-	}
-	mockInsertSingle := categorized.MockInsertSingle(-1, errors.New("failed to insert categorized tweet"))
-	mockDTO := categorized.MockDTO()
+func TestInsertCategorizedTweet_failsWhenSelectTweetByIDThrowsError(t *testing.T) {
+	mockSelectUserIDByToken := session.MockSelectUserIDByToken(789, nil)
+	mockTweetDAO := tweets.MockTweetDAO()
+	mockSelectTweetByID := tweets.MockSelectByID(mockTweetDAO, errors.New("failed to select tweet by id"))
+	mockInsertSingle := categorized.MockInsertSingle(1, nil)
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
 
-	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockInsertSingle)
+	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
+
+	want := categorized.FailedToRetrieveTweetByID
+	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
+
+	assert.Equal(t, want, got)
+}
+
+func TestInsertCategorizedTweet_failsWhenInsertSingleThrowsError(t *testing.T) {
+	mockSelectUserIDByToken := session.MockSelectUserIDByToken(789, nil)
+	mockTweetDAO := tweets.MockTweetDAO()
+	mockSelectTweetByID := tweets.MockSelectByID(mockTweetDAO, nil)
+	mockInsertSingle := categorized.MockInsertSingle(-1, errors.New("failed to insert categorized tweet"))
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
+
+	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
 	want := categorized.FailedToInsertSingleCategorizedTweet
-	_, got := insertCategorizedTweet(context.Background(), "valid-token", mockDTO)
+	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
 
 	assert.Equal(t, want, got)
 }

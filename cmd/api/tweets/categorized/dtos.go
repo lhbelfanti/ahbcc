@@ -19,7 +19,12 @@ type (
 		Categorization   string `json:"categorization"`
 	}
 
-	// InsertSingleResponseDTO is the response of the /tweets/categorized/v1 endpoint
+	// InsertSingleBodyDTO is the body of the /tweets/{tweet_id}/categorize/v1 endpoint
+	InsertSingleBodyDTO struct {
+		Categorization string `json:"categorization"`
+	}
+
+	// InsertSingleResponseDTO is the response of the /tweets/{tweet_id}/categorize/v1 endpoint
 	InsertSingleResponseDTO struct {
 		ID int `json:"id"`
 	}

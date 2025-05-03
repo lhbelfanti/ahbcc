@@ -17,10 +17,11 @@ import (
 func TestInsertSingleHandlerV1_success(t *testing.T) {
 	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(1, nil)
 	mockResponseWriter := httptest.NewRecorder()
-	mockDTO := categorized.MockDTO()
-	mockBody, _ := json.Marshal(mockDTO)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
+	bodyBytes, _ := json.Marshal(mockBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/{tweet_id}/categorize/v1", bytes.NewReader(bodyBytes))
 	mockRequest.Header.Set("X-Session-Token", "token")
+	mockRequest.SetPathValue("tweet_id", "123")
 
 	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
 
@@ -44,8 +45,9 @@ func TestInsertSingleHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(1, nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockBody, _ := json.Marshal(`{"wrong": "body"}`)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/{tweet_id}/categorize/v1", bytes.NewReader(mockBody))
 	mockRequest.Header.Set("X-Session-Token", "token")
+	mockRequest.SetPathValue("tweet_id", "123")
 
 	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
 
@@ -57,33 +59,14 @@ func TestInsertSingleHandlerV1_failsWhenTheBodyCannotBeParsed(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestInsertSingleHandlerV1_failsWhenSearchCriteriaIDIsNotPresentInBody(t *testing.T) {
-	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, categorized.InvalidSearchCriteriaID)
-	mockResponseWriter := httptest.NewRecorder()
-	mockDTO := categorized.MockDTO()
-	mockDTO.SearchCriteriaID = 0
-	mockBody, _ := json.Marshal(mockDTO)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
-	mockRequest.Header.Set("X-Session-Token", "token")
-
-	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
-
-	insertSingleHandlerV1(mockResponseWriter, mockRequest)
-
-	want := http.StatusBadRequest
-	got := mockResponseWriter.Result().StatusCode
-
-	assert.Equal(t, want, got)
-}
-
-func TestInsertSingleHandlerV1_failsWhenTweetIDIsNotPresentInBody(t *testing.T) {
+func TestInsertSingleHandlerV1_failsWhenTweetIDIsInvalid(t *testing.T) {
 	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, categorized.InvalidTweetID)
 	mockResponseWriter := httptest.NewRecorder()
-	mockDTO := categorized.MockDTO()
-	mockDTO.TweetID = 0
-	mockBody, _ := json.Marshal(mockDTO)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
+	bodyBytes, _ := json.Marshal(mockBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/{tweet_id}/categorize/v1", bytes.NewReader(bodyBytes))
 	mockRequest.Header.Set("X-Session-Token", "token")
+	mockRequest.SetPathValue("tweet_id", "invalid")
 
 	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
 
@@ -98,9 +81,10 @@ func TestInsertSingleHandlerV1_failsWhenTweetIDIsNotPresentInBody(t *testing.T) 
 func TestInsertSingleHandlerV1_failsWhenTokenIsMissing(t *testing.T) {
 	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, errors.New("token is missing"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockDTO := categorized.MockDTO()
-	mockBody, _ := json.Marshal(mockDTO)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
+	bodyBytes, _ := json.Marshal(mockBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/{tweet_id}/categorize/v1", bytes.NewReader(bodyBytes))
+	mockRequest.SetPathValue("tweet_id", "123")
 
 	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
 
@@ -113,13 +97,13 @@ func TestInsertSingleHandlerV1_failsWhenTokenIsMissing(t *testing.T) {
 }
 
 func TestInsertSingleHandlerV1_failsWhenCategorizationIsInvalid(t *testing.T) {
-	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, categorized.InvalidCategorization)
+	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, errors.New("invalid categorization"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockDTO := categorized.MockDTO()
-	mockDTO.Categorization = "INVALID"
-	mockBody, _ := json.Marshal(mockDTO)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
+	mockBody := categorized.MockInsertSingleBodyDTO("INVALID")
+	bodyBytes, _ := json.Marshal(mockBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/123/categorize/v1", bytes.NewReader(bodyBytes))
 	mockRequest.Header.Set("X-Session-Token", "token")
+	mockRequest.SetPathValue("tweet_id", "123")
 
 	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
 
@@ -134,10 +118,11 @@ func TestInsertSingleHandlerV1_failsWhenCategorizationIsInvalid(t *testing.T) {
 func TestInsertSingleHandlerV1_failsWhenInsertThrowsError(t *testing.T) {
 	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, errors.New("failed to insert categorized tweet"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockDTO := categorized.MockDTO()
-	mockBody, _ := json.Marshal(mockDTO)
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/categorized/v1", bytes.NewReader(mockBody))
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
+	bodyBytes, _ := json.Marshal(mockBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/123/categorize/v1", bytes.NewReader(bodyBytes))
 	mockRequest.Header.Set("X-Session-Token", "token")
+	mockRequest.SetPathValue("tweet_id", "123")
 
 	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
 

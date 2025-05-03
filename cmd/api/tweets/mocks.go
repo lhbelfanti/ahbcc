@@ -21,6 +21,13 @@ func MockSelectBySearchCriteriaIDYearAndMonth(tweets []CustomTweetDTO, err error
 	}
 }
 
+// MockSelectByID mocks SelectByID function
+func MockSelectByID(tweetDAO DAO, err error) SelectByID {
+	return func(ctx context.Context, id int) (DAO, error) {
+		return tweetDAO, err
+	}
+}
+
 // MockTweetDTO mocks a TweetDTO
 func MockTweetDTO() TweetDTO {
 	avatar := "https://testuseravatar.com"
