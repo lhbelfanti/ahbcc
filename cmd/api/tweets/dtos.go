@@ -9,7 +9,7 @@ import (
 type (
 	// TweetDTO represents a tweet to be inserted into the 'tweets' table
 	TweetDTO struct {
-		ID               string           `json:"id"`
+		StatusID         string           `json:"status_id"`
 		Author           string           `json:"author"`
 		Avatar           *string          `json:"avatar,omitempty"`
 		PostedAt         string           `json:"posted_at"`
@@ -22,7 +22,8 @@ type (
 
 	// CustomTweetDTO represents a tweet obtained from the database with the extra property *quotes.CustomQuoteDTO
 	CustomTweetDTO struct {
-		ID               string                 `json:"id"`
+		ID               int                    `json:"id"`
+		StatusID         string                 `json:"status_id"`
 		Author           string                 `json:"author"`
 		Avatar           *string                `json:"avatar,omitempty"`
 		PostedAt         time.Time              `json:"posted_at"`

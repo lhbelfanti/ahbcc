@@ -22,7 +22,7 @@ func TestInsertCategorizedTweet_success(t *testing.T) {
 	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
 	want := 1
-	got, err := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
+	got, err := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.ID, mockBody)
 
 	assert.NoError(t, err)
 	assert.Equal(t, want, got)
@@ -38,7 +38,7 @@ func TestInsertCategorizedTweet_failsWhenSelectUserIDByTokenThrowsError(t *testi
 	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
 	want := categorized.FailedToRetrieveUserID
-	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
+	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.ID, mockBody)
 
 	assert.Equal(t, want, got)
 }
@@ -53,7 +53,7 @@ func TestInsertCategorizedTweet_failsWhenSelectTweetByIDThrowsError(t *testing.T
 	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
 	want := categorized.FailedToRetrieveTweetByID
-	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
+	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.ID, mockBody)
 
 	assert.Equal(t, want, got)
 }
@@ -68,7 +68,7 @@ func TestInsertCategorizedTweet_failsWhenInsertSingleThrowsError(t *testing.T) {
 	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(mockSelectUserIDByToken, mockSelectTweetByID, mockInsertSingle)
 
 	want := categorized.FailedToInsertSingleCategorizedTweet
-	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.UUID, mockBody)
+	_, got := insertCategorizedTweet(context.Background(), "token", mockTweetDAO.ID, mockBody)
 
 	assert.Equal(t, want, got)
 }

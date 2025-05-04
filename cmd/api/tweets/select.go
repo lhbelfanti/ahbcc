@@ -23,11 +23,11 @@ type (
 
 // MakeSelectBySearchCriteriaIDYearAndMonth creates a new SelectBySearchCriteriaIDYearAndMonth
 func MakeSelectBySearchCriteriaIDYearAndMonth(db database.Connection, collectRows database.CollectRows[CustomTweetDTO], selectUserIDByToken session.SelectUserIDByToken) SelectBySearchCriteriaIDYearAndMonth {
-	const query string = `SELECT t.id, t.author, t.avatar, t.posted_at, t.is_a_reply, t.text_content, t.images, t.quote_id, t.search_criteria_id,
+	const query string = `SELECT t.id, t.status_id, t.author, t.avatar, t.posted_at, t.is_a_reply, t.text_content, t.images, t.quote_id, t.search_criteria_id,
          							q.author, q.avatar, q.posted_at, q.is_a_reply, q.text_content, q.images
 						  FROM tweets AS t
 						  LEFT JOIN tweets_quotes AS q ON t.quote_id = q.id
-						  WHERE t.uuid NOT IN (SELECT c.tweet_id FROM categorized_tweets AS c WHERE c.user_id = $1)
+						  WHERE t.id NOT IN (SELECT c.tweet_id FROM categorized_tweets AS c WHERE c.user_id = $1)
 						    AND t.search_criteria_id = $2`
 
 	return func(ctx context.Context, searchCriteriaID, year, month, limit int, token string) ([]CustomTweetDTO, error) {
@@ -78,15 +78,15 @@ func MakeSelectBySearchCriteriaIDYearAndMonth(db database.Connection, collectRow
 
 // MakeSelectByID creates a new SelectByID
 func MakeSelectByID(db database.Connection) SelectByID {
-	const query string = `SELECT t.uuid, t.id, t.author, t.avatar, t.posted_at, t.is_a_reply, t.text_content, t.images, t.quote_id, t.search_criteria_id
+	const query string = `SELECT t.id, t.status_id, t.author, t.avatar, t.posted_at, t.is_a_reply, t.text_content, t.images, t.quote_id, t.search_criteria_id
 						  FROM tweets AS t
 						  WHERE t.id = $1`
 
 	return func(ctx context.Context, id int) (DAO, error) {
 		var tweet DAO
 		err := db.QueryRow(ctx, query, id).Scan(
-			&tweet.UUID,
 			&tweet.ID,
+			&tweet.StatusID,
 			&tweet.Author,
 			&tweet.Avatar,
 			&tweet.PostedAt,

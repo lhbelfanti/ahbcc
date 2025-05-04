@@ -4,7 +4,7 @@ import "errors"
 
 var (
 	FailedToInsertTweets                                      = errors.New("failed to insert tweets")
-	MissingTweetID                                            = errors.New("missing tweet ID")
+	MissingTweetStatusID                                      = errors.New("missing status tweet ID")
 	MissingTweetSearchCriteriaID                              = errors.New("missing tweet search criteria ID")
 	FailedToRetrieveUserUncategorizedTweets                   = errors.New("failed to retrieve user uncategorized tweets")
 	FailedToExecuteCollectRowsInSelectUserUncategorizedTweets = errors.New("failed to execute collect rows in select user uncategorized tweets")

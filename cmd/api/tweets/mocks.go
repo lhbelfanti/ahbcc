@@ -37,7 +37,7 @@ func MockTweetDTO() TweetDTO {
 	quote := quotes.MockQuoteDTO()
 
 	return TweetDTO{
-		ID:               "1234567890987654321",
+		StatusID:         "1234567890987654321",
 		IsAReply:         true,
 		Author:           "TestAuthor",
 		Avatar:           &avatar,
@@ -67,7 +67,8 @@ func MockCustomTweetDTO() CustomTweetDTO {
 	quote := quotes.MockCustomQuoteDTO()
 
 	return CustomTweetDTO{
-		ID:               "1234567890987654321",
+		ID:               1,
+		StatusID:         "1234567890987654321",
 		IsAReply:         true,
 		Author:           "TestAuthor",
 		Avatar:           &avatar,
@@ -92,6 +93,7 @@ func MockCustomTweetDTOs() []CustomTweetDTO {
 func MockTweetCollectedRow(tweet CustomTweetDTO) []any {
 	row := []any{
 		tweet.ID,
+		tweet.StatusID,
 		tweet.Author,
 		tweet.Avatar,
 		tweet.PostedAt,
@@ -120,16 +122,20 @@ func MockTweetCollectedRow(tweet CustomTweetDTO) []any {
 
 // MockTweetDAO mocks a DAO
 func MockTweetDAO() DAO {
+	avatar := "https://testuseravatar.com"
+	textContent := "test"
+	quoteID := 3
+
 	return DAO{
-		UUID:             1,
-		ID:               "1234567890987654321",
+		ID:               1,
+		StatusID:         "1234567890987654321",
 		Author:           "TestAuthor",
-		Avatar:           "https://testuseravatar.com",
-		PostedAt:         "2024-11-18T15:04:05Z",
+		Avatar:           &avatar,
+		PostedAt:         time.Now(),
 		IsAReply:         true,
-		TextContent:      "test",
+		TextContent:      &textContent,
 		Images:           []string{"test1", "test2"},
-		QuoteID:          2,
+		QuoteID:          &quoteID,
 		SearchCriteriaID: 1,
 	}
 }
@@ -137,8 +143,8 @@ func MockTweetDAO() DAO {
 // MockScanTweetDAOValues mocks the properties of DAO to be used in the Scan function
 func MockScanTweetDAOValues(dao DAO) []any {
 	return []any{
-		dao.UUID,
 		dao.ID,
+		dao.StatusID,
 		dao.Author,
 		dao.Avatar,
 		dao.PostedAt,
