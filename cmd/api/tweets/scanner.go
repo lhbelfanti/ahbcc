@@ -24,6 +24,7 @@ func CustomScanner() pgx.RowToFunc[CustomTweetDTO] {
 
 		err := row.Scan(
 			&tweetDTO.ID,
+			&tweetDTO.StatusID,
 			&tweetDTO.Author,
 			&tweetDTO.Avatar,
 			&tweetDTO.PostedAt,

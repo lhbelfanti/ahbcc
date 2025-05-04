@@ -2,8 +2,7 @@ package categorized
 
 import (
 	"context"
-	"time"
-
+	
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/user/session"
 	"ahbcc/internal/log"
@@ -27,20 +26,11 @@ func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken,
 			return -1, FailedToRetrieveTweetByID
 		}
 
-		var year, month int
-		t, err := time.Parse(time.RFC3339, tweetDAO.PostedAt)
-		if err != nil {
-			log.Error(ctx, err.Error())
-		} else {
-			year = t.Year()
-			month = int(t.Month())
-		}
-
 		categorizedTweet := DTO{
 			SearchCriteriaID: tweetDAO.SearchCriteriaID,
-			TweetID:          tweetID,
-			TweetYear:        year,
-			TweetMonth:       month,
+			TweetID:          tweetDAO.ID,
+			TweetYear:        tweetDAO.PostedAt.Year(),
+			TweetMonth:       int(tweetDAO.PostedAt.Month()),
 			UserID:           userID,
 			Categorization:   body.Categorization,
 		}

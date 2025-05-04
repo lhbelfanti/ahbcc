@@ -201,47 +201,10 @@ func MockScan(mockPgxRow *MockPgxRow, values []any, t *testing.T) {
 				t.Errorf("Expected %d destination arguments but got %d", len(values), len(dest))
 			}
 			for i, val := range values {
-				switch v := dest[i].(type) {
-				case *int:
-					*v = val.(int)
-				case *bool:
-					*v = val.(bool)
-				case *string:
-					*v = val.(string)
-				case *time.Time:
-					*v = val.(time.Time)
-				case *[]string:
-					*v = val.([]string)
-				default:
-					t.Errorf("Unsupported type %T", v)
-				}
+				parseScanValue(val, dest[i], t)
 			}
 		},
 	)
-}
-
-// MockCollectRows mocks CollectRows function
-func MockCollectRows[T any](slice []T, err error) CollectRows[T] {
-	return func(rows pgx.Rows) ([]T, error) {
-		return slice, err
-	}
-}
-
-// MockFieldDescriptions mocks field descriptions of a MockPgxCollectableRow
-func MockFieldDescriptions(fields []string) []pgconn.FieldDescription {
-	descriptions := make([]pgconn.FieldDescription, len(fields))
-	for i, name := range fields {
-		descriptions[i] = pgconn.FieldDescription{
-			Name:                 name,
-			TableOID:             0,
-			TableAttributeNumber: 0,
-			DataTypeOID:          0,
-			DataTypeSize:         0,
-			TypeModifier:         0,
-			Format:               0,
-		}
-	}
-	return descriptions
 }
 
 // MockPgxCollectableRowMethods mocks all the methods of a MockPgxCollectableRow
@@ -258,57 +221,70 @@ func MockPgxCollectableRowMethods(m *MockPgxCollectableRow, values []any, t *tes
 				continue // Let the zero value remain
 			}
 
-			switch d := dest[i].(type) {
-			case *int:
-				*d = val.(int)
-			case **int:
-				*d = val.(*int)
-			case *string:
-				if s, ok := val.(*string); ok {
-					*d = *s
-				} else {
-					*d = val.(string)
-				}
-			case **string:
-				*d = val.(*string)
-			case *time.Time:
-				*d = val.(time.Time)
-			case *bool:
-				*d = val.(bool)
-			case *[]string:
-				*d = val.([]string)
-			case *pgtype.Text:
-				switch v := val.(type) {
-				case *string:
-					if v != nil {
-						d.String = *v
-						d.Valid = true
-					} else {
-						d.Valid = false
-					}
-				case string:
-					d.String = v
-					d.Valid = true
-				default:
-					d.Valid = false
-				}
-			case *pgtype.Timestamp:
-				if v, ok := val.(time.Time); ok {
-					d.Time = v
-					d.Valid = true
-				} else {
-					d.Valid = false
-				}
-			case *pgtype.Bool:
-				if v, ok := val.(bool); ok {
-					d.Bool = v
-					d.Valid = true
-				} else {
-					d.Valid = false
-				}
-			default:
-				t.Errorf("Unsupported type %T", d)
-			}
+			parseScanValue(val, dest[i], t)
 		}
 	})
+}
+
+// parseScanValue assigns a value from `val` to the provided `dest` based on its type, validating supported types.
+// It uses `t` for error reporting in tests when the type is unsupported or mismatched.
+func parseScanValue(val any, dest interface{}, t *testing.T) {
+	switch d := dest.(type) {
+	case *int:
+		*d = val.(int)
+	case **int:
+		*d = val.(*int)
+	case *string:
+		if s, ok := val.(*string); ok {
+			*d = *s
+		} else {
+			*d = val.(string)
+		}
+	case **string:
+		*d = val.(*string)
+	case *time.Time:
+		*d = val.(time.Time)
+	case *bool:
+		*d = val.(bool)
+	case *[]string:
+		*d = val.([]string)
+	case *pgtype.Text:
+		switch v := val.(type) {
+		case *string:
+			if v != nil {
+				d.String = *v
+				d.Valid = true
+			} else {
+				d.Valid = false
+			}
+		case string:
+			d.String = v
+			d.Valid = true
+		default:
+			d.Valid = false
+		}
+	case *pgtype.Timestamp:
+		if v, ok := val.(time.Time); ok {
+			d.Time = v
+			d.Valid = true
+		} else {
+			d.Valid = false
+		}
+	case *pgtype.Bool:
+		if v, ok := val.(bool); ok {
+			d.Bool = v
+			d.Valid = true
+		} else {
+			d.Valid = false
+		}
+	default:
+		t.Errorf("Unsupported type %T", d)
+	}
+}
+
+// MockCollectRows mocks CollectRows function
+func MockCollectRows[T any](slice []T, err error) CollectRows[T] {
+	return func(rows pgx.Rows) ([]T, error) {
+		return slice, err
+	}
 }

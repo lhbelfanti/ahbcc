@@ -51,7 +51,7 @@ func TestInsertHandlerV1_failsWhenTweetIDIsNotPresentInBody(t *testing.T) {
 	mockInsert := tweets.MockInsert(nil)
 	mockResponseWriter := httptest.NewRecorder()
 	mockTweets := tweets.MockTweetsDTOs()
-	mockTweets[0].ID = ""
+	mockTweets[0].StatusID = ""
 	mockBody, _ := json.Marshal(mockTweets)
 	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/v1", bytes.NewReader(mockBody))
 

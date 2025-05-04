@@ -27,7 +27,8 @@ func InsertSingleHandlerV1(insertCategorizedTweet InsertCategorizedTweet) http.H
 			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
 			return
 		}
-		ctx = log.With(ctx, log.Param("tweet_id", tweetIDParam))
+
+		ctx = log.With(ctx, log.Param("tweet_id", tweetID))
 
 		var body InsertSingleBodyDTO
 		err = json.NewDecoder(r.Body).Decode(&body)

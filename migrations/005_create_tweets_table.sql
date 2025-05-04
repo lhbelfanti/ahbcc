@@ -1,7 +1,7 @@
 -- Create the tweets table
 CREATE TABLE IF NOT EXISTS tweets (
-    uuid                SERIAL PRIMARY KEY,
-    id                  TEXT NOT NULL,
+    id                  SERIAL PRIMARY KEY,
+    status_id           TEXT NOT NULL,
     author              TEXT NOT NULL,
     avatar              TEXT,
     posted_at           TIMESTAMP WITH TIME ZONE,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS tweets (
     quote_id            INTEGER NULL,
     search_criteria_id  INTEGER NOT NULL,
 
-    CONSTRAINT uq_id_posted_at_search_criteria UNIQUE (id, posted_at, search_criteria_id),
+    CONSTRAINT uq_id_posted_at_search_criteria UNIQUE (status_id, posted_at, search_criteria_id),
     CONSTRAINT fk_quote_id FOREIGN KEY(quote_id) REFERENCES tweets_quotes(id),
     CONSTRAINT fk_search_criteria_id FOREIGN KEY(search_criteria_id) REFERENCES search_criteria(id)
 );
@@ -23,8 +23,8 @@ CREATE INDEX IF NOT EXISTS idx_tweets_criteria_posted ON tweets(search_criteria_
 
 -- Table comments
 COMMENT ON TABLE tweets                         IS 'Contains the tweets scrapped by GoXCrap';
-COMMENT ON COLUMN tweets.uuid                   IS 'Auto-incrementing UUID of the tweet, agnostic to business logic';
-COMMENT ON COLUMN tweets.id                     IS 'ID of the tweet. It is part of the primary key';
+COMMENT ON COLUMN tweets.id                     IS 'Auto-incrementing id of the tweet, agnostic to business logic';
+COMMENT ON COLUMN tweets.status_id              IS 'The number after the /status/ of the tweet url';
 COMMENT ON COLUMN tweets.author                 IS 'The user that wrote the tweet';
 COMMENT ON COLUMN tweets.avatar                 IS 'The user profile image';
 COMMENT ON COLUMN tweets.posted_at              IS 'Timestamp indicating when the tweet was posted';
