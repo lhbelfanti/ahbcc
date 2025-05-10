@@ -9,6 +9,13 @@ func MockSelectAllByUserID(dtos []AnalyzedTweetsDTO, err error) SelectAllByUserI
 	}
 }
 
+// MockSelectByUserIDTweetIDAndSearchCriteriaID mocks a SelectByUserIDTweetIDAndSearchCriteriaID function
+func MockSelectByUserIDTweetIDAndSearchCriteriaID(dao DAO, err error) SelectByUserIDTweetIDAndSearchCriteriaID {
+	return func(ctx context.Context, userID, tweetID, searchCriteriaID int) (DAO, error) {
+		return dao, err
+	}
+}
+
 // MockCategorizedTweetsDAO mocks an AnalyzedTweetsDTO
 func MockCategorizedTweetsDAO(searchCriteriaID, year, month, analyzed int) AnalyzedTweetsDTO {
 	return AnalyzedTweetsDTO{
@@ -58,5 +65,31 @@ func MockDTO() DTO {
 func MockInsertSingleBodyDTO(verdict string) InsertSingleBodyDTO {
 	return InsertSingleBodyDTO{
 		Categorization: verdict,
+	}
+}
+
+// MockCategorizedTweetDAO mocks a DAO
+func MockCategorizedTweetDAO() DAO {
+	return DAO{
+		ID:               1,
+		SearchCriteriaID: 2,
+		TweetID:          123,
+		TweetYear:        2024,
+		TweetMonth:       5,
+		UserID:           456,
+		Categorization:   VerdictPositive,
+	}
+}
+
+// MockScanCategorizedTweetsDAOValues mocks the properties of DAO to be used in the Scan function
+func MockScanCategorizedTweetsDAOValues(dao DAO) []any {
+	return []any{
+		dao.ID,
+		dao.SearchCriteriaID,
+		dao.TweetID,
+		dao.TweetYear,
+		dao.TweetMonth,
+		dao.UserID,
+		dao.Categorization,
 	}
 }
