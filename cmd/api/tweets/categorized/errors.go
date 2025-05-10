@@ -12,11 +12,16 @@ var (
 	FailedToRetrieveTweetByID                                      = errors.New("failed to retrieve tweet by id")
 	FailedToInsertSingleCategorizedTweet                           = errors.New("failed to insert single categorized tweet")
 	FailedToExecuteInsertCategorizedTweet                          = errors.New("failed to execute insert categorized tweet")
+	NoCategorizedTweetFound                                        = errors.New("no categorized tweet found")
+	FailedExecuteQueryToRetrieveCategorizedTweetData               = errors.New("failed to execute query to retrieve categorized tweet data")
+	FailedToCheckIfTheTweetWasAlreadyCategorized                   = errors.New("failed to check if the tweet was already categorized")
+	TweetAlreadyCategorized                                        = errors.New("tweet already categorized")
 )
 
 const (
-	AuthorizationTokenRequired     string = "Authorization token is required"
-	InvalidURLParameter            string = "Invalid url parameter"
-	InvalidRequestBody             string = "Invalid request body"
-	FailedToInsertCategorizedTweet string = "Failed to insert categorized tweet"
+	AuthorizationTokenRequired                  string = "Authorization token is required"
+	InvalidURLParameter                         string = "Invalid url parameter"
+	InvalidRequestBody                          string = "Invalid request body"
+	FailedToInsertCategorizedTweet              string = "Failed to insert categorized tweet"
+	FailedToCategorizeAnAlreadyCategorizedTweet string = "Failed to categorize an already categorized tweet"
 )

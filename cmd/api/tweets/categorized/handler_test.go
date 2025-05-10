@@ -115,6 +115,25 @@ func TestInsertSingleHandlerV1_failsWhenCategorizationIsInvalid(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
+func TestInsertSingleHandlerV1_failsWhenInsertThrowsTweetAlreadyCategorizedError(t *testing.T) {
+	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, categorized.TweetAlreadyCategorized)
+	mockResponseWriter := httptest.NewRecorder()
+	mockBody := categorized.MockInsertSingleBodyDTO(categorized.VerdictPositive)
+	bodyBytes, _ := json.Marshal(mockBody)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/tweets/123/categorize/v1", bytes.NewReader(bodyBytes))
+	mockRequest.Header.Set("X-Session-Token", "token")
+	mockRequest.SetPathValue("tweet_id", "123")
+
+	insertSingleHandlerV1 := categorized.InsertSingleHandlerV1(mockInsertCategorizedTweet)
+
+	insertSingleHandlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusConflict
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
 func TestInsertSingleHandlerV1_failsWhenInsertThrowsError(t *testing.T) {
 	mockInsertCategorizedTweet := categorized.MockInsertCategorizedTweet(-1, errors.New("failed to insert categorized tweet"))
 	mockResponseWriter := httptest.NewRecorder()

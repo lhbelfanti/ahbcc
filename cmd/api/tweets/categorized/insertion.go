@@ -2,7 +2,8 @@ package categorized
 
 import (
 	"context"
-	
+	"errors"
+
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/user/session"
 	"ahbcc/internal/log"
@@ -12,7 +13,7 @@ import (
 type InsertCategorizedTweet func(ctx context.Context, token string, tweetID int, body InsertSingleBodyDTO) (int, error)
 
 // MakeInsertCategorizedTweet creates a new InsertCategorizedTweet service
-func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken, selectTweetByID tweets.SelectByID, insertSingle InsertSingle) InsertCategorizedTweet {
+func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken, selectTweetByID tweets.SelectByID, selectByUserIDTweetIDAndSearchCriteriaID SelectByUserIDTweetIDAndSearchCriteriaID, insertSingle InsertSingle) InsertCategorizedTweet {
 	return func(ctx context.Context, token string, tweetID int, body InsertSingleBodyDTO) (int, error) {
 		userID, err := selectUserIDByToken(ctx, token)
 		if err != nil {
@@ -26,7 +27,18 @@ func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken,
 			return -1, FailedToRetrieveTweetByID
 		}
 
-		categorizedTweet := DTO{
+		_, err = selectByUserIDTweetIDAndSearchCriteriaID(ctx, userID, tweetID, tweetDAO.SearchCriteriaID)
+		if err == nil {
+			log.Error(ctx, TweetAlreadyCategorized.Error())
+			return -1, TweetAlreadyCategorized
+		}
+
+		if err != nil && !errors.Is(err, NoCategorizedTweetFound) {
+			log.Error(ctx, err.Error())
+			return -1, FailedToCheckIfTheTweetWasAlreadyCategorized
+		}
+
+		newCategorizedTweet := DTO{
 			SearchCriteriaID: tweetDAO.SearchCriteriaID,
 			TweetID:          tweetDAO.ID,
 			TweetYear:        tweetDAO.PostedAt.Year(),
@@ -35,7 +47,7 @@ func MakeInsertCategorizedTweet(selectUserIDByToken session.SelectUserIDByToken,
 			Categorization:   body.Categorization,
 		}
 
-		categorizedTweetID, err := insertSingle(ctx, categorizedTweet)
+		categorizedTweetID, err := insertSingle(ctx, newCategorizedTweet)
 		if err != nil {
 			log.Error(ctx, err.Error())
 			return -1, FailedToInsertSingleCategorizedTweet

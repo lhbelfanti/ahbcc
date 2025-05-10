@@ -84,8 +84,9 @@ func main() {
 	// POST /tweets/categorized/v1 dependencies
 	selectUserIDByToken := session.MakeSelectUserIDByToken(db)
 	selectTweetByID := tweets.MakeSelectByID(db)
+	selectByUserIDTweetIDAndSearchCriteriaID := categorized.MakeSelectByUserIDTweetIDAndSearchCriteriaID(db)
 	insertSingle := categorized.MakeInsertSingle(db)
-	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(selectUserIDByToken, selectTweetByID, insertSingle)
+	insertCategorizedTweet := categorized.MakeInsertCategorizedTweet(selectUserIDByToken, selectTweetByID, selectByUserIDTweetIDAndSearchCriteriaID, insertSingle)
 
 	// POST /criteria/v1
 	collectSummaryDAORows := database.MakeCollectRows[summary.DAO](nil)

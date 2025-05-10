@@ -2,6 +2,7 @@ package categorized
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -47,6 +48,11 @@ func InsertSingleHandlerV1(insertCategorizedTweet InsertCategorizedTweet) http.H
 
 		categorizedTweetID, err := insertCategorizedTweet(ctx, token, tweetID, body)
 		if err != nil {
+			if errors.Is(err, TweetAlreadyCategorized) {
+				response.Send(ctx, w, http.StatusConflict, FailedToCategorizeAnAlreadyCategorizedTweet, nil, TweetAlreadyCategorized)
+				return
+			}
+
 			response.Send(ctx, w, http.StatusInternalServerError, FailedToInsertCategorizedTweet, nil, err)
 			return
 		}
