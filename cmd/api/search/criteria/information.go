@@ -10,9 +10,15 @@ import (
 	"ahbcc/internal/log"
 )
 
-// Information returns all the search criteria executions information for a given user ID. It includes
-// the number of tweets retrieved and the number of tweets analyzed by the user, ordered by month and year.
-type Information func(ctx context.Context, token string) (InformationDTOs, error)
+type (
+	// Information returns all the search criteria executions information for a given user ID. It includes
+	// the number of tweets retrieved and the number of tweets analyzed by the user, ordered by month and year.
+	Information func(ctx context.Context, token string) (InformationDTOs, error)
+
+	// SummarizedInformation returns a search criteria execution information filtering by a given month and year. It includes
+	// the number of tweets retrieved and the number of tweets analyzed by the user, the criteria name and the criteria ID
+	SummarizedInformation func(ctx context.Context, token string, criteriaID int, year int, month int) (SummarizedInformationDTO, error)
+)
 
 // MakeInformation creates a new Information
 func MakeInformation(selectUserIDByToken session.SelectUserIDByToken, selectAllCriteriaExecutionsSummaries summary.SelectAll, selectAllSearchCriteria SelectAll, selectAllCategorizedTweets categorized.SelectAllByUserID) Information {
@@ -105,5 +111,66 @@ func MakeInformation(selectUserIDByToken session.SelectUserIDByToken, selectAllC
 		sort.Sort(information)
 
 		return information, nil
+	}
+}
+
+// MakeSummarizedInformation creates a new SummarizedInformation
+func MakeSummarizedInformation(selectUserIDByToken session.SelectUserIDByToken, selectCriteriaByID SelectByID, selectAllSummarized summary.SelectAll, selectAllCategorized categorized.SelectAllByUserID) SummarizedInformation {
+	return func(ctx context.Context, token string, criteriaID int, year int, month int) (SummarizedInformationDTO, error) {
+		userID, err := selectUserIDByToken(ctx, token)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return SummarizedInformationDTO{}, FailedToRetrieveUserID
+		}
+		ctx = log.With(ctx, log.Param("user_id", userID))
+
+		criteriaInfo, err := selectCriteriaByID(ctx, criteriaID)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return SummarizedInformationDTO{}, FailedToRetrieveSearchCriteria
+		}
+
+		summarizedTweets, err := selectAllSummarized(ctx)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return SummarizedInformationDTO{}, FailedToRetrieveSearchCriteriaExecutionsSummaries
+		}
+
+		categorizedTweets, err := selectAllCategorized(ctx, userID)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return SummarizedInformationDTO{}, FailedToRetrieveCategorizedTweetsByUserID
+		}
+
+		var totalTweets int
+		for _, current := range summarizedTweets {
+			if current.SearchCriteriaID != criteriaID {
+				continue
+			}
+
+			if (year == 0 || current.Year == year) && (month == 0 || current.Month == month) {
+				totalTweets += current.Total
+			}
+		}
+
+		var analyzedTweets int
+		for _, current := range categorizedTweets {
+			if current.SearchCriteriaID != criteriaID {
+				continue
+			}
+
+			if (year == 0 || current.Year == year) && (month == 0 || current.Month == month) {
+				analyzedTweets += current.Analyzed
+			}
+		}
+
+		return SummarizedInformationDTO{
+			Name:           criteriaInfo.Name,
+			ID:             criteriaID,
+			Year:           year,
+			Month:          month,
+			AnalyzedTweets: analyzedTweets,
+			TotalTweets:    totalTweets,
+		}, nil
 	}
 }

@@ -81,3 +81,54 @@ func InformationHandlerV1(information Information) http.HandlerFunc {
 		response.Send(ctx, w, http.StatusOK, "Criteria successfully obtained", criteriaInformation, nil)
 	}
 }
+
+// SummarizedInformationHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/v1
+func SummarizedInformationHandlerV1(summarizedInformation SummarizedInformation) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var year, month int
+
+		ctx := r.Context()
+
+		token := r.Header.Get("X-Session-Token")
+		if token == "" {
+			response.Send(ctx, w, http.StatusUnauthorized, AuthorizationTokenRequired, nil, AuthorizationTokenIsRequired)
+			return
+		}
+
+		criteriaIDParam := r.PathValue("criteria_id")
+		criteriaID, err := strconv.Atoi(criteriaIDParam)
+		if err != nil {
+			response.Send(ctx, w, http.StatusBadRequest, InvalidURLParameter, nil, err)
+			return
+		}
+		ctx = log.With(ctx, log.Param("criteria_id", criteriaIDParam))
+
+		yearQueryParamStr := r.URL.Query().Get("year")
+		if yearQueryParamStr != "" {
+			year, err = strconv.Atoi(yearQueryParamStr)
+			if err != nil {
+				response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
+				return
+			}
+			ctx = log.With(ctx, log.Param("year", yearQueryParamStr))
+		}
+
+		monthQueryParamStr := r.URL.Query().Get("month")
+		if monthQueryParamStr != "" {
+			month, err = strconv.Atoi(monthQueryParamStr)
+			if err != nil {
+				response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
+				return
+			}
+			ctx = log.With(ctx, log.Param("month", monthQueryParamStr))
+		}
+
+		criteriaInformation, err := summarizedInformation(ctx, token, criteriaID, year, month)
+		if err != nil {
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToExecuteCriteriaSummarizedInformation, nil, err)
+			return
+		}
+
+		response.Send(ctx, w, http.StatusOK, "Criteria successfully obtained", criteriaInformation, nil)
+	}
+}
