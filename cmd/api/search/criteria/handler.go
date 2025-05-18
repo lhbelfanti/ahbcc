@@ -82,7 +82,7 @@ func InformationHandlerV1(information Information) http.HandlerFunc {
 	}
 }
 
-// SummarizedInformationHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/v1
+// SummarizedInformationHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/summarize/v1
 func SummarizedInformationHandlerV1(summarizedInformation SummarizedInformation) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var year, month int

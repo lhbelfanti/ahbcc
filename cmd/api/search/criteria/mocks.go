@@ -47,6 +47,13 @@ func MockInformation(informationDTOs InformationDTOs, err error) Information {
 	}
 }
 
+// MockSummarizedInformation mocks SummarizedInformation function
+func MockSummarizedInformation(summarizedInformationDTO SummarizedInformationDTO, err error) SummarizedInformation {
+	return func(ctx context.Context, token string, criteriaID int, year int, month int) (SummarizedInformationDTO, error) {
+		return summarizedInformationDTO, err
+	}
+}
+
 // MockCriteriaDAO mocks a criteria.DAO
 func MockCriteriaDAO() DAO {
 	return DAO{

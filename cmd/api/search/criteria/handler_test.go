@@ -185,3 +185,128 @@ func TestInformationHandlerV1_failsWhenInformationThrowsError(t *testing.T) {
 
 	assert.Equal(t, want, got)
 }
+
+func TestSummarizedInformationHandlerV1_success(t *testing.T) {
+	mockSummarizedInformationDTOs := criteria.MockSummarizedInformationDTO(2024, 9, 15, 350)
+	mockSummarizedInformation := criteria.MockSummarizedInformation(mockSummarizedInformationDTOs, nil)
+	mockBody, _ := json.Marshal(mockSummarizedInformation)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/summarize/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("criteria_id", "1")
+	mockRequest.Header.Set("X-Session-Token", "token")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	handlerV1 := criteria.SummarizedInformationHandlerV1(mockSummarizedInformation)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusOK
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestSummarizedInformationHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
+	mockSummarizedInformationDTOs := criteria.MockSummarizedInformationDTO(2024, 9, 15, 350)
+	mockSummarizedInformation := criteria.MockSummarizedInformation(mockSummarizedInformationDTOs, nil)
+	mockBody, _ := json.Marshal(mockSummarizedInformation)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/summarize/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("criteria_id", "1")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	handlerV1 := criteria.SummarizedInformationHandlerV1(mockSummarizedInformation)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusUnauthorized
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestSummarizedInformationHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
+	mockSummarizedInformationDTOs := criteria.MockSummarizedInformationDTO(2024, 9, 15, 350)
+	mockSummarizedInformation := criteria.MockSummarizedInformation(mockSummarizedInformationDTOs, nil)
+	mockBody, _ := json.Marshal(mockSummarizedInformation)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/summarize/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("criteria_id", "wrong")
+	mockRequest.Header.Set("X-Session-Token", "token")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	handlerV1 := criteria.SummarizedInformationHandlerV1(mockSummarizedInformation)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusBadRequest
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
+
+func TestSummarizedInformationHandlerV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T) {
+	tests := []struct {
+		params map[string]string
+	}{
+		{params: map[string]string{"year": "wrong", "month": "1"}},
+		{params: map[string]string{"year": "2025", "month": "wrong"}},
+	}
+
+	mockSummarizedInformationDTOs := criteria.MockSummarizedInformationDTO(2024, 9, 15, 350)
+	mockSummarizedInformation := criteria.MockSummarizedInformation(mockSummarizedInformationDTOs, nil)
+	mockBody, _ := json.Marshal(mockSummarizedInformation)
+	mockResponseWriter := httptest.NewRecorder()
+
+	for _, tt := range tests {
+		mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/summarize/v1", bytes.NewReader(mockBody))
+		mockRequest.SetPathValue("criteria_id", "1")
+		mockRequest.Header.Set("X-Session-Token", "token")
+		mockURLQuery := mockRequest.URL.Query()
+		for key, value := range tt.params {
+			mockURLQuery.Add(key, value)
+		}
+		mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+		handlerV1 := criteria.SummarizedInformationHandlerV1(mockSummarizedInformation)
+
+		handlerV1(mockResponseWriter, mockRequest)
+
+		want := http.StatusBadRequest
+		got := mockResponseWriter.Result().StatusCode
+
+		assert.Equal(t, want, got)
+	}
+}
+
+func TestSummarizedInformationHandlerV1_failsWhenSummarizedInformationThrowsError(t *testing.T) {
+	mockSummarizedInformationDTOs := criteria.MockSummarizedInformationDTO(2024, 9, 15, 350)
+	mockSummarizedInformation := criteria.MockSummarizedInformation(mockSummarizedInformationDTOs, errors.New("failed to retrieve summarized information"))
+	mockBody, _ := json.Marshal(mockSummarizedInformation)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/criteria/{criteria_id}/summarize/v1", bytes.NewReader(mockBody))
+	mockRequest.SetPathValue("criteria_id", "1")
+	mockRequest.Header.Set("X-Session-Token", "token")
+	mockURLQuery := mockRequest.URL.Query()
+	mockURLQuery.Add("year", "2025")
+	mockURLQuery.Add("month", "1")
+	mockRequest.URL.RawQuery = mockURLQuery.Encode()
+
+	handlerV1 := criteria.SummarizedInformationHandlerV1(mockSummarizedInformation)
+
+	handlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusInternalServerError
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
