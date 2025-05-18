@@ -146,3 +146,15 @@ func MockInformationDTOs() InformationDTOs {
 		},
 	}
 }
+
+// MockSummarizedInformationDTO mocks a criteria.SummarizedInformationDTO
+func MockSummarizedInformationDTO(year, month, analyzed, total int) SummarizedInformationDTO {
+	return SummarizedInformationDTO{
+		ID:             1,
+		Name:           "Example",
+		Year:           year,
+		Month:          month,
+		AnalyzedTweets: analyzed,
+		TotalTweets:    total,
+	}
+}
