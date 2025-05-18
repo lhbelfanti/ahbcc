@@ -165,8 +165,8 @@ func MakeSummarizedInformation(selectUserIDByToken session.SelectUserIDByToken, 
 		}
 
 		return SummarizedInformationDTO{
-			Name:           criteriaInfo.Name,
 			ID:             criteriaID,
+			Name:           criteriaInfo.Name,
 			Year:           year,
 			Month:          month,
 			AnalyzedTweets: analyzedTweets,

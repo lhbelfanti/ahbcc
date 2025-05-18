@@ -33,8 +33,8 @@ type (
 	// SummarizedInformationDTO represents the total and analyzed tweets for a given criteria, summarized for a specific
 	// year and month
 	SummarizedInformationDTO struct {
-		Name           string `json:"name"`
 		ID             int    `json:"id"`
+		Name           string `json:"name"`
 		Year           int    `json:"year"`
 		Month          int    `json:"month"`
 		AnalyzedTweets int    `json:"analyzed_tweets"`
