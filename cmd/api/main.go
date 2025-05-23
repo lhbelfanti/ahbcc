@@ -148,7 +148,7 @@ func main() {
 	router.HandleFunc("GET /criteria/v1", criteria.InformationHandlerV1(information))
 	router.HandleFunc("GET /criteria/{criteria_id}/summarize/v1", criteria.SummarizedInformationHandlerV1(summarizedInformation))
 	router.HandleFunc("POST /criteria/init/v1", criteria.InitHandlerV1(initCriteria))
-	router.HandleFunc("GET /criteria/{criteria_id}/tweets/v1", tweets.GetCriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth))
+	router.HandleFunc("GET /criteria/{criteria_id}/tweets/v1", tweets.CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth))
 	router.HandleFunc("POST /criteria/{criteria_id}/enqueue/v1", criteria.EnqueueHandlerV1(enqueueCriteria))
 	router.HandleFunc("POST /criteria-executions/summarize/v1", executions.SummarizeHandlerV1(summarizeCriteriaExecutions))
 	router.HandleFunc("GET /criteria-executions/{execution_id}/v1", executions.GetExecutionByIDHandlerV1(selectExecutionByID))

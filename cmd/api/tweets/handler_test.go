@@ -100,7 +100,7 @@ func TestInsertHandlerV1_failsWhenInsertTweetsThrowsError(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestGetCriteriaTweetsHandlerV1_success(t *testing.T) {
+func TestCriteriaTweetsHandlerV1_success(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
@@ -113,9 +113,9 @@ func TestGetCriteriaTweetsHandlerV1_success(t *testing.T) {
 	mockURLQuery.Add("limit", "2")
 	mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	criteriaTweetsV1 := tweets.CriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
-	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+	criteriaTweetsV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusOK
 	got := mockResponseWriter.Result().StatusCode
@@ -123,7 +123,7 @@ func TestGetCriteriaTweetsHandlerV1_success(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestGetCriteriaTweetsHandlerV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *testing.T) {
+func TestCriteriaTweetsHandlerV1_successWithoutQueryParamsOrWithWrongLimitQueryParam(t *testing.T) {
 	tests := []struct {
 		params map[string]string
 	}{
@@ -145,9 +145,9 @@ func TestGetCriteriaTweetsHandlerV1_successWithoutQueryParamsOrWithWrongLimitQue
 		}
 		mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
+		criteriaTweetsV1 := tweets.CriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
-		getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+		criteriaTweetsV1(mockResponseWriter, mockRequest)
 
 		want := http.StatusOK
 		got := mockResponseWriter.Result().StatusCode
@@ -156,7 +156,7 @@ func TestGetCriteriaTweetsHandlerV1_successWithoutQueryParamsOrWithWrongLimitQue
 	}
 }
 
-func TestGetCriteriaTweetsHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
+func TestCriteriaTweetsHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
@@ -168,9 +168,9 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *te
 	mockURLQuery.Add("limit", "2")
 	mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	criteriaTweetsV1 := tweets.CriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
-	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+	criteriaTweetsV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusUnauthorized
 	got := mockResponseWriter.Result().StatusCode
@@ -178,7 +178,7 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenSessionTokenHeaderWasNotFound(t *te
 	assert.Equal(t, want, got)
 }
 
-func TestGetCriteriaTweetsHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
+func TestCriteriaTweetsHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, nil)
 	mockResponseWriter := httptest.NewRecorder()
@@ -186,9 +186,9 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testin
 	mockRequest.SetPathValue("criteria_id", "wrong")
 	mockRequest.Header.Set("X-Session-Token", "token")
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	criteriaTweetsV1 := tweets.CriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
-	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+	criteriaTweetsV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusBadRequest
 	got := mockResponseWriter.Result().StatusCode
@@ -196,7 +196,7 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenTheURLParamCannotBeParsed(t *testin
 	assert.Equal(t, want, got)
 }
 
-func TestGetCriteriaTweetsHandlerV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T) {
+func TestCriteriaTweetsHandlerV1_failsWhenYearOrMonthQueryParamsCannotBeParsed(t *testing.T) {
 	tests := []struct {
 		params map[string]string
 	}{
@@ -218,9 +218,9 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenYearOrMonthQueryParamsCannotBeParse
 		}
 		mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-		getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
+		criteriaTweetsV1 := tweets.CriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
-		getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+		criteriaTweetsV1(mockResponseWriter, mockRequest)
 
 		want := http.StatusBadRequest
 		got := mockResponseWriter.Result().StatusCode
@@ -229,7 +229,7 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenYearOrMonthQueryParamsCannotBeParse
 	}
 }
 
-func TestGetCriteriaTweetsHandlerV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t *testing.T) {
+func TestCriteriaTweetsHandlerV1_failsWhenSelectBySearchCriteriaIDYearAndMonthThrowsError(t *testing.T) {
 	mockTweets := tweets.MockCustomTweetDTOs()
 	mockSelectBySearchCriteriaIDYearAndMonth := tweets.MockSelectBySearchCriteriaIDYearAndMonth(mockTweets, errors.New("failed to retrieve tweets"))
 	mockResponseWriter := httptest.NewRecorder()
@@ -242,9 +242,9 @@ func TestGetCriteriaTweetsHandlerV1_failsWhenSelectBySearchCriteriaIDYearAndMont
 	mockURLQuery.Add("limit", "2")
 	mockRequest.URL.RawQuery = mockURLQuery.Encode()
 
-	getCriteriaTweetsV1 := tweets.GetCriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
+	criteriaTweetsV1 := tweets.CriteriaTweetsHandlerV1(mockSelectBySearchCriteriaIDYearAndMonth)
 
-	getCriteriaTweetsV1(mockResponseWriter, mockRequest)
+	criteriaTweetsV1(mockResponseWriter, mockRequest)
 
 	want := http.StatusInternalServerError
 	got := mockResponseWriter.Result().StatusCode
