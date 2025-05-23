@@ -53,8 +53,8 @@ func validateBody(body []TweetDTO) error {
 	return nil
 }
 
-// GetCriteriaTweetsHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/tweets/v1
-func GetCriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearchCriteriaIDYearAndMonth) http.HandlerFunc {
+// CriteriaTweetsHandlerV1 HTTP Handler of the endpoint /criteria/{criteria_id}/tweets/v1
+func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearchCriteriaIDYearAndMonth) http.HandlerFunc {
 	const defaultLimit int = 10
 
 	return func(w http.ResponseWriter, r *http.Request) {
