@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"ahbcc/cmd/api/auth"
+	"ahbcc/cmd/api/middleware"
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
 	"ahbcc/cmd/api/search/criteria"
@@ -156,8 +157,11 @@ func main() {
 	router.HandleFunc("POST /criteria-executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	log.Info(ctx, "Router initialized!")
 
+	/* --- Middlewares --- */
+	handler := middleware.CORS(router)
+
 	/* --- Server --- */
 	port := fmt.Sprintf(":%s", os.Getenv("API_PORT"))
 	log.Info(ctx, fmt.Sprintf("AHBCC server is ready to receive request on port %s", port))
-	setup.Must(http.ListenAndServe(port, router))
+	setup.Must(http.ListenAndServe(port, handler))
 }

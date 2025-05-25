@@ -58,8 +58,6 @@ func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearch
 	const defaultLimit int = 10
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		var year, month, limit int
-
 		ctx := r.Context()
 
 		token := r.Header.Get("X-Session-Token")
@@ -76,6 +74,7 @@ func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearch
 		}
 		ctx = log.With(ctx, log.Param("criteria_id", criteriaIDParam))
 
+		var year, month, limit int
 		yearQueryParamStr := r.URL.Query().Get("year")
 		if yearQueryParamStr != "" {
 			year, err = strconv.Atoi(yearQueryParamStr)
@@ -91,10 +90,10 @@ func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearch
 						response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
 						return
 					}
-					ctx = log.With(ctx, log.Param("month", monthQueryParamStr))
+					ctx = log.With(ctx, log.Param("month", month))
 				}
 			}
-			ctx = log.With(ctx, log.Param("year", yearQueryParamStr))
+			ctx = log.With(ctx, log.Param("year", year))
 		}
 
 		limitQueryParamStr := r.URL.Query().Get("limit")
@@ -112,6 +111,6 @@ func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearch
 			return
 		}
 
-		response.Send(ctx, w, http.StatusOK, "Tweets successfully retrieved", uncategorizedTweets, nil)
+		response.Send(ctx, w, http.StatusOK, "Criteria tweets successfully retrieved", uncategorizedTweets, nil)
 	}
 }
