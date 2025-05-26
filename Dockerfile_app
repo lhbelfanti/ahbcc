@@ -1,6 +1,9 @@
 # Build Stage
 FROM golang:1.23.4-alpine AS builder
 
+# Maintainer
+LABEL maintainer="Lucas Belfanti"
+
 # Install necessary dependencies
 RUN apk update && apk add --no-cache  \
     curl  \
@@ -25,11 +28,8 @@ COPY migrations/ ./migrations
 # Build the application and output the binary as 'ahbcc'
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd/api
 
-# Final Stage
-FROM alpine:3.21.0 AS final
-
-# Maintainer
-LABEL maintainer="Lucas Belfanti"
+# Run Stage
+FROM alpine:3.21.0 AS runner
 
 # Install necessary dependencies
 RUN apk update && apk add --no-cache  \

@@ -11,10 +11,12 @@ vendor
 # Exclude build directory
 build
 
-# Exclude temporary files and directories
-tmp
+# Exclude temporary files and directories, and editor files
 *.log
 *.swp
+*.swo
+.vscode
+.idea
 
 # Exclude documentation files
 *.md
@@ -23,3 +25,4 @@ LICENSE
 # Exclude Dockerfile and docker-compose.yml
 Dockerfile
 docker-compose.yml
+.dockerignore
