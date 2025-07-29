@@ -1,4 +1,4 @@
--- Create the tweets table
+-- Create the users_sessions table
 CREATE TABLE IF NOT EXISTS users_sessions (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER,
