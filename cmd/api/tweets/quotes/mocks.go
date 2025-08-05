@@ -48,3 +48,32 @@ func MockCustomQuoteDTO() CustomQuoteDTO {
 		Images:      []string{"test1", "test2"},
 	}
 }
+
+// MockTweetQuoteDAO mocks a quotes.DAO
+func MockTweetQuoteDAO() DAO {
+	textContent := "test"
+	avatar := "https://testquoteavatar.com"
+
+	return DAO{
+		ID:          1,
+		Author:      "TestQuoteAuthor",
+		Avatar:      &avatar,
+		PostedAt:    "2022-11-18T15:04:05Z",
+		IsAReply:    false,
+		TextContent: &textContent,
+		Images:      []string{"test1", "test2"},
+	}
+}
+
+// MockScanTweetQuoteDAOValues mocks the properties of DAO to be used in the Scan function
+func MockScanTweetQuoteDAOValues(dao DAO) []any {
+	return []any{
+		dao.ID,
+		dao.Author,
+		dao.Avatar,
+		dao.PostedAt,
+		dao.IsAReply,
+		dao.TextContent,
+		dao.Images,
+	}
+}
