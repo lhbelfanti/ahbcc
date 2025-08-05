@@ -22,9 +22,9 @@ There are four main categories:
 - Illicit drug use
 
 ## Application
-This application serves as the orchestrator, utilizing a docker-compose.yml file to **connect the other two applications with the database managed by [AHBCC](https://github.com/lhbelfanti/ahbcc)**.
+This application serves as the orchestrator, using a docker-compose.yml file to **connect the other two applications with the database managed by [AHBCC](https://github.com/lhbelfanti/ahbcc)**.
 
-The primary objective is to gather information from X (formerly Twitter) using [GoXCrap](https://github.com/lhbelfanti/goxcrap). Subsequently, each tweet is manually evaluated to determine if it discusses an Adverse Human Behavior using [Binarizer](https://github.com/lhbelfanti/binarizer). Finally, [AHBCC](https://github.com/lhbelfanti/ahbcc) is in charge of creating a balanced corpus from the retrieved and categorized tweets.
+The primary goal is to gather information from X (formerly Twitter) using [GoXCrap](https://github.com/lhbelfanti/goxcrap). Subsequently, each tweet is manually evaluated to determine if it discusses an Adverse Human Behavior using [Binarizer](https://github.com/lhbelfanti/binarizer). Finally, [AHBCC](https://github.com/lhbelfanti/ahbcc) is in charge of creating a corpus from the retrieved and categorized tweets.
 
 ### Endpoints
 
@@ -135,7 +135,26 @@ erDiagram
         INTEGER tweets_month
         INTEGER total_tweets
     }
+    
+    corpus { 
+        INTEGER id PK 
+        TEXT tweet_author
+        TEXT tweet_avatar
+        TEXT tweet_text
+        TEXT[] tweet_images
+        BOOLEAN is_tweet_a_reply
+        TEXT quote_author
+        TEXT quote_avatar
+        TEXT quote_text
+        TEXT[] quote_images
+        BOOLEAN is_quote_a_reply
+    }
 ```
+
+> The corpus table is a denormalized table that combines tweet and quote information in a single row. 
+> This design optimizes for read performance when extracting data in CSV or JSON format, as it 
+> eliminates the need for JOIN operations between tweets and quotes tables.
+
 
 ## Setup
 
