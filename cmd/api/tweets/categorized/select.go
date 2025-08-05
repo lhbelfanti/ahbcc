@@ -3,7 +3,9 @@ package categorized
 import (
 	"context"
 	"errors"
-	
+	"fmt"
+	"strings"
+
 	"github.com/jackc/pgx/v5"
 
 	"ahbcc/internal/database"
@@ -16,6 +18,9 @@ type (
 
 	// SelectByUserIDTweetIDAndSearchCriteriaID returns a categorized tweet DAO by user ID, tweet ID and search criteria ID
 	SelectByUserIDTweetIDAndSearchCriteriaID func(ctx context.Context, userID, tweetID, searchCriteriaID int) (DAO, error)
+
+	// SelectByCategorizations returns all the categorized tweets seeking by any of the specified categorizations passed by parameter
+	SelectByCategorizations func(ctx context.Context, categorizations []string) ([]DAO, error)
 )
 
 // MakeSelectAllByUserID creates a new SelectAllByUserID
@@ -71,5 +76,37 @@ func MakeSelectByUserIDTweetIDAndSearchCriteriaID(db database.Connection) Select
 		}
 
 		return categorizedTweet, nil
+	}
+}
+
+// MakeSelectByCategorizations creates a new SelectByCategorizations
+func MakeSelectByCategorizations(db database.Connection, collectRows database.CollectRows[DAO]) SelectByCategorizations {
+	const query string = `SELECT id, search_criteria_id, tweet_id, tweet_year, tweet_month, user_id, categorization
+						  FROM categorized_tweets
+						  WHERE categorization IN (%s)`
+
+	return func(ctx context.Context, categorizations []string) ([]DAO, error) {
+		placeholders := make([]string, len(categorizations))
+		values := make([]any, len(categorizations))
+		for i, status := range categorizations {
+			placeholders[i] = fmt.Sprintf("$%d", i+1)
+			values[i] = status
+		}
+
+		queryToExecute := fmt.Sprintf(query, strings.Join(placeholders, ","))
+
+		rows, err := db.Query(ctx, queryToExecute, values...)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return nil, FailedToExecuteSelectByCategorizations
+		}
+
+		categorizedTweets, err := collectRows(rows)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return nil, FailedToExecuteCollectRowsInSelectByCategorizations
+		}
+
+		return categorizedTweets, nil
 	}
 }

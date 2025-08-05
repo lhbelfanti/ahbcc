@@ -16,6 +16,8 @@ var (
 	FailedExecuteQueryToRetrieveCategorizedTweetData               = errors.New("failed to execute query to retrieve categorized tweet data")
 	FailedToCheckIfTheTweetWasAlreadyCategorized                   = errors.New("failed to check if the tweet was already categorized")
 	TweetAlreadyCategorized                                        = errors.New("tweet already categorized")
+	FailedToExecuteSelectByCategorizations                         = errors.New("failed to execute select by categorizations")
+	FailedToExecuteCollectRowsInSelectByCategorizations            = errors.New("failed to execute collect rows in select by categorizations")
 )
 
 const (
