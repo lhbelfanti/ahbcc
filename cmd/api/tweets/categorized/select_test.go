@@ -107,3 +107,54 @@ func TestSelectByUserIDTweetIDAndSearchCriteriaID_failsWhenSelectOperationFails(
 		assert.Equal(t, want, got)
 	}
 }
+
+func TestSelectByCategorizations_success(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
+	mockCategorizedTweetsDAOSlice := []categorized.DAO{categorized.MockCategorizedTweetDAO()}
+	mockCollectRows := database.MockCollectRows[categorized.DAO](mockCategorizedTweetsDAOSlice, nil)
+
+	selectByCategorizations := categorized.MakeSelectByCategorizations(mockPostgresConnection, mockCollectRows)
+
+	want := mockCategorizedTweetsDAOSlice
+	got, err := selectByCategorizations(context.Background(), []string{categorized.VerdictPositive, categorized.VerdictNegative})
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectByCategorizations_failsWhenSelectOperationThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, errors.New("failed to select by categorizations"))
+	mockCategorizedTweetsDAOSlice := []categorized.DAO{categorized.MockCategorizedTweetDAO()}
+	mockCollectRows := database.MockCollectRows[categorized.DAO](mockCategorizedTweetsDAOSlice, nil)
+
+	selectByCategorizations := categorized.MakeSelectByCategorizations(mockPostgresConnection, mockCollectRows)
+
+	want := categorized.FailedToExecuteSelectByCategorizations
+	_, got := selectByCategorizations(context.Background(), []string{categorized.VerdictPositive, categorized.VerdictNegative})
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
+
+func TestSelectByCategorizations_failsWhenCollectRowsThrowsError(t *testing.T) {
+	mockPostgresConnection := new(database.MockPostgresConnection)
+	mockPgxRows := new(database.MockPgxRows)
+	mockPostgresConnection.On("Query", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRows, nil)
+	mockCollectRows := database.MockCollectRows[categorized.DAO](nil, errors.New("failed to collect rows"))
+
+	selectByCategorizations := categorized.MakeSelectByCategorizations(mockPostgresConnection, mockCollectRows)
+
+	want := categorized.FailedToExecuteCollectRowsInSelectByCategorizations
+	_, got := selectByCategorizations(context.Background(), []string{categorized.VerdictPositive, categorized.VerdictNegative})
+
+	assert.Equal(t, want, got)
+	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRows.AssertExpectations(t)
+}
