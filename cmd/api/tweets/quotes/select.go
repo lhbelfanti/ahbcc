@@ -13,7 +13,7 @@ import (
 // SelectByID retrieves a tweet DAO by its ID
 type SelectByID func(ctx context.Context, id int) (DAO, error)
 
-// MakeSelectByID creates a new SelectByID
+// MakeSelectByID creates a new SelectByID function
 func MakeSelectByID(db database.Connection) SelectByID {
 	const query string = `SELECT tq.id, tq.author, tq.avatar, tq.posted_at, tq.is_a_reply, tq.text_content, tq.images
 						  FROM tweets_quotes AS tq
