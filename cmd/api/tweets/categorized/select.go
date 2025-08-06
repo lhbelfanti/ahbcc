@@ -79,7 +79,7 @@ func MakeSelectByUserIDTweetIDAndSearchCriteriaID(db database.Connection) Select
 	}
 }
 
-// MakeSelectByCategorizations creates a new SelectByCategorizations
+// MakeSelectByCategorizations creates a new SelectByCategorizations function
 func MakeSelectByCategorizations(db database.Connection, collectRows database.CollectRows[DAO]) SelectByCategorizations {
 	const query string = `SELECT id, search_criteria_id, tweet_id, tweet_year, tweet_month, user_id, categorization
 						  FROM categorized_tweets

@@ -19,6 +19,13 @@ func MockDeleteOrphans(err error) DeleteOrphans {
 	}
 }
 
+// MockSelectByID mocks SelectByID function
+func MockSelectByID(quoteDAO DAO, err error) SelectByID {
+	return func(ctx context.Context, id int) (DAO, error) {
+		return quoteDAO, err
+	}
+}
+
 // MockQuoteDTO mocks a QuoteDTO
 func MockQuoteDTO() QuoteDTO {
 	textContent := "test"

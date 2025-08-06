@@ -1,13 +1,34 @@
 package corpus
 
+import "context"
+
+// MockInsert mocks Insert function
+func MockInsert(err error) Insert {
+	return func(ctx context.Context, entry DTO) error {
+		return err
+	}
+}
+
+// MockSelectAll mocks SelectAll function
+func MockSelectAll(entries []DAO, err error) SelectAll {
+	return func(ctx context.Context) ([]DAO, error) {
+		return entries, err
+	}
+}
+
+// MockDeleteAll mocks DeleteAll function
+func MockDeleteAll(err error) DeleteAll {
+	return func(ctx context.Context) error {
+		return err
+	}
+}
+
 // MockDTO mocks a corpus.DTO
 func MockDTO() DTO {
 	tweetAvatar := "test_avatar"
 	tweetText := "test_text"
-	quoteAuthor := "quote_author"
 	quoteAvatar := "quote_avatar"
 	quoteText := "quote_text"
-	isQuoteAReply := true
 
 	return DTO{
 		TweetAuthor:   "test_author",
@@ -15,11 +36,11 @@ func MockDTO() DTO {
 		TweetText:     &tweetText,
 		TweetImages:   []string{"image1.jpg", "image2.jpg"},
 		IsTweetAReply: false,
-		QuoteAuthor:   &quoteAuthor,
+		QuoteAuthor:   "quote_author",
 		QuoteAvatar:   &quoteAvatar,
 		QuoteText:     &quoteText,
 		QuoteImages:   []string{"quote_image1.jpg"},
-		IsQuoteAReply: &isQuoteAReply,
+		IsQuoteAReply: true,
 	}
 }
 
