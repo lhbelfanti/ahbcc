@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"ahbcc/cmd/api/auth"
+	"ahbcc/cmd/api/corpus"
 	"ahbcc/cmd/api/middleware"
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
@@ -94,8 +95,8 @@ func main() {
 	selectAllCriteriaExecutionsSummaries := summary.MakeSelectAll(db, collectSummaryDAORows)
 	collectCriteriaDAORows := database.MakeCollectRows[criteria.DAO](nil)
 	selectAllSearchCriteria := criteria.MakeSelectAll(db, collectCriteriaDAORows)
-	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.AnalyzedTweetsDTO](nil)
-	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectCategorizedTweetsDAORows)
+	collectAnalyzedTweetsDTO := database.MakeCollectRows[categorized.AnalyzedTweetsDTO](nil)
+	selectAllCategorizedTweets := categorized.MakeSelectAllByUserID(db, collectAnalyzedTweetsDTO)
 	information := criteria.MakeInformation(selectUserIDByToken, selectAllCriteriaExecutionsSummaries, selectAllSearchCriteria, selectAllCategorizedTweets)
 
 	// GET /criteria/{criteria_id}/v1
@@ -136,6 +137,18 @@ func main() {
 	// POST /criteria-executions/{execution_id}/day/v1 dependencies
 	insertCriteriaExecutionDay := executions.MakeInsertExecutionDay(db)
 
+	//selectTweetByID tweets.SelectByID,
+	//selectTweetQuoteByID quotes.SelectByID,
+	//deleteAllCorpusRows DeleteAll,
+	//insertCorpusRow Insert
+
+	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO](nil)
+	selectCategorizedTweetsByCategorizations := categorized.MakeSelectByCategorizations(db, collectCategorizedTweetsDAORows)
+	selectTweetQuoteByID := quotes.MakeSelectByID(db)
+	deleteAllCorpusRows := corpus.MockDeleteAll(nil)
+	insertCorpusRow := corpus.MockInsert(nil)
+	createCorpus := corpus.MakeCreate(selectCategorizedTweetsByCategorizations, selectTweetByID, selectTweetQuoteByID, deleteAllCorpusRows, insertCorpusRow)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -155,6 +168,7 @@ func main() {
 	router.HandleFunc("GET /criteria-executions/{execution_id}/v1", executions.GetExecutionByIDHandlerV1(selectExecutionByID))
 	router.HandleFunc("PUT /criteria-executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria-executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
+	router.HandleFunc("POST /corpus/v1", corpus.CreateCorpusHandlerV1(createCorpus))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Middlewares --- */

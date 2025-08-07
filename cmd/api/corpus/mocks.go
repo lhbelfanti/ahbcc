@@ -23,6 +23,13 @@ func MockDeleteAll(err error) DeleteAll {
 	}
 }
 
+// MockCreate mocks Create function
+func MockCreate(err error) Create {
+	return func(ctx context.Context) error {
+		return err
+	}
+}
+
 // MockDTO mocks a corpus.DTO
 func MockDTO() DTO {
 	tweetAvatar := "test_avatar"
