@@ -34,25 +34,25 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			}
 
 			row := DTO{
-				TweetAuthor:   tweetData.Author,
-				TweetAvatar:   tweetData.Avatar,
-				TweetText:     tweetData.TextContent,
-				TweetImages:   tweetData.Images,
-				IsTweetAReply: tweetData.IsAReply,
+				TweetAuthor:    tweetData.Author,
+				TweetAvatar:    tweetData.Avatar,
+				TweetText:      tweetData.TextContent,
+				TweetImages:    tweetData.Images,
+				IsTweetAReply:  tweetData.IsAReply,
+				Categorization: categorizedTweet.Categorization,
 			}
 
 			if tweetData.QuoteID != nil {
 				tweetQuoteData, err := selectTweetQuoteByID(ctx, *tweetData.QuoteID)
 				if err != nil {
 					log.Error(ctx, err.Error())
-					continue
+				} else {
+					row.QuoteAuthor = &tweetQuoteData.Author
+					row.QuoteAvatar = tweetQuoteData.Avatar
+					row.QuoteText = tweetQuoteData.TextContent
+					row.QuoteImages = tweetQuoteData.Images
+					row.IsQuoteAReply = &tweetQuoteData.IsAReply
 				}
-
-				row.QuoteAuthor = tweetQuoteData.Author
-				row.QuoteAvatar = tweetQuoteData.Avatar
-				row.QuoteText = tweetQuoteData.TextContent
-				row.QuoteImages = tweetQuoteData.Images
-				row.IsQuoteAReply = tweetQuoteData.IsAReply
 			}
 
 			rows = append(rows, row)
@@ -66,7 +66,7 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 
 		var inserted int
 		for _, row := range rows {
-			err = insertCorpusRow(ctx, row)
+			_, err := insertCorpusRow(ctx, row)
 			if err != nil {
 				log.Error(ctx, err.Error())
 				continue

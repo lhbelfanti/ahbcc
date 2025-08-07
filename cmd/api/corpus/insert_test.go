@@ -5,7 +5,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
@@ -14,28 +13,36 @@ import (
 )
 
 func TestInsert_success(t *testing.T) {
-	mockCorpusDTO := corpus.MockDTO()
 	mockPostgresConnection := new(database.MockPostgresConnection)
-	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
+	mockPgxRow := new(database.MockPgxRow)
+	database.MockScan(mockPgxRow, []any{1}, t)
+	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+	mockCorpusDTO := corpus.MockDTO()
 
 	insertCorpusEntry := corpus.MakeInsert(mockPostgresConnection)
 
-	got := insertCorpusEntry(context.Background(), mockCorpusDTO)
+	want := 1
+	got, err := insertCorpusEntry(context.Background(), mockCorpusDTO)
 
-	assert.Nil(t, got)
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRow.AssertExpectations(t)
 }
 
 func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
-	mockCorpusDTO := corpus.MockDTO()
 	mockPostgresConnection := new(database.MockPostgresConnection)
-	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("db error"))
+	mockPgxRow := new(database.MockPgxRow)
+	mockPgxRow.On("Scan", mock.Anything).Return(errors.New("failed to scan"))
+	mockPostgresConnection.On("QueryRow", mock.Anything, mock.Anything, mock.Anything).Return(mockPgxRow)
+	mockCorpusDTO := corpus.MockDTO()
 
 	insertCorpusEntry := corpus.MakeInsert(mockPostgresConnection)
 
 	want := corpus.FailedToInsertCorpusEntry
-	got := insertCorpusEntry(context.Background(), mockCorpusDTO)
+	_, got := insertCorpusEntry(context.Background(), mockCorpusDTO)
 
 	assert.Equal(t, want, got)
 	mockPostgresConnection.AssertExpectations(t)
+	mockPgxRow.AssertExpectations(t)
 }

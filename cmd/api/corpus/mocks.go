@@ -4,8 +4,8 @@ import "context"
 
 // MockInsert mocks Insert function
 func MockInsert(err error) Insert {
-	return func(ctx context.Context, entry DTO) error {
-		return err
+	return func(ctx context.Context, entry DTO) (int, error) {
+		return 1, err
 	}
 }
 
@@ -34,20 +34,23 @@ func MockCreate(err error) Create {
 func MockDTO() DTO {
 	tweetAvatar := "test_avatar"
 	tweetText := "test_text"
+	quoteAuthor := "quote_author"
 	quoteAvatar := "quote_avatar"
 	quoteText := "quote_text"
+	isQuoteAReply := true
 
 	return DTO{
-		TweetAuthor:   "test_author",
-		TweetAvatar:   &tweetAvatar,
-		TweetText:     &tweetText,
-		TweetImages:   []string{"image1.jpg", "image2.jpg"},
-		IsTweetAReply: false,
-		QuoteAuthor:   "quote_author",
-		QuoteAvatar:   &quoteAvatar,
-		QuoteText:     &quoteText,
-		QuoteImages:   []string{"quote_image1.jpg"},
-		IsQuoteAReply: true,
+		TweetAuthor:    "test_author",
+		TweetAvatar:    &tweetAvatar,
+		TweetText:      &tweetText,
+		TweetImages:    []string{"image1.jpg", "image2.jpg"},
+		IsTweetAReply:  false,
+		QuoteAuthor:    &quoteAuthor,
+		QuoteAvatar:    &quoteAvatar,
+		QuoteText:      &quoteText,
+		QuoteImages:    []string{"quote_image1.jpg"},
+		IsQuoteAReply:  &isQuoteAReply,
+		Categorization: "POSITIVE",
 	}
 }
 
@@ -61,16 +64,17 @@ func MockDAO() DAO {
 	isQuoteAReply := true
 
 	return DAO{
-		ID:            1,
-		TweetAuthor:   "test_author",
-		TweetAvatar:   &tweetAvatar,
-		TweetText:     &tweetText,
-		TweetImages:   []string{"image1.jpg"},
-		IsTweetAReply: false,
-		QuoteAuthor:   &quoteAuthor,
-		QuoteAvatar:   &quoteAvatar,
-		QuoteText:     &quoteText,
-		QuoteImages:   []string{"quote_image1.jpg"},
-		IsQuoteAReply: &isQuoteAReply,
+		ID:             1,
+		TweetAuthor:    "test_author",
+		TweetAvatar:    &tweetAvatar,
+		TweetText:      &tweetText,
+		TweetImages:    []string{"image1.jpg"},
+		IsTweetAReply:  false,
+		QuoteAuthor:    &quoteAuthor,
+		QuoteAvatar:    &quoteAvatar,
+		QuoteText:      &quoteText,
+		QuoteImages:    []string{"quote_image1.jpg"},
+		IsQuoteAReply:  &isQuoteAReply,
+		Categorization: "POSITIVE",
 	}
 }

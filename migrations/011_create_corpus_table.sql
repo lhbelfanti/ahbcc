@@ -1,3 +1,6 @@
+-- Create the enum type for categorization
+SELECT create_enum_type_if_not_exists('verdict', ARRAY['POSITIVE', 'INDETERMINATE', 'NEGATIVE']);
+
 -- Create the corpus table
 CREATE TABLE IF NOT EXISTS corpus (
     id                  SERIAL PRIMARY KEY,
@@ -10,7 +13,8 @@ CREATE TABLE IF NOT EXISTS corpus (
     quote_avatar        TEXT NULL,
     quote_text          TEXT NULL,
     quote_images        TEXT[] NULL,
-    is_quote_a_reply    BOOLEAN NULL
+    is_quote_a_reply    BOOLEAN NULL,
+    categorization      verdict NOT NULL
 );
 
 -- Table comments
@@ -26,4 +30,5 @@ COMMENT ON COLUMN corpus.quote_avatar       IS 'The quote''s user profile image,
 COMMENT ON COLUMN corpus.quote_text         IS 'The quote''s text content, if any';
 COMMENT ON COLUMN corpus.quote_images       IS 'Array of image URLs associated with the quote, if any';
 COMMENT ON COLUMN corpus.is_quote_a_reply   IS 'Boolean indicating if the quote is a reply to another tweet, if the quote exists';
+COMMENT ON COLUMN corpus.categorization     IS 'Indicates the categorization verdict. It can be POSITIVE, INDETERMINATE or NEGATIVE';
 

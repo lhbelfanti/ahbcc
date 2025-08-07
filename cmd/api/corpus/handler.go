@@ -17,6 +17,6 @@ func CreateCorpusHandlerV1(createCorpus Create) http.HandlerFunc {
 			return
 		}
 
-		response.Send(ctx, w, http.StatusOK, "Tweets successfully inserted", nil, nil)
+		response.Send(ctx, w, http.StatusOK, "Corpus successfully created", nil, nil)
 	}
 }
