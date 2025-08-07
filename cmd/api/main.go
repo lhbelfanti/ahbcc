@@ -137,16 +137,12 @@ func main() {
 	// POST /criteria-executions/{execution_id}/day/v1 dependencies
 	insertCriteriaExecutionDay := executions.MakeInsertExecutionDay(db)
 
-	//selectTweetByID tweets.SelectByID,
-	//selectTweetQuoteByID quotes.SelectByID,
-	//deleteAllCorpusRows DeleteAll,
-	//insertCorpusRow Insert
-
+	// POST /corpus/v1 dependencies
 	collectCategorizedTweetsDAORows := database.MakeCollectRows[categorized.DAO](nil)
 	selectCategorizedTweetsByCategorizations := categorized.MakeSelectByCategorizations(db, collectCategorizedTweetsDAORows)
 	selectTweetQuoteByID := quotes.MakeSelectByID(db)
-	deleteAllCorpusRows := corpus.MockDeleteAll(nil)
-	insertCorpusRow := corpus.MockInsert(nil)
+	deleteAllCorpusRows := corpus.MakeDeleteAll(db)
+	insertCorpusRow := corpus.MakeInsert(db)
 	createCorpus := corpus.MakeCreate(selectCategorizedTweetsByCategorizations, selectTweetByID, selectTweetQuoteByID, deleteAllCorpusRows, insertCorpusRow)
 
 	/* --- Router --- */

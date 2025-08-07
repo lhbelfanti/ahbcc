@@ -65,7 +65,7 @@ func MockTweetQuoteDAO() DAO {
 		ID:          1,
 		Author:      "TestQuoteAuthor",
 		Avatar:      &avatar,
-		PostedAt:    "2022-11-18T15:04:05Z",
+		PostedAt:    time.Now(),
 		IsAReply:    false,
 		TextContent: &textContent,
 		Images:      []string{"test1", "test2"},
