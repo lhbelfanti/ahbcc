@@ -10,3 +10,5 @@ var (
 	FailedToRetrieveCategorizedTweets                  = errors.New("failed to retrieve categorized tweets")
 	FailedToCleanUpCorpusTable                         = errors.New("failed to clean up corpus table")
 )
+
+const FailedToCreateCorpus string = "Failed to create corpus"

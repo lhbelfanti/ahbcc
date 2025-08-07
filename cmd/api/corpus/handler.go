@@ -1,0 +1,21 @@
+package corpus
+
+import (
+	"ahbcc/internal/http/response"
+	"net/http"
+)
+
+// CreateCorpusHandlerV1 HTTP Handler of the endpoint /corpus/v1
+func CreateCorpusHandlerV1(createCorpus Create) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		err := createCorpus(ctx)
+		if err != nil {
+			response.Send(ctx, w, http.StatusInternalServerError, FailedToCreateCorpus, nil, err)
+			return
+		}
+
+		response.Send(ctx, w, http.StatusOK, "Tweets successfully inserted", nil, nil)
+	}
+}
