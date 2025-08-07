@@ -1,8 +1,9 @@
 package corpus
 
 import (
-	"ahbcc/internal/http/response"
 	"net/http"
+
+	"ahbcc/internal/http/response"
 )
 
 // CreateCorpusHandlerV1 HTTP Handler of the endpoint /corpus/v1
