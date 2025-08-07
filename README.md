@@ -151,9 +151,11 @@ erDiagram
     }
 ```
 
-> The corpus table is a denormalized table that combines tweet and quote information in a single row. 
-> This design optimizes for read performance when extracting data in CSV or JSON format, as it 
-> eliminates the need for JOIN operations between tweets and quotes tables.
+> The corpus table is designed as a denormalized structure that consolidates information from both tweets and their 
+> corresponding quoted tweets into a single record. This schema is intended to optimize read performance, particularly 
+> during data extraction processes such as exporting to CSV or JSON formats. By avoiding JOIN operations between the 
+> tweets and quotes tables, the denormalized design reduces query complexity and improves efficiency at the cost of 
+> some data redundancy, which is considered acceptable in this context due to the read-heavy nature of the task.
 
 
 ## Setup
