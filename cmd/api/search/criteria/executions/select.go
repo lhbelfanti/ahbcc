@@ -16,14 +16,14 @@ type (
 	// SelectExecutionByID returns an execution seeking by its ID
 	SelectExecutionByID func(ctx context.Context, id int) (ExecutionDAO, error)
 
-	// SelectExecutionsByStatuses returns all the search criteria executions in certain state
+	// SelectExecutionsByStatuses returns all the search criteria executions in a certain state
 	SelectExecutionsByStatuses func(ctx context.Context, statuses []string) ([]ExecutionDAO, error)
 
 	// SelectLastDayExecutedByCriteriaID returns the last day executed for the given criteria
 	SelectLastDayExecutedByCriteriaID func(ctx context.Context, id int) (ExecutionDayDAO, error)
 )
 
-// MakeSelectExecutionByID creates a new SelectExecutionByID
+// MakeSelectExecutionByID creates a new SelectExecutionByID function
 func MakeSelectExecutionByID(db database.Connection) SelectExecutionByID {
 	const query string = `
 		SELECT id, status, search_criteria_id
@@ -50,7 +50,7 @@ func MakeSelectExecutionByID(db database.Connection) SelectExecutionByID {
 	}
 }
 
-// MakeSelectExecutionsByStatuses creates a new SelectExecutionsByStatuses
+// MakeSelectExecutionsByStatuses creates a new SelectExecutionsByStatuses function
 func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database.CollectRows[ExecutionDAO]) SelectExecutionsByStatuses {
 	const query string = `
 		SELECT id, status, search_criteria_id
@@ -84,7 +84,7 @@ func MakeSelectExecutionsByStatuses(db database.Connection, collectRows database
 	}
 }
 
-// MakeSelectLastDayExecutedByCriteriaID creates a new SelectLastDayExecutedByCriteriaID
+// MakeSelectLastDayExecutedByCriteriaID creates a new SelectLastDayExecutedByCriteriaID function
 func MakeSelectLastDayExecutedByCriteriaID(db database.Connection) SelectLastDayExecutedByCriteriaID {
 	const query string = `
 		SELECT sced.execution_date, sced.search_criteria_execution_id
