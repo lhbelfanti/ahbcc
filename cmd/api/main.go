@@ -145,6 +145,13 @@ func main() {
 	insertCorpusRow := corpus.MakeInsert(db)
 	createCorpus := corpus.MakeCreate(selectCategorizedTweetsByCategorizations, selectTweetByID, selectTweetQuoteByID, deleteAllCorpusRows, insertCorpusRow)
 
+	// GET /corpus/v1 dependencies
+	collectCorpusDAORows := database.MakeCollectRows[corpus.DAO](nil)
+	selectAllCorpusRows := corpus.MakeSelectAll(db, collectCorpusDAORows)
+	exportDataToJSON := corpus.MakeExportDataToJSON()
+	exportDataToCSV := corpus.MakeExportDataToCSV()
+	exportCorpus := corpus.MakeExportCorpus(selectAllCorpusRows, exportDataToJSON, exportDataToCSV)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -165,6 +172,7 @@ func main() {
 	router.HandleFunc("PUT /criteria-executions/{execution_id}/v1", executions.UpdateExecutionHandlerV1(updateCriteriaExecution))
 	router.HandleFunc("POST /criteria-executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	router.HandleFunc("POST /corpus/v1", corpus.CreateCorpusHandlerV1(createCorpus))
+	router.HandleFunc("GET /corpus/v1", corpus.ExportCorpusHandlerV1(exportCorpus))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Middlewares --- */

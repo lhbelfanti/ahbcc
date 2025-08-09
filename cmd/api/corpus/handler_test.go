@@ -41,3 +41,50 @@ func TestCreateCorpusHandlerV1_failsWhenCreateCorpusThrowsError(t *testing.T) {
 
 	assert.Equal(t, want, got)
 }
+
+func TestExportCorpusHandlerV1_successWithJSONExport(t *testing.T) {
+	mockJSONExportResult := corpus.MockJSONExportResult()
+	mockExportCorpus := corpus.MockExportCorpus(mockJSONExportResult, nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/corpus/v1?format=json", nil)
+
+	exportCorpusHandlerV1 := corpus.ExportCorpusHandlerV1(mockExportCorpus)
+
+	exportCorpusHandlerV1(mockResponseWriter, mockRequest)
+
+	assert.Equal(t, http.StatusOK, mockResponseWriter.Code)
+	assert.Equal(t, "application/json", mockResponseWriter.Header().Get("Content-Type"))
+	assert.Equal(t, "attachment; filename=corpus.json", mockResponseWriter.Header().Get("Content-Disposition"))
+	assert.Equal(t, mockResponseWriter.Body.String(), string(mockJSONExportResult.Data))
+}
+
+func TestExportCorpusHandlerV1_successWithCSVExport(t *testing.T) {
+	mockCSVExportResult := corpus.MockCSVExportResult()
+	mockExportCorpus := corpus.MockExportCorpus(mockCSVExportResult, nil)
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/corpus/v1?format=json", nil)
+
+	exportCorpusHandlerV1 := corpus.ExportCorpusHandlerV1(mockExportCorpus)
+
+	exportCorpusHandlerV1(mockResponseWriter, mockRequest)
+
+	assert.Equal(t, http.StatusOK, mockResponseWriter.Code)
+	assert.Equal(t, "text/csv", mockResponseWriter.Header().Get("Content-Type"))
+	assert.Equal(t, "attachment; filename=corpus.csv", mockResponseWriter.Header().Get("Content-Disposition"))
+	assert.Equal(t, mockResponseWriter.Body.String(), string(mockCSVExportResult.Data))
+}
+
+func TestExportCorpusHandlerV1_Error(t *testing.T) {
+	mockExportCorpus := corpus.MockExportCorpus(nil, errors.New("failed to export corpus"))
+	mockResponseWriter := httptest.NewRecorder()
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "/corpus/v1", nil)
+
+	exportCorpusHandlerV1 := corpus.ExportCorpusHandlerV1(mockExportCorpus)
+
+	exportCorpusHandlerV1(mockResponseWriter, mockRequest)
+
+	want := http.StatusInternalServerError
+	got := mockResponseWriter.Result().StatusCode
+
+	assert.Equal(t, want, got)
+}
