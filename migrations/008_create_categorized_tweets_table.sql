@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS categorized_tweets (
     categorization      verdict NOT NULL,
 
     CONSTRAINT fk_search_criteria_id FOREIGN KEY(search_criteria_id) REFERENCES search_criteria(id),
-    CONSTRAINT fk_tweet_id FOREIGN KEY(tweet_id) REFERENCES tweets(uuid) ON DELETE CASCADE,
+    CONSTRAINT fk_tweet_id FOREIGN KEY(tweet_id) REFERENCES tweets(id) ON DELETE CASCADE,
     CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
