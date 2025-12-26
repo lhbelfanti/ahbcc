@@ -6,13 +6,6 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// MockSelectIDBySearchCriteriaIDYearAndMonth mocks SelectIDBySearchCriteriaIDYearAndMonth function
-func MockSelectIDBySearchCriteriaIDYearAndMonth(id int, err error) SelectIDBySearchCriteriaIDYearAndMonth {
-	return func(ctx context.Context, searchCriteriaID, year, month int) (int, error) {
-		return id, err
-	}
-}
-
 // MockSelectMonthlyTweetsCountsByYearByCriteriaID mocks SelectMonthlyTweetsCountsByYearByCriteriaID function
 func MockSelectMonthlyTweetsCountsByYearByCriteriaID(daos []DAO, err error) SelectMonthlyTweetsCountsByYearByCriteriaID {
 	return func(ctx context.Context, criteriaID int) ([]DAO, error) {
@@ -27,24 +20,17 @@ func MockSelectAll(daos []DAO, err error) SelectAll {
 	}
 }
 
+// MockDeleteAll mocks DeleteAll function
+func MockDeleteAll(err error) DeleteAll {
+	return func(ctx context.Context) error {
+		return err
+	}
+}
+
 // MockInsert mocks Insert function
-func MockInsert(insertedRowID int, err error) Insert {
+func MockInsert(err error) Insert {
 	return func(tx pgx.Tx, ctx context.Context, dao DAO) (int, error) {
-		return insertedRowID, err
-	}
-}
-
-// MockUpdateTotalTweets mocks UpdateTotalTweets function
-func MockUpdateTotalTweets(err error) UpdateTotalTweets {
-	return func(tx pgx.Tx, ctx context.Context, id, totalTweets int) error {
-		return err
-	}
-}
-
-// MockUpsert mocks Upsert function
-func MockUpsert(err error) Upsert {
-	return func(ctx context.Context, tx pgx.Tx, executionSummary DAO) error {
-		return err
+		return 1, err
 	}
 }
 
