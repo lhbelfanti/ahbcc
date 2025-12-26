@@ -85,7 +85,7 @@ func TestWithContextParams_success(t *testing.T) {
 
 			got := buf.String()
 
-			for key, _ := range tt.want {
+			for key := range tt.want {
 				assert.Contains(t, got, key)
 			}
 		})
