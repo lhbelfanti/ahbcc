@@ -1,11 +1,13 @@
 package session
 
 import (
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
 	"context"
 	"errors"
+
 	"github.com/jackc/pgx/v5"
+	
+	"ahbcc/internal/database"
+	"ahbcc/internal/log"
 )
 
 type SelectUserIDByToken func(ctx context.Context, token string) (int, error)

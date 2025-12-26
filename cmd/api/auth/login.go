@@ -2,8 +2,9 @@ package auth
 
 import (
 	"context"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"ahbcc/cmd/api/user"
 	"ahbcc/cmd/api/user/session"

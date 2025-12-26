@@ -81,17 +81,17 @@ func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearch
 			if err != nil {
 				response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
 				return
-			} else {
-				// Only retrieve the month if the year is present. Otherwise, the default value is 0, which means all months.
-				monthQueryParamStr := r.URL.Query().Get("month")
-				if monthQueryParamStr != "" {
-					month, err = strconv.Atoi(monthQueryParamStr)
-					if err != nil {
-						response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
-						return
-					}
-					ctx = log.With(ctx, log.Param("month", month))
+			}
+			
+			// Only retrieve the month if the year is present. Otherwise, the default value is 0, which means all months.
+			monthQueryParamStr := r.URL.Query().Get("month")
+			if monthQueryParamStr != "" {
+				month, err = strconv.Atoi(monthQueryParamStr)
+				if err != nil {
+					response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
+					return
 				}
+				ctx = log.With(ctx, log.Param("month", month))
 			}
 			ctx = log.With(ctx, log.Param("year", year))
 		}

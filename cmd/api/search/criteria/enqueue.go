@@ -76,19 +76,19 @@ func MakeResume(selectCriteriaByID SelectByID, selectLastDayExecutedByCriteria e
 			if !errors.Is(err, NoExecutionDaysFoundForTheGivenCriteriaID) {
 				log.Error(ctx, err.Error())
 				return FailedToExecuteSelectLastDayExecutedByCriteriaID
-			} else {
-				// The criteria hasn't started yet, but it was enqueued once before (it is in a PENDING state for example)
-				executionsDAO, err := selectExecutionsByStatuses(ctx, []string{executions.PendingStatus, executions.InProgressStatus})
-				if err != nil {
-					log.Error(ctx, err.Error())
-					return FailedToExecuteSelectExecutionsByStatuses
-				}
+			}
 
-				for _, execution := range executionsDAO {
-					if execution.SearchCriteriaID == criteriaID {
-						searchCriteriaExecutionID = execution.ID
-						break
-					}
+			// The criterion hasn't started yet, but it was enqueued once before (it is in a PENDING state for example)
+			executionsDAO, err := selectExecutionsByStatuses(ctx, []string{executions.PendingStatus, executions.InProgressStatus})
+			if err != nil {
+				log.Error(ctx, err.Error())
+				return FailedToExecuteSelectExecutionsByStatuses
+			}
+
+			for _, execution := range executionsDAO {
+				if execution.SearchCriteriaID == criteriaID {
+					searchCriteriaExecutionID = execution.ID
+					break
 				}
 			}
 		} else {
