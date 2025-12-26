@@ -122,11 +122,9 @@ func main() {
 
 	// POST /criteria-executions/summarize/v1 dependencies
 	selectMonthlyTweetsCountsByYearByCriteriaID := summary.MakeSelectMonthlyTweetsCountsByYearByCriteriaID(db, collectSummaryDAORows)
-	selectIDBySearchCriteriaIDYearAndMonth := summary.MakeSelectIDBySearchCriteriaIDYearAndMonth(db)
 	insertExecutionSummary := summary.MakeInsert(db)
-	updateSummaryTotalTweets := summary.MakeUpdateTotalTweets(db)
-	upsertExecutionSummary := summary.MakeUpsert(selectIDBySearchCriteriaIDYearAndMonth, insertExecutionSummary, updateSummaryTotalTweets)
-	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, selectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary)
+	deleteAllExecutionSummaries := summary.MakeDeleteAll(db)
+	summarizeCriteriaExecutions := executions.MakeSummarize(db, selectExecutionsByStatuses, deleteAllExecutionSummaries, selectMonthlyTweetsCountsByYearByCriteriaID, insertExecutionSummary)
 
 	// GET /criteria-executions/{execution_id}/v1 dependencies
 	selectExecutionByID := executions.MakeSelectExecutionByID(db)

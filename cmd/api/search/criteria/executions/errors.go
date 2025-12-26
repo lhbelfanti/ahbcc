@@ -14,8 +14,9 @@ var (
 	FailedToExecuteQueryToRetrieveExecutionData         = errors.New("failed to execute query to retrieve execution data")
 	FailedToBeginTransaction                            = errors.New("failed to begin transaction")
 	FailedToExecuteSelectMonthlyTweetsCountsByYear      = errors.New("failed to execute select monthly tweets count by year")
-	FailedToExecuteUpsertExecutionSummary               = errors.New("failed to execute upsert execution summary")
+	FailedToExecuteInsertExecutionSummary               = errors.New("failed to execute insert execution summary")
 	FailedToCommitTransaction                           = errors.New("failed to commit transaction")
+	FailedToClearOldSummary                             = errors.New("failed to clear old summary")
 )
 
 const (

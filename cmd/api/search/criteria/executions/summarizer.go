@@ -13,7 +13,7 @@ import (
 type Summarize func(ctx context.Context) error
 
 // MakeSummarize creates a new Summarize
-func MakeSummarize(db database.Connection, selectExecutionsByStatuses SelectExecutionsByStatuses, selectMonthlyTweetsCountsByYear summary.SelectMonthlyTweetsCountsByYearByCriteriaID, upsertExecutionSummary summary.Upsert) Summarize {
+func MakeSummarize(db database.Connection, selectExecutionsByStatuses SelectExecutionsByStatuses, deleteAllExecutionsSummary summary.DeleteAll, selectMonthlyTweetsCountsByYear summary.SelectMonthlyTweetsCountsByYearByCriteriaID, insertExecutionSummary summary.Insert) Summarize {
 	return func(ctx context.Context) error {
 		searchCriteriaExecutions, err := selectExecutionsByStatuses(ctx, []string{"DONE"})
 		if err != nil {
@@ -29,6 +29,12 @@ func MakeSummarize(db database.Connection, selectExecutionsByStatuses SelectExec
 
 		defer tx.Rollback(ctx)
 
+		err = deleteAllExecutionsSummary(ctx)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return FailedToClearOldSummary
+		}
+
 		for _, searchCriteriaExecution := range searchCriteriaExecutions {
 			searchCriteriaExecutionsSummary, err := selectMonthlyTweetsCountsByYear(ctx, searchCriteriaExecution.SearchCriteriaID)
 			if err != nil {
@@ -37,10 +43,10 @@ func MakeSummarize(db database.Connection, selectExecutionsByStatuses SelectExec
 			}
 
 			for _, executionSummary := range searchCriteriaExecutionsSummary {
-				err = upsertExecutionSummary(ctx, tx, executionSummary)
+				_, err = insertExecutionSummary(tx, ctx, executionSummary)
 				if err != nil {
 					log.Error(ctx, err.Error())
-					return FailedToExecuteUpsertExecutionSummary
+					return FailedToExecuteInsertExecutionSummary
 				}
 			}
 		}

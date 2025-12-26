@@ -10,7 +10,7 @@ import (
 	"ahbcc/internal/log"
 )
 
-// Insert inserts a new row into tweets_counts table
+// Insert inserts a new row into search_criteria_executions_summary table
 type Insert func(tx pgx.Tx, ctx context.Context, dao DAO) (int, error)
 
 // MakeInsert creates a new Insert
