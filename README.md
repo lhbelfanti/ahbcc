@@ -149,6 +149,14 @@ erDiagram
         TEXT[] quote_images
         BOOLEAN is_quote_a_reply
     }
+
+    corpus_cleaning_rules {
+        INTEGER id PK
+        ENUM cleaning_rules "'BAD_WORD', 'PERSON', etc."
+        TEXT source_text
+        TEXT target_text
+        INTEGER priority
+    }
 ```
 
 > The corpus table is designed as a denormalized structure that consolidates information from both tweets and their 
