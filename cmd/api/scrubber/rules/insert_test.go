@@ -16,11 +16,11 @@ import (
 func TestInsert_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
-	mockRulesDTO := rules.MockRulesDTO()
+	mockRulesDTOSlice := rules.MockRulesDTOSlice()
 
 	insertRules := rules.MakeInsert(mockPostgresConnection)
 
-	got := insertRules(context.Background(), mockRulesDTO)
+	got := insertRules(context.Background(), mockRulesDTOSlice)
 
 	assert.Nil(t, got)
 	mockPostgresConnection.AssertExpectations(t)
@@ -29,7 +29,7 @@ func TestInsert_success(t *testing.T) {
 func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert rules"))
-	mockRulesDTO := rules.MockRulesDTO()
+	mockRulesDTO := rules.MockRulesDTOSlice()
 
 	insertRules := rules.MakeInsert(mockPostgresConnection)
 
