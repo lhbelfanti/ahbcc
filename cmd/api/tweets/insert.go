@@ -11,7 +11,7 @@ import (
 	"ahbcc/internal/log"
 )
 
-// Insert inserts a new TweetDTO into 'tweets' table
+// Insert inserts a slice of TweetDTO into 'tweets' table
 type Insert func(ctx context.Context, tweet []TweetDTO) error
 
 // MakeInsert creates a new Insert
