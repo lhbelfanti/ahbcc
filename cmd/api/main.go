@@ -11,6 +11,7 @@ import (
 
 	"ahbcc/cmd/api/auth"
 	"ahbcc/cmd/api/corpus"
+	"ahbcc/cmd/api/corpus/cleaner/rules"
 	"ahbcc/cmd/api/middleware"
 	"ahbcc/cmd/api/migrations"
 	"ahbcc/cmd/api/ping"
@@ -150,6 +151,9 @@ func main() {
 	exportDataToCSV := corpus.MakeExportDataToCSV()
 	exportCorpus := corpus.MakeExportCorpus(selectAllCorpusRows, exportDataToJSON, exportDataToCSV)
 
+	// POST /corpus/cleaning-rules/v1 dependencies
+	insertRules := rules.MakeInsert(db)
+
 	/* --- Router --- */
 	log.Info(ctx, "Initializing router...")
 	router := http.NewServeMux()
@@ -171,6 +175,7 @@ func main() {
 	router.HandleFunc("POST /criteria-executions/{execution_id}/day/v1", executions.CreateExecutionDayHandlerV1(insertCriteriaExecutionDay))
 	router.HandleFunc("POST /corpus/v1", corpus.CreateCorpusHandlerV1(createCorpus))
 	router.HandleFunc("GET /corpus/v1", corpus.ExportCorpusHandlerV1(exportCorpus))
+	router.HandleFunc("POST /corpus/cleaning-rules/v1", rules.InsertRulesHandlerV1(insertRules))
 	log.Info(ctx, "Router initialized!")
 
 	/* --- Middlewares --- */
