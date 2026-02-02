@@ -6,7 +6,7 @@ type DTO struct {
 	SourceText  string  `json:"source_text"`
 	TargetText  *string `json:"target_text,omitempty"`
 	Priority    int     `json:"priority"`
-	Description string  `json:"description"`
+	Description *string `json:"description,omitempty"`
 }
 
 const (

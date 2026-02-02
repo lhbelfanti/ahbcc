@@ -18,12 +18,14 @@ func MockSelectAllByPriority(cleaningRules []DAO, err error) SelectAllByPriority
 
 // MockRuleDTO mocks a rule DTO
 func MockRuleDTO(ruleType string, sourceText string, targetText *string, priority int) DTO {
+	description := "description"
+
 	return DTO{
 		RuleType:    ruleType,
 		SourceText:  sourceText,
 		TargetText:  targetText,
 		Priority:    priority,
-		Description: "description",
+		Description: &description,
 	}
 }
 
@@ -40,12 +42,14 @@ func MockRulesDTOSlice() []DTO {
 
 // MockRuleDAO mocks a rule DAO
 func MockRuleDAO(ruleType string, sourceText string, targetText *string, priority int) DAO {
+	description := "description"
+
 	return DAO{
 		RuleType:    ruleType,
 		SourceText:  sourceText,
 		TargetText:  targetText,
 		Priority:    priority,
-		Description: "description",
+		Description: &description,
 	}
 }
 
