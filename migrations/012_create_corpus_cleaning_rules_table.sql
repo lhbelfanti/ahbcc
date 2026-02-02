@@ -1,5 +1,5 @@
 -- Create the enum type for rules types
-SELECT create_enum_type_if_not_exists('cleaning_rules', ARRAY['BAD_WORD', 'PERSON', 'HASHTAG_DELETE', 'MENTION_DELETE', 'TEXT_DELETE', 'REPLACEMENT']);
+SELECT create_enum_type_if_not_exists('cleaning_rules', ARRAY['BAD_WORD', 'REPLACE', 'DELETE']);
 
 -- Create corpus_cleaning_rules table
 CREATE TABLE IF NOT EXISTS corpus_cleaning_rules (
@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS corpus_cleaning_rules (
     source_text     TEXT NOT NULL,
     target_text     TEXT,
     priority        INTEGER DEFAULT 10 CHECK (priority >= 1 AND priority <= 10),
+    description     TEXT,
 
     CONSTRAINT uq_rule_type_source_text_priority UNIQUE (rule_type, source_text, priority)
 );
@@ -22,3 +23,4 @@ COMMENT ON COLUMN corpus_cleaning_rules.rule_type     IS 'The type of rule that 
 COMMENT ON COLUMN corpus_cleaning_rules.source_text   IS 'The original text or pattern (like a word, hashtag, or mention) that the rule will identify for cleaning';
 COMMENT ON COLUMN corpus_cleaning_rules.target_text   IS 'The replacement text for the source_text, if not already given by the rule_type';
 COMMENT ON COLUMN corpus_cleaning_rules.priority      IS 'The priority of the rule, used to order the rules applied to the text. Lower values are applied first.';
+COMMENT ON COLUMN corpus_cleaning_rules.description   IS 'A description of the rule, used for debugging purposes';

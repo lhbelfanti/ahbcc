@@ -12,7 +12,7 @@ type SelectAllByPriority func(ctx context.Context, priority int) ([]DAO, error)
 // MakeSelectAllByPriority creates a new SelectAllByPriority
 func MakeSelectAllByPriority(db database.Connection, collectRows database.CollectRows[DAO]) SelectAllByPriority {
 	const query string = `
-			SELECT rule_type, source_text, target_text, priority 
+			SELECT rule_type, source_text, target_text, priority, description
 			FROM corpus_cleaning_rules 
 			WHERE priority = $1
 	`

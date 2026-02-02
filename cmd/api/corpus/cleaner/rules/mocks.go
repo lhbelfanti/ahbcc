@@ -19,10 +19,11 @@ func MockSelectAllByPriority(cleaningRules []DAO, err error) SelectAllByPriority
 // MockRuleDTO mocks a rule DTO
 func MockRuleDTO(ruleType string, sourceText string, targetText *string, priority int) DTO {
 	return DTO{
-		RuleType:   ruleType,
-		SourceText: sourceText,
-		TargetText: targetText,
-		Priority:   priority,
+		RuleType:    ruleType,
+		SourceText:  sourceText,
+		TargetText:  targetText,
+		Priority:    priority,
+		Description: "description",
 	}
 }
 
@@ -32,21 +33,19 @@ func MockRulesDTOSlice() []DTO {
 
 	return []DTO{
 		MockRuleDTO(RuleBadWord, "badword", nil, 1),
-		MockRuleDTO(RulePerson, "person", nil, 2),
-		MockRuleDTO(RuleHashtagDelete, "#delete", nil, 3),
-		MockRuleDTO(RuleMentionDelete, "@delete", nil, 4),
-		MockRuleDTO(RuleTextDelete, "delete", nil, 5),
-		MockRuleDTO(RuleReplacement, "replace", &replacement, 6),
+		MockRuleDTO(RuleReplacement, "replace", &replacement, 2),
+		MockRuleDTO(RuleDelete, "delete", nil, 3),
 	}
 }
 
 // MockRuleDAO mocks a rule DAO
 func MockRuleDAO(ruleType string, sourceText string, targetText *string, priority int) DAO {
 	return DAO{
-		RuleType:   ruleType,
-		SourceText: sourceText,
-		TargetText: targetText,
-		Priority:   priority,
+		RuleType:    ruleType,
+		SourceText:  sourceText,
+		TargetText:  targetText,
+		Priority:    priority,
+		Description: "description",
 	}
 }
 
@@ -56,10 +55,7 @@ func MockRulesDAOSlice() []DAO {
 
 	return []DAO{
 		MockRuleDAO(RuleBadWord, "badword", nil, 1),
-		MockRuleDAO(RulePerson, "person", nil, 2),
-		MockRuleDAO(RuleHashtagDelete, "#delete", nil, 3),
-		MockRuleDAO(RuleMentionDelete, "@delete", nil, 4),
-		MockRuleDAO(RuleTextDelete, "delete", nil, 5),
-		MockRuleDAO(RuleReplacement, "replace", &replacement, 6),
+		MockRuleDAO(RuleReplacement, "replace", &replacement, 2),
+		MockRuleDAO(RuleDelete, "delete", nil, 3),
 	}
 }

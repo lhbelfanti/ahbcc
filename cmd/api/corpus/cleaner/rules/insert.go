@@ -16,12 +16,12 @@ type Insert func(ctx context.Context, rules []DTO) error
 func MakeInsert(db database.Connection) Insert {
 	const (
 		query string = ` 
-			INSERT INTO corpus_cleaning_rules(rule_type, source_text, target_text, priority)
+			INSERT INTO corpus_cleaning_rules(rule_type, source_text, target_text, priority, description)
 			VALUES %s
 		    ON CONFLICT (rule_type, source_text, priority) DO NOTHING;
 		`
 
-		parameters = 4
+		parameters = 5
 	)
 
 	return func(ctx context.Context, rules []DTO) error {
@@ -29,8 +29,8 @@ func MakeInsert(db database.Connection) Insert {
 		values := make([]any, 0, len(rules)*parameters)
 		for i, rule := range rules {
 			idx := i * parameters
-			placeholders = append(placeholders, fmt.Sprintf("($%d::cleaning_rules, $%d, $%d, $%d)", idx+1, idx+2, idx+3, idx+4))
-			values = append(values, rule.RuleType, rule.SourceText, rule.TargetText, rule.Priority)
+			placeholders = append(placeholders, fmt.Sprintf("($%d::cleaning_rules, $%d, $%d, $%d, $%d)", idx+1, idx+2, idx+3, idx+4, idx+5))
+			values = append(values, rule.RuleType, rule.SourceText, rule.TargetText, rule.Priority, rule.Description)
 		}
 
 		queryToExecute := fmt.Sprintf(query, strings.Join(placeholders, ","))

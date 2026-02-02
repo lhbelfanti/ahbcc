@@ -1,7 +1,6 @@
 package rules_test
 
 import (
-	rules2 "ahbcc/cmd/api/corpus/cleaner/rules"
 	"context"
 	"errors"
 	"testing"
@@ -10,15 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	"ahbcc/cmd/api/corpus/cleaner/rules"
 	"ahbcc/internal/database"
 )
 
 func TestInsert_success(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, nil)
-	mockRulesDTOSlice := rules2.MockRulesDTOSlice()
+	mockRulesDTOSlice := rules.MockRulesDTOSlice()
 
-	insertRules := rules2.MakeInsert(mockPostgresConnection)
+	insertRules := rules.MakeInsert(mockPostgresConnection)
 
 	got := insertRules(context.Background(), mockRulesDTOSlice)
 
@@ -29,11 +29,11 @@ func TestInsert_success(t *testing.T) {
 func TestInsert_failsWhenInsertOperationThrowsError(t *testing.T) {
 	mockPostgresConnection := new(database.MockPostgresConnection)
 	mockPostgresConnection.On("Exec", mock.Anything, mock.Anything, mock.Anything).Return(pgconn.CommandTag{}, errors.New("failed to insert rules"))
-	mockRulesDTO := rules2.MockRulesDTOSlice()
+	mockRulesDTO := rules.MockRulesDTOSlice()
 
-	insertRules := rules2.MakeInsert(mockPostgresConnection)
+	insertRules := rules.MakeInsert(mockPostgresConnection)
 
-	want := rules2.FailedToInsertRules
+	want := rules.FailedToInsertRules
 	got := insertRules(context.Background(), mockRulesDTO)
 
 	assert.Equal(t, want, got)
