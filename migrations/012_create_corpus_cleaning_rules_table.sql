@@ -7,9 +7,15 @@ CREATE TABLE IF NOT EXISTS corpus_cleaning_rules (
     rule_type       cleaning_rules NOT NULL,
     source_text     TEXT NOT NULL,
     target_text     TEXT,
-    priority        INTEGER DEFAULT 10 CHECK (priority >= 1 AND priority <= 10)
+    priority        INTEGER DEFAULT 10 CHECK (priority >= 1 AND priority <= 10),
+
+    CONSTRAINT uq_rule_type_source_text_priority UNIQUE (rule_type, source_text, priority)
 );
 
+-- Table indexes
+CREATE INDEX IF NOT EXISTS idx_corpus_cleaning_rules_priority ON corpus_cleaning_rules(priority);
+
+-- Table comments
 COMMENT ON TABLE corpus_cleaning_rules                IS 'Records the corpus generated after the tweets categorization';
 COMMENT ON COLUMN corpus_cleaning_rules.id            IS 'Auto-incrementing id of the entry of the corpus, agnostic to business logic';
 COMMENT ON COLUMN corpus_cleaning_rules.rule_type     IS 'The type of rule that will be applied to the text';
