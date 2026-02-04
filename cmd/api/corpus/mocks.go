@@ -25,7 +25,7 @@ func MockDeleteAll(err error) DeleteAll {
 
 // MockCreate mocks Create function
 func MockCreate(err error) Create {
-	return func(ctx context.Context) error {
+	return func(ctx context.Context, perfectBalancedCorpus bool) error {
 		return err
 	}
 }

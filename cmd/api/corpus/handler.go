@@ -11,7 +11,13 @@ func CreateCorpusHandlerV1(createCorpus Create) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		err := createCorpus(ctx)
+		var perfectBalancedCorpus bool
+		perfectBalancedCorpusQueryString := r.URL.Query().Get("perfectBalancedCorpus")
+		if perfectBalancedCorpusQueryString == "true" {
+			perfectBalancedCorpus = true
+		}
+
+		err := createCorpus(ctx, perfectBalancedCorpus)
 		if err != nil {
 			response.Send(ctx, w, http.StatusInternalServerError, FailedToCreateCorpus, nil, err)
 			return

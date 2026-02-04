@@ -12,25 +12,50 @@ import (
 	"ahbcc/cmd/api/corpus"
 )
 
-func TestCreateCorpusHandlerV1_success(t *testing.T) {
-	mockCreateCorpus := corpus.MockCreate(nil)
-	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/corpus/v1", nil)
+func TestCreateCorpusHandlerV1(t *testing.T) {
+	tests := []struct {
+		name       string
+		url        string
+		wantStatus int
+	}{
+		{
+			name:       "success with perfectBalancedCorpus false",
+			url:        "/corpus/v1?perfectBalancedCorpus=false",
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "success with perfectBalancedCorpus true",
+			url:        "/corpus/v1?perfectBalancedCorpus=true",
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "success without perfectBalancedCorpus query string",
+			url:        "/corpus/v1",
+			wantStatus: http.StatusOK,
+		},
+	}
 
-	createCorpusHandlerV1 := corpus.CreateCorpusHandlerV1(mockCreateCorpus)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockCreateCorpus := corpus.MockCreate(nil)
+			mockResponseWriter := httptest.NewRecorder()
+			mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, tt.url, nil)
 
-	createCorpusHandlerV1(mockResponseWriter, mockRequest)
+			createCorpusHandlerV1 := corpus.CreateCorpusHandlerV1(mockCreateCorpus)
 
-	want := http.StatusOK
-	got := mockResponseWriter.Result().StatusCode
+			createCorpusHandlerV1(mockResponseWriter, mockRequest)
 
-	assert.Equal(t, want, got)
+			got := mockResponseWriter.Result().StatusCode
+
+			assert.Equal(t, tt.wantStatus, got)
+		})
+	}
 }
 
 func TestCreateCorpusHandlerV1_failsWhenCreateCorpusThrowsError(t *testing.T) {
 	mockCreateCorpus := corpus.MockCreate(errors.New("failed to create corpus"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/corpus/v1", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/corpus/v1?perfectBalancedCorpus=false", nil)
 
 	createCorpusHandlerV1 := corpus.CreateCorpusHandlerV1(mockCreateCorpus)
 

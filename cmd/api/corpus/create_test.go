@@ -13,7 +13,7 @@ import (
 	"ahbcc/cmd/api/tweets/quotes"
 )
 
-func TestCreate_success(t *testing.T) {
+func TestCreate_successWithoutPerfectBalancedCorpus(t *testing.T) {
 	mockSelectByCategorizations := categorized.MockSelectByCategorizations([]categorized.DAO{categorized.MockCategorizedTweetDAO()}, nil)
 	mockSelectTweetByID := tweets.MockSelectByID(tweets.MockTweetDAO(), nil)
 	mockSelectQuoteByID := quotes.MockSelectByID(quotes.MockTweetQuoteDAO(), nil)
@@ -22,7 +22,21 @@ func TestCreate_success(t *testing.T) {
 
 	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
 
-	got := create(context.Background())
+	got := create(context.Background(), false)
+
+	assert.Nil(t, got)
+}
+
+func TestCreate_successWithPerfectBalancedCorpus(t *testing.T) {
+	mockSelectByCategorizations := categorized.MockSelectByCategorizations([]categorized.DAO{categorized.MockCategorizedTweetDAO()}, nil)
+	mockSelectTweetByID := tweets.MockSelectByID(tweets.MockTweetDAO(), nil)
+	mockSelectQuoteByID := quotes.MockSelectByID(quotes.MockTweetQuoteDAO(), nil)
+	mockDeleteAll := corpus.MockDeleteAll(nil)
+	mockInsert := corpus.MockInsert(nil)
+
+	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
+
+	got := create(context.Background(), true)
 
 	assert.Nil(t, got)
 }
@@ -36,7 +50,7 @@ func TestCreate_successEvenWhenSelectTweetByIDThrowsError(t *testing.T) {
 
 	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
 
-	got := create(context.Background())
+	got := create(context.Background(), false)
 
 	assert.Nil(t, got)
 }
@@ -50,7 +64,7 @@ func TestCreate_successEvenWhenSelectTweetQuoteByIDThrowsError(t *testing.T) {
 
 	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
 
-	got := create(context.Background())
+	got := create(context.Background(), false)
 
 	assert.Nil(t, got)
 }
@@ -64,7 +78,7 @@ func TestCreate_successEvenWhenInsertThrowsError(t *testing.T) {
 
 	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
 
-	got := create(context.Background())
+	got := create(context.Background(), false)
 
 	assert.Nil(t, got)
 }
@@ -79,7 +93,7 @@ func TestCreate_failsWhenSelectByCategorizationsThrowsError(t *testing.T) {
 	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
 
 	want := corpus.FailedToRetrieveCategorizedTweets
-	got := create(context.Background())
+	got := create(context.Background(), false)
 
 	assert.Equal(t, want, got)
 }
@@ -94,7 +108,7 @@ func TestCreate_failsWhenDeleteAllThrowsError(t *testing.T) {
 	create := corpus.MakeCreate(mockSelectByCategorizations, mockSelectTweetByID, mockSelectQuoteByID, mockDeleteAll, mockInsert)
 
 	want := corpus.FailedToCleanUpCorpusTable
-	got := create(context.Background())
+	got := create(context.Background(), false)
 
 	assert.Equal(t, want, got)
 }
