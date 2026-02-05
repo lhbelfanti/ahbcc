@@ -29,13 +29,16 @@ func convertTweetsToCleanToDTOs(tweetsToClean []cleaner.TweetToClean) []DTO {
 // toDTO converts a cleaner.TweetToClean to a DTO
 func toDTO(tweetToClean cleaner.TweetToClean) DTO {
 	return DTO{
-		TweetAuthor:   tweetToClean.TweetAuthor,
-		TweetAvatar:   tweetToClean.TweetAvatar,
-		TweetText:     tweetToClean.TweetText,
-		TweetImages:   tweetToClean.TweetImages,
-		IsTweetAReply: tweetToClean.IsTweetAReply,
-		QuoteAuthor:   tweetToClean.QuoteAuthor,
-		QuoteAvatar:   tweetToClean.QuoteAvatar,
-		QuoteText:     tweetToClean.QuoteText,
+		TweetAuthor:    tweetToClean.TweetAuthor,
+		TweetAvatar:    tweetToClean.TweetAvatar,
+		TweetText:      tweetToClean.TweetText,
+		TweetImages:    tweetToClean.TweetImages,
+		IsTweetAReply:  tweetToClean.IsTweetAReply,
+		QuoteAuthor:    tweetToClean.QuoteAuthor,
+		QuoteAvatar:    tweetToClean.QuoteAvatar,
+		QuoteText:      tweetToClean.QuoteText,
+		QuoteImages:    tweetToClean.QuoteImages,
+		IsQuoteAReply:  tweetToClean.IsQuoteAReply,
+		Categorization: tweetToClean.Categorization,
 	}
 }
