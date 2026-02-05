@@ -79,7 +79,7 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 		}
 
 		corpusRows := make([]cleaner.TweetToClean, 0, len(tweetsBySearchCriteria))
-		for _, searchCriteria := range tweetsBySearchCriteria {
+		for searchCriteriaID, searchCriteria := range tweetsBySearchCriteria {
 			categorizedNegative := searchCriteria[categorized.VerdictNegative]
 			categorizedPositive := searchCriteria[categorized.VerdictPositive]
 
@@ -90,6 +90,8 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 				lenNegative = min(lenNegative, lenPositive)
 				lenPositive = lenNegative
 			}
+
+			log.Info(ctx, fmt.Sprintf("For search criteria %d - There will be: %d negative and %d positive tweets", searchCriteriaID, lenNegative, lenPositive))
 
 			corpusRows = append(corpusRows, categorizedNegative[:lenNegative]...)
 			corpusRows = append(corpusRows, categorizedPositive[:lenPositive]...)
