@@ -19,17 +19,17 @@ func TestCreateCorpusHandlerV1(t *testing.T) {
 		wantStatus int
 	}{
 		{
-			name:       "success with perfectBalancedCorpus false",
-			url:        "/corpus/v1?perfectBalancedCorpus=false",
+			name:       "success with perfectlyBalanced false",
+			url:        "/corpus/v1?perfectlyBalanced=false",
 			wantStatus: http.StatusOK,
 		},
 		{
-			name:       "success with perfectBalancedCorpus true",
-			url:        "/corpus/v1?perfectBalancedCorpus=true",
+			name:       "success with perfectlyBalanced true",
+			url:        "/corpus/v1?perfectlyBalanced=true",
 			wantStatus: http.StatusOK,
 		},
 		{
-			name:       "success without perfectBalancedCorpus query string",
+			name:       "success without perfectlyBalanced query string",
 			url:        "/corpus/v1",
 			wantStatus: http.StatusOK,
 		},
@@ -55,7 +55,7 @@ func TestCreateCorpusHandlerV1(t *testing.T) {
 func TestCreateCorpusHandlerV1_failsWhenCreateCorpusThrowsError(t *testing.T) {
 	mockCreateCorpus := corpus.MockCreate(errors.New("failed to create corpus"))
 	mockResponseWriter := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/corpus/v1?perfectBalancedCorpus=false", nil)
+	mockRequest, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, "/corpus/v1?perfectlyBalanced=false", nil)
 
 	createCorpusHandlerV1 := corpus.CreateCorpusHandlerV1(mockCreateCorpus)
 

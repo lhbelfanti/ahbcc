@@ -14,7 +14,7 @@ import (
 	"ahbcc/cmd/api/tweets/quotes"
 )
 
-func TestCreate_successWithoutPerfectBalancedCorpus(t *testing.T) {
+func TestCreate_successWithoutPerfectlyBalancedCorpus(t *testing.T) {
 	mockSelectByCategorizations := categorized.MockSelectByCategorizations([]categorized.DAO{categorized.MockCategorizedTweetDAO()}, nil)
 	mockSelectTweetByID := tweets.MockSelectByID(tweets.MockTweetDAO(), nil)
 	mockSelectQuoteByID := quotes.MockSelectByID(quotes.MockTweetQuoteDAO(), nil)
@@ -29,7 +29,7 @@ func TestCreate_successWithoutPerfectBalancedCorpus(t *testing.T) {
 	assert.Nil(t, got)
 }
 
-func TestCreate_successWithPerfectBalancedCorpus(t *testing.T) {
+func TestCreate_successWithPerfectlyBalancedCorpus(t *testing.T) {
 	mockSelectByCategorizations := categorized.MockSelectByCategorizations([]categorized.DAO{categorized.MockCategorizedTweetDAO()}, nil)
 	mockSelectTweetByID := tweets.MockSelectByID(tweets.MockTweetDAO(), nil)
 	mockSelectQuoteByID := quotes.MockSelectByID(quotes.MockTweetQuoteDAO(), nil)

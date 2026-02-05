@@ -13,13 +13,13 @@ import (
 
 // Create retrieves the information from the categorized_tweets table and inserts the tweets with all their information
 // into the corpus table. It only considers the 'POSITIVE' and 'NEGATIVE' categorizations.
-type Create func(ctx context.Context, perfectBalancedCorpus bool) error
+type Create func(ctx context.Context, perfectlyBalanced bool) error
 
 // MakeCreate creates a new Create function
 func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, selectTweetByID tweets.SelectByID, selectTweetQuoteByID quotes.SelectByID, deleteAllCorpusRows DeleteAll, cleanTweets cleaner.CleanTweets, insertCorpusRow Insert) Create {
 	var categorizations = []string{categorized.VerdictPositive, categorized.VerdictNegative}
 
-	return func(ctx context.Context, perfectBalancedCorpus bool) error {
+	return func(ctx context.Context, perfectlyBalanced bool) error {
 		categorizedTweets, err := selectByCategorizations(ctx, categorizations)
 		if err != nil {
 			log.Error(ctx, err.Error())
@@ -86,7 +86,7 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			lenNegative := len(categorizedNegative)
 			lenPositive := len(categorizedPositive)
 
-			if perfectBalancedCorpus {
+			if perfectlyBalanced {
 				lenNegative = min(lenNegative, lenPositive)
 				lenPositive = lenNegative
 			}
