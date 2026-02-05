@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"ahbcc/cmd/api/corpus/cleaner"
 	"ahbcc/cmd/api/tweets"
 	"ahbcc/cmd/api/tweets/categorized"
 	"ahbcc/cmd/api/tweets/quotes"
@@ -15,7 +16,7 @@ import (
 type Create func(ctx context.Context, perfectBalancedCorpus bool) error
 
 // MakeCreate creates a new Create function
-func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, selectTweetByID tweets.SelectByID, selectTweetQuoteByID quotes.SelectByID, deleteAllCorpusRows DeleteAll, insertCorpusRow Insert) Create {
+func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, selectTweetByID tweets.SelectByID, selectTweetQuoteByID quotes.SelectByID, deleteAllCorpusRows DeleteAll, cleanTweets cleaner.CleanTweets, insertCorpusRow Insert) Create {
 	var categorizations = []string{categorized.VerdictPositive, categorized.VerdictNegative}
 
 	return func(ctx context.Context, perfectBalancedCorpus bool) error {
@@ -25,7 +26,7 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			return FailedToRetrieveCategorizedTweets
 		}
 
-		tweetsBySearchCriteria := make(map[int]map[string][]DTO)
+		tweetsBySearchCriteria := make(map[int]map[string][]cleaner.TweetToClean)
 		for _, categorizedTweet := range categorizedTweets {
 			tweetData, err := selectTweetByID(ctx, categorizedTweet.TweetID)
 			if err != nil {
@@ -35,10 +36,10 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 
 			tweetsByCategorization := tweetsBySearchCriteria[tweetData.SearchCriteriaID]
 			if tweetsByCategorization == nil {
-				tweetsByCategorization = make(map[string][]DTO)
+				tweetsByCategorization = make(map[string][]cleaner.TweetToClean)
 			}
 
-			row := DTO{
+			row := cleaner.TweetToClean{
 				TweetAuthor:    tweetData.Author,
 				TweetAvatar:    tweetData.Avatar,
 				TweetText:      tweetData.TextContent,
@@ -62,7 +63,7 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 
 			rows := tweetsByCategorization[row.Categorization]
 			if rows == nil {
-				rows = make([]DTO, 0, len(tweetsByCategorization)/2)
+				rows = make([]cleaner.TweetToClean, 0, len(tweetsByCategorization)/2)
 			}
 
 			rows = append(rows, row)
@@ -77,7 +78,7 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			return FailedToCleanUpCorpusTable
 		}
 
-		corpusRows := make([]DTO, 0, len(tweetsBySearchCriteria))
+		corpusRows := make([]cleaner.TweetToClean, 0, len(tweetsBySearchCriteria))
 		for _, searchCriteria := range tweetsBySearchCriteria {
 			categorizedNegative := searchCriteria[categorized.VerdictNegative]
 			categorizedPositive := searchCriteria[categorized.VerdictPositive]
@@ -94,8 +95,15 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			corpusRows = append(corpusRows, categorizedPositive[:lenPositive]...)
 		}
 
+		err = cleanTweets(ctx, corpusRows)
+		if err != nil {
+			log.Error(ctx, err.Error())
+			return FailedToCleanTweets
+		}
+
+		corpusDTORows := convertTweetsToCleanToDTOs(corpusRows)
 		var inserted int
-		for _, row := range corpusRows {
+		for _, row := range corpusDTORows {
 			_, err := insertCorpusRow(ctx, row)
 			if err != nil {
 				log.Error(ctx, err.Error())

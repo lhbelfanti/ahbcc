@@ -40,11 +40,6 @@ func MockRulesDTOSlice() []DTO {
 	}
 }
 
-// MockRulesDTOs mocks a slice of rule DTOs
-func MockRulesDTOs(rulesDTO ...DTO) []DTO {
-	return rulesDTO
-}
-
 // MockRuleDAO mocks a rule DAO
 func MockRuleDAO(ruleType string, sourceText string, targetText *string, priority int) DAO {
 	description := "description"

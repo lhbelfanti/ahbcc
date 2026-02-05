@@ -11,6 +11,7 @@ import (
 
 	"ahbcc/cmd/api/auth"
 	"ahbcc/cmd/api/corpus"
+	"ahbcc/cmd/api/corpus/cleaner"
 	"ahbcc/cmd/api/corpus/cleaner/rules"
 	"ahbcc/cmd/api/middleware"
 	"ahbcc/cmd/api/migrations"
@@ -141,8 +142,11 @@ func main() {
 	selectCategorizedTweetsByCategorizations := categorized.MakeSelectByCategorizations(db, collectCategorizedTweetsDAORows)
 	selectTweetQuoteByID := quotes.MakeSelectByID(db)
 	deleteAllCorpusRows := corpus.MakeDeleteAll(db)
+	collectCleaningRulesDAORows := database.MakeCollectRows[rules.DAO](nil)
+	selectCleaningRulesByPriority := rules.MakeSelectAllByPriority(db, collectCleaningRulesDAORows)
+	cleanTweets := cleaner.MakeCleanTweets(selectCleaningRulesByPriority)
 	insertCorpusRow := corpus.MakeInsert(db)
-	createCorpus := corpus.MakeCreate(selectCategorizedTweetsByCategorizations, selectTweetByID, selectTweetQuoteByID, deleteAllCorpusRows, insertCorpusRow)
+	createCorpus := corpus.MakeCreate(selectCategorizedTweetsByCategorizations, selectTweetByID, selectTweetQuoteByID, deleteAllCorpusRows, cleanTweets, insertCorpusRow)
 
 	// GET /corpus/v1 dependencies
 	collectCorpusDAORows := database.MakeCollectRows[corpus.DAO](nil)

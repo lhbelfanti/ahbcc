@@ -1,21 +1,33 @@
 package cleaner
 
 import (
-	"ahbcc/internal/log"
 	"context"
 	"regexp"
 
 	"ahbcc/cmd/api/corpus/cleaner/rules"
-	"ahbcc/cmd/api/tweets"
+	"ahbcc/internal/log"
 )
 
 // CleanTweets cleans tweets according to cleaning rules
-type CleanTweets func(ctx context.Context, tweets []tweets.TweetDTO, cleaningRules []rules.DTO) error
+type CleanTweets func(ctx context.Context, tweets []TweetToClean) error
 
 // MakeCleanTweets creates a new CleanTweets
-func MakeCleanTweets() CleanTweets {
-	return func(ctx context.Context, tweets []tweets.TweetDTO, cleaningRules []rules.DTO) error {
-		for _, rule := range cleaningRules {
+func MakeCleanTweets(selectCleaningRulesByPriority rules.SelectAllByPriority) CleanTweets {
+	return func(ctx context.Context, tweets []TweetToClean) error {
+		// The priorities go from 1 to 10, being 1 the first highest priority.
+		// This means the cleaning rule will be applied first.
+		cleaningRulesSlice := make([]rules.DAO, 0, 10)
+		for i := 1; i <= 10; i++ {
+			cleaningRules, err := selectCleaningRulesByPriority(ctx, i)
+			if err != nil {
+				log.Error(ctx, err.Error())
+				return FailedToRetrieveCleaningRulesByPriority
+			}
+
+			cleaningRulesSlice = append(cleaningRulesSlice, cleaningRules...)
+		}
+
+		for _, rule := range cleaningRulesSlice {
 			re, err := regexp.Compile(rule.SourceText)
 			if err != nil {
 				log.Error(ctx, err.Error())
@@ -23,7 +35,7 @@ func MakeCleanTweets() CleanTweets {
 			}
 
 			for _, tweet := range tweets {
-				textContent := *tweet.TextContent
+				textContent := *tweet.TweetText
 				switch rule.RuleType {
 				case rules.RuleReplacement:
 					textContent = re.ReplaceAllString(textContent, *rule.TargetText)
@@ -33,7 +45,7 @@ func MakeCleanTweets() CleanTweets {
 					textContent = re.ReplaceAllString(textContent, "***")
 				}
 
-				*tweet.TextContent = textContent
+				*tweet.TweetText = textContent
 			}
 		}
 

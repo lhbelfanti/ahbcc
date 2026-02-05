@@ -9,6 +9,7 @@ var (
 	FailedToExecuteCollectRowsInSelectAllCorpusEntries = errors.New("failed to execute collect rows in select all corpus entries")
 	FailedToRetrieveCategorizedTweets                  = errors.New("failed to retrieve categorized tweets")
 	FailedToCleanUpCorpusTable                         = errors.New("failed to clean up corpus table")
+	FailedToCleanTweets                                = errors.New("failed to clean tweets")
 	FailedToExecuteSelectAll                           = errors.New("failed to execute select all")
 	InvalidExportFormat                                = errors.New("invalid export format")
 )

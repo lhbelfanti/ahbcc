@@ -2,108 +2,128 @@ package cleaner_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"ahbcc/cmd/api/corpus/cleaner"
 	"ahbcc/cmd/api/corpus/cleaner/rules"
-	"ahbcc/cmd/api/tweets"
 )
 
 func TestCleanTweet_successWithRuleReplacementWithRegex(t *testing.T) {
 	textContent := "Hello 123 World"
-	tweet := tweets.MockTweetDTO()
-	tweet.TextContent = &textContent
+	mockTweet := cleaner.MockTweetToClean(textContent)
 	target := "NUM"
-	cleaningRules := rules.MockRulesDTOs(rules.MockRuleDTO(rules.RuleReplacement, `\d+`, &target, 1))
-	cleanTweet := cleaner.MakeCleanTweets()
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleReplacement, `\d+`, &target, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
 
-	err := cleanTweet(context.Background(), []tweets.TweetDTO{tweet}, cleaningRules)
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
 
 	want := "Hello NUM World"
-	got := *tweet.TextContent
+	got := *mockTweet.TweetText
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
 }
 
 func TestCleanTweet_successWithRuleDeleteWithRegex(t *testing.T) {
-	cleanTweet := cleaner.MakeCleanTweets()
 	textContent := "Hello 123 World"
-	tweet := tweets.MockTweetDTO()
-	tweet.TextContent = &textContent
-	cleaningRules := rules.MockRulesDTOs(rules.MockRuleDTO(rules.RuleDelete, `\s\d+\s`, nil, 1))
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleDelete, `\s\d+\s`, nil, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
 
-	err := cleanTweet(context.Background(), []tweets.TweetDTO{tweet}, cleaningRules)
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
 
 	want := "HelloWorld"
-	got := *tweet.TextContent
+	got := *mockTweet.TweetText
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
 }
 
 func TestCleanTweet_successWithRuleBadWordWithRegex(t *testing.T) {
-	cleanTweet := cleaner.MakeCleanTweets()
 	textContent := "Hello badword123 World"
-	tweet := tweets.MockTweetDTO()
-	tweet.TextContent = &textContent
-	cleaningRules := rules.MockRulesDTOs(rules.MockRuleDTO(rules.RuleBadWord, `badword\d+`, nil, 1))
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleBadWord, `badword\d+`, nil, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
 
-	err := cleanTweet(context.Background(), []tweets.TweetDTO{tweet}, cleaningRules)
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
 
 	want := "Hello *** World"
-	got := *tweet.TextContent
+	got := *mockTweet.TweetText
 
 	assert.Nil(t, err)
 	assert.Equal(t, want, got)
 }
 
 func TestCleanTweet_successWithLiteralStringReplacement(t *testing.T) {
-	cleanTweet := cleaner.MakeCleanTweets()
 	textContent := "Hello World"
-	tweet := tweets.MockTweetDTO()
-	tweet.TextContent = &textContent
+	mockTweet := cleaner.MockTweetToClean(textContent)
 	target := "Universe"
-	cleaningRules := rules.MockRulesDTOs(rules.MockRuleDTO(rules.RuleReplacement, "World", &target, 1))
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleReplacement, "World", &target, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
 
-	err := cleanTweet(context.Background(), []tweets.TweetDTO{tweet}, cleaningRules)
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
 
 	want := "Hello Universe"
-	got := *tweet.TextContent
+	got := *mockTweet.TweetText
 
 	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+}
+
+func TestCleanTweets_successWithMultipleTweets(t *testing.T) {
+	tweetContent1 := "Hello 123"
+	mockTweet1 := cleaner.MockTweetToClean(tweetContent1)
+	tweetContent2 := "World 456"
+	mockTweet2 := cleaner.MockTweetToClean(tweetContent2)
+	target := "NUM"
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleReplacement, `\d+`, &target, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
+
+	cleanTweets := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweets(context.Background(), []cleaner.TweetToClean{mockTweet1, mockTweet2})
+
+	assert.Nil(t, err)
+	assert.Equal(t, "Hello NUM", *mockTweet1.TweetText)
+	assert.Equal(t, "World NUM", *mockTweet2.TweetText)
+}
+
+func TestCleanTweet_failsWhenSelectCleaningRulesByPriorityThrowsError(t *testing.T) {
+	textContent := "Hello 123 World"
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	target := "NUM"
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleReplacement, `\d+`, &target, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, errors.New("failed to select cleaning rules by priority"))
+
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	want := cleaner.FailedToRetrieveCleaningRulesByPriority
+	got := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
+
 	assert.Equal(t, want, got)
 }
 
 func TestCleanTweet_failsWhenRegexCompileThrowsError(t *testing.T) {
-	cleanTweet := cleaner.MakeCleanTweets()
 	textContent := "Hello World"
-	tweet := tweets.MockTweetDTO()
-	tweet.TextContent = &textContent
-	cleaningRules := rules.MockRulesDTOs(rules.MockRuleDTO(rules.RuleReplacement, "[", nil, 1))
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleReplacement, "[", nil, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
+
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
 
 	want := cleaner.CannotParseRegex
-	got := cleanTweet(context.Background(), []tweets.TweetDTO{tweet}, cleaningRules)
+	got := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
 
 	assert.Equal(t, want, got)
-}
-
-func TestCleanTweets_multipleTweets(t *testing.T) {
-	cleanTweets := cleaner.MakeCleanTweets()
-	tweetContent1 := "Hello 123"
-	tweet1 := tweets.MockTweetDTO()
-	tweet1.TextContent = &tweetContent1
-	tweetContent2 := "World 456"
-	tweet2 := tweets.MockTweetDTO()
-	tweet2.TextContent = &tweetContent2
-	target := "NUM"
-	cleaningRules := rules.MockRulesDTOs(rules.MockRuleDTO(rules.RuleReplacement, `\d+`, &target, 1))
-
-	err := cleanTweets(context.Background(), []tweets.TweetDTO{tweet1, tweet2}, cleaningRules)
-
-	assert.Nil(t, err)
-	assert.Equal(t, "Hello NUM", *tweet1.TextContent)
-	assert.Equal(t, "World NUM", *tweet2.TextContent)
 }
