@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/corpus-creator-logo.png" width="180" alt="Repository logo" />
+  <img src="media/corpus-creator-logo.png" width="300" alt="Repository logo" />
 </p>
 <h3 align="center">Corpus Creator</h3>
 <p align="center">Central orchestrator for harvesting, labeling, and assembling a specialized tweet corpus<p>
