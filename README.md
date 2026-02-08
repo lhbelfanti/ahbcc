@@ -1,7 +1,8 @@
 <p align="center">
   <img src="media/corpus-creator-logo.png" width="150" alt="Repository logo" />
 </p>
-<p align="center">Corpus Creator<p>
+<h3 align="center">Corpus Creator</h3>
+<p align="center">Central orchestrator for harvesting, labeling, and assembling a specialized tweet corpus<p>
 <p align="center">
     <img src="https://img.shields.io/github/repo-size/lhbelfanti/corpus-creator?label=Repo%20size" alt="Repo size" />
     <img src="https://img.shields.io/github/license/lhbelfanti/corpus-creator?label=License" alt="License" />
