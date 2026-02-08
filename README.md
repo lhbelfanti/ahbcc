@@ -1,34 +1,29 @@
 <p align="center">
-  <img src="media/ahbcc-logo.png" width="100" alt="Repository logo" />
+  <img src="media/corpus-creator-logo.png" width="150" alt="Repository logo" />
 </p>
-<p align="center">Adverse Human Behaviors Corpus Creator<p>
+<p align="center">Corpus Creator<p>
 <p align="center">
-    <img src="https://img.shields.io/github/repo-size/lhbelfanti/ahbcc?label=Repo%20size" alt="Repo size" />
-    <img src="https://img.shields.io/github/license/lhbelfanti/ahbcc?label=License" alt="License" />
-    <img src="https://codecov.io/gh/lhbelfanti/ahbcc/graph/badge.svg?token=69LLNMKXRU" alt="Coverage" />
+    <img src="https://img.shields.io/github/repo-size/lhbelfanti/corpus-creator?label=Repo%20size" alt="Repo size" />
+    <img src="https://img.shields.io/github/license/lhbelfanti/corpus-creator?label=License" alt="License" />
+    <img src="https://codecov.io/gh/lhbelfanti/corpus-creator/graph/badge.svg?token=69LLNMKXRU" alt="Coverage" />
 </p>
 
 ---
 
 
-# AHBCC: Adverse Human Behaviors Corpus Creator
-
-Adverse Human Behaviors is a term created to encompass all types of human behaviors that affect one or more individuals in physical, psychological, or emotional ways.
-
-There are four main categories:
-- Hate speech
-- Depression and/or suicidal attempt
-- Eating disorders
-- Illicit drug use
+# Corpus Creator
 
 ## Application
-This application serves as the orchestrator, using a docker-compose.yml file to **connect the other two applications with the database managed by [AHBCC](https://github.com/lhbelfanti/ahbcc)**.
 
-The primary goal is to gather information from X (formerly Twitter) using [GoXCrap](https://github.com/lhbelfanti/goxcrap). Subsequently, each tweet is manually evaluated to determine if it discusses an Adverse Human Behavior using [Binarizer](https://github.com/lhbelfanti/binarizer). Finally, [AHBCC](https://github.com/lhbelfanti/ahbcc) is in charge of creating a corpus from the retrieved and categorized tweets.
+This application acts as the system orchestrator, using Docker Compose to integrate the microservices with the central database. 
+
+The workflow begins with [GoXCrap](https://github.com/lhbelfanti/goxcrap), which performs the raw data collection from X (formerly Twitter). These tweets are then processed through [Binarizer](https://github.com/lhbelfanti/binarizer) for manual binary labeling. Finally, [Corpus Creator](https://github.com/lhbelfanti/corpus-creator) consolidates the retrieved and categorized data to generate the final research corpus.
 
 ### Endpoints
 
 To allow [GoXCrap](https://github.com/lhbelfanti/goxcrap) to save the tweets into the database and then retrieve them using [Binarizer](https://github.com/lhbelfanti/binarizer), this application exposes different endpoints, encapsulating the access to the database in one place (this app).
+
+There is a Postman collection available in the root directory of the project with all the endpoints of this API.
 
 #### Network
 This app calls an endpoint defined by the env variable `ENQUEUE_CRITERIA_API_URL`. To ensure proper communication, the app that owns this endpoint must be on the same network (named shared), which is defined in the [compose.yml](compose.yml) as follows:
@@ -174,8 +169,8 @@ You can create a .env file in the root directory of the project or rename the pr
 This file should contain the following environment variables:
 ```
 # App settings
-APP_EXPOSED_PORT=<AHBCC Host Port>
-APP_INTERNAL_PORT=<AHBCC Container Port>
+APP_EXPOSED_PORT=<Corpus Creator Host Port>
+APP_INTERNAL_PORT=<Corpus Creator Container Port>
 
 # Database
 DB_NAME=<Database name>
@@ -190,7 +185,7 @@ SESSION_SECRET_KEY=<Secret key used for signing and verifying HMAC-based tokens>
 ENQUEUE_CRITERIA_API_URL=<Domain of the application with the endpoint /criteria/enqueue/v1> --> Example: the URL to the GoXCrap API
 ```
 
-Replace the `< ... >` by the correct value. For example: `DB_NAME=<Database name>` --> `DB_NAME=ahbcc`.
+Replace the `< ... >` by the correct value. For example: `DB_NAME=<Database name>` --> `DB_NAME=corpus-creator`.
 
 #### Session secret key
 
