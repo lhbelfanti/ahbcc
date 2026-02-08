@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
 )
 
 func TestInsertSingleHandlerV1_success(t *testing.T) {

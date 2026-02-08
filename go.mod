@@ -1,4 +1,4 @@
-module ahbcc
+module github.com/lhbelfanti/corpus-creator
 
 go 1.25
 

@@ -7,11 +7,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/corpus"
-	"ahbcc/cmd/api/corpus/cleaner"
-	"ahbcc/cmd/api/tweets"
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/tweets/quotes"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/quotes"
 )
 
 func TestCreate_successWithoutPerfectlyBalancedCorpus(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"ahbcc/internal/http"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/http"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // EnqueueCriteria calls the endpoint to enqueue a criteria seeking by the criteria ID

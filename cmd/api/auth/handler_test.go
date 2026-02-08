@@ -13,9 +13,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/auth"
-	"ahbcc/cmd/api/user"
-	"ahbcc/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/auth"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
 )
 
 func TestSignUpHandlerV1_success(t *testing.T) {

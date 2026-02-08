@@ -7,9 +7,9 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 type (

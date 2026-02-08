@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/corpus"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus"
 )
 
 func TestMakeExportCorpus_successWithJSON(t *testing.T) {

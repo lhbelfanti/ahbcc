@@ -12,8 +12,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/search/criteria/executions"
-	"ahbcc/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
 )
 
 func TestGetExecutionByIDHandlerV1_success(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/search/criteria"
-	"ahbcc/cmd/api/search/criteria/executions"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions"
 )
 
 func TestInit_success(t *testing.T) {

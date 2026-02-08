@@ -6,8 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Insert inserts a new row into search_criteria_executions_summary table

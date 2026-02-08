@@ -4,7 +4,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 
-	"ahbcc/cmd/api/tweets/quotes"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/quotes"
 )
 
 // CustomScanner is a custom scanner to parse the row retrieved and return a TweetDTO which also contains a quotes.QuoteDTO

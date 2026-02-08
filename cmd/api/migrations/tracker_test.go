@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/migrations"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/migrations"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestCreateMigrationsTable_success(t *testing.T) {

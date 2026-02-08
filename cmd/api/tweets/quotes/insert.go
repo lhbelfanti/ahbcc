@@ -7,8 +7,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // InsertSingle inserts a new QuoteDTO into 'quotes' table and returns the PK

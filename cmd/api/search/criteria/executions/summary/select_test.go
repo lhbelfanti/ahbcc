@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/search/criteria/executions/summary"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions/summary"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestSelectMonthlyTweetsCountsByYearByCriteriaID_success(t *testing.T) {

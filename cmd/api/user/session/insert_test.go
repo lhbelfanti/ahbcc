@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestInsert_success(t *testing.T) {

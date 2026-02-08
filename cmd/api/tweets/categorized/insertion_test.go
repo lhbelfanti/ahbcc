@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/tweets"
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
 )
 
 func TestInsertCategorizedTweet_success(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/corpus"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus"
 )
 
 func TestCreateCorpusHandlerV1(t *testing.T) {

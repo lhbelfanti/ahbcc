@@ -2,11 +2,11 @@ package auth
 
 import (
 	"context"
-	
+
 	"golang.org/x/crypto/bcrypt"
 
-	"ahbcc/cmd/api/user"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // SignUp registers a new user in the system

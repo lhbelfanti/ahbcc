@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"ahbcc/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
 )
 
 // HandlerV1 HTTP Handler of the endpoint /ping/v1

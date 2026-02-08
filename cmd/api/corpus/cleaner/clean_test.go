@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/corpus/cleaner"
-	"ahbcc/cmd/api/corpus/cleaner/rules"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner/rules"
 )
 
 func TestCleanTweet_successWithRuleReplacementWithRegex(t *testing.T) {

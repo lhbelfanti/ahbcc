@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 type (

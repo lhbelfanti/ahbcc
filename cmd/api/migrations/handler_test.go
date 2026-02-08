@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/migrations"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/migrations"
 )
 
 func TestRunHandlerV1_success(t *testing.T) {

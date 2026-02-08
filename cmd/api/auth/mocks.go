@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"ahbcc/cmd/api/user"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user"
 )
 
 // MockSignUp mocks SignUp function

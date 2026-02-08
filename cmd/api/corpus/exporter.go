@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 const (

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"ahbcc/internal/http/response"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // InsertSingleHandlerV1 HTTP Handler of the endpoint /tweets/{tweet_id}/categorize/v1

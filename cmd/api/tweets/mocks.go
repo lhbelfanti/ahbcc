@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"ahbcc/cmd/api/tweets/quotes"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/quotes"
 )
 
 // MockInsert mocks Insert function

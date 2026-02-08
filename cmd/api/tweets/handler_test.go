@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
 )
 
 func TestInsertHandlerV1_success(t *testing.T) {

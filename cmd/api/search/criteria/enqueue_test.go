@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/search/criteria"
-	"ahbcc/cmd/api/search/criteria/executions"
-	"ahbcc/internal/scrapper"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions"
+	"github.com/lhbelfanti/corpus-creator/internal/scrapper"
 )
 
 func TestEnqueue_success(t *testing.T) {

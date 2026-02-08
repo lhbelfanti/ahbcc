@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // CreateToken creates a new session token for the user login action

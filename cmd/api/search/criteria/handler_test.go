@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/search/criteria"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria"
 )
 
 func TestEnqueueHandlerV1_success(t *testing.T) {

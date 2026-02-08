@@ -3,9 +3,9 @@ package executions
 import (
 	"context"
 
-	"ahbcc/cmd/api/search/criteria/executions/summary"
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions/summary"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Summarize creates a summary of the search criteria executions. The summary is saved for each month of each year

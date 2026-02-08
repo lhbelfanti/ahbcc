@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile_app
     container_name: corpus_creator
-    command: ["/ahbcc", "--prod"]
+    command: ["/corpus-creator", "--prod"]
     ports:
       - "${APP_EXPOSED_PORT}:${APP_INTERNAL_PORT}"
     environment:

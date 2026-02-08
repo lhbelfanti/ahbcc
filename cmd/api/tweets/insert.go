@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"ahbcc/cmd/api/tweets/quotes"
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/quotes"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Insert inserts a slice of TweetDTO into 'tweets' table

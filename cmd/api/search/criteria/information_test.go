@@ -7,10 +7,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/search/criteria"
-	"ahbcc/cmd/api/search/criteria/executions/summary"
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions/summary"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
 )
 
 func TestInformation_success(t *testing.T) {

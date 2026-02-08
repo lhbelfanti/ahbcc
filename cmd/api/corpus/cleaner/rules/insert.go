@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Insert represents a function that inserts a slice of rules into the 'corpus_cleaning_rules' table

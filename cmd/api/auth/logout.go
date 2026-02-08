@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // LogOut Logs the user out. It deletes the current user session associated to that user by the token

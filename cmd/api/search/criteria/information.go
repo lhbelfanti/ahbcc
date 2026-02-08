@@ -4,10 +4,10 @@ import (
 	"context"
 	"sort"
 
-	"ahbcc/cmd/api/search/criteria/executions/summary"
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions/summary"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 type (

@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
 )
 
 func TestMain(m *testing.M) {

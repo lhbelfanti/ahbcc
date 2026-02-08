@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
-// Insert inserts a new DTO into 'user' table
+// Insert inserts a new DTO into the 'user' table
 type Insert func(ctx context.Context, user DTO) error
 
 // MakeInsert creates a new Insert

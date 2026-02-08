@@ -3,8 +3,8 @@ package executions
 import (
 	"context"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // UpdateExecution updates a search criteria execution status

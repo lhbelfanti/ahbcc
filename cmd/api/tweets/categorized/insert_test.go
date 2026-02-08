@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestInsertSingle_success(t *testing.T) {

@@ -1,9 +1,9 @@
 package rules
 
 import (
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
 	"context"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // SelectAllByPriority is a function that retrieves all the rules that matches the given priority

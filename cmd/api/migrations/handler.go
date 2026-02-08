@@ -2,8 +2,8 @@ package migrations
 
 import (
 	"net/http"
-	
-	"ahbcc/internal/http/response"
+
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
 )
 
 const migrationsDir string = "./migrations"

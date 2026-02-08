@@ -6,9 +6,9 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"ahbcc/cmd/api/user"
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // LogIn logs the user in. It first verifies if the user exists in the database and then compares its password hash with

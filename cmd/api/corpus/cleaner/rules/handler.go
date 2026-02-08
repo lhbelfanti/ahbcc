@@ -1,9 +1,9 @@
 package rules
 
 import (
-	"ahbcc/internal/http/response"
-	"ahbcc/internal/log"
 	"encoding/json"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 	"net/http"
 	"slices"
 )

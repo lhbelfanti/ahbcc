@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	
-	"ahbcc/cmd/api/auth"
-	"ahbcc/cmd/api/user/session"
+
+	"github.com/lhbelfanti/corpus-creator/cmd/api/auth"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
 )
 
 func TestLogOut_success(t *testing.T) {

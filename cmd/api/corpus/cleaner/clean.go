@@ -4,8 +4,8 @@ import (
 	"context"
 	"regexp"
 
-	"ahbcc/cmd/api/corpus/cleaner/rules"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner/rules"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // CleanTweets cleans tweets according to cleaning rules

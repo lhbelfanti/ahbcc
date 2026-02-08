@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/internal/http"
-	"ahbcc/internal/scrapper"
+	"github.com/lhbelfanti/corpus-creator/internal/http"
+	"github.com/lhbelfanti/corpus-creator/internal/scrapper"
 )
 
 func TestEnqueueCriteria_success(t *testing.T) {

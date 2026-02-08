@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"ahbcc/internal/http/response"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // InsertHandlerV1 HTTP Handler of the endpoint /tweets/v1
@@ -82,7 +82,7 @@ func CriteriaTweetsHandlerV1(selectBySearchCriteriaIDYearAndMonth SelectBySearch
 				response.Send(ctx, w, http.StatusBadRequest, InvalidQueryParameterFormat, nil, err)
 				return
 			}
-			
+
 			// Only retrieve the month if the year is present. Otherwise, the default value is 0, which means all months.
 			monthQueryParamStr := r.URL.Query().Get("month")
 			if monthQueryParamStr != "" {

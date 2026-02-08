@@ -1,6 +1,6 @@
 package corpus
 
-import "ahbcc/cmd/api/corpus/cleaner"
+import "github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner"
 
 // DTO represents a corpus entry to be inserted into the 'corpus' table
 type DTO struct {

@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/corpus/cleaner/rules"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner/rules"
 )
 
 func TestInsertRulesHandlerV1_success(t *testing.T) {

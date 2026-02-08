@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/tweets"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestCustomScanner_success(t *testing.T) {

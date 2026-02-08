@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"ahbcc/cmd/api/search/criteria/executions"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Init retrieves all the criteria in a 'PENDING' or 'IN PROGRESS' state and executes an enqueue of each one

@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
-	
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 type SelectUserIDByToken func(ctx context.Context, token string) (int, error)

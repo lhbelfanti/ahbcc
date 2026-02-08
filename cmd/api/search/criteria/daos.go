@@ -3,7 +3,7 @@ package criteria
 import (
 	"time"
 
-	"ahbcc/internal/scrapper"
+	"github.com/lhbelfanti/corpus-creator/internal/scrapper"
 )
 
 // DAO represents a search criteria

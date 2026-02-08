@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 
-	"ahbcc/cmd/api/user"
-	"ahbcc/internal/http/response"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // SignUpHandlerV1 HTTP Handler of the endpoint /auth/signup/v1

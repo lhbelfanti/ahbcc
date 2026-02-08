@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"testing"
-	
+
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/search/criteria"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestSelectByID_success(t *testing.T) {

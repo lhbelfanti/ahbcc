@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/cmd/api/middleware"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/middleware"
 )
 
 func TestMain(m *testing.M) {

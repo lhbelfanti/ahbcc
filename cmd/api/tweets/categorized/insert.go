@@ -3,8 +3,8 @@ package categorized
 import (
 	"context"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // InsertSingle inserts a new categorized tweet DTO into 'categorized_tweets' table and returns the ID

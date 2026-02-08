@@ -9,26 +9,26 @@ import (
 
 	"github.com/rs/zerolog"
 
-	"ahbcc/cmd/api/auth"
-	"ahbcc/cmd/api/corpus"
-	"ahbcc/cmd/api/corpus/cleaner"
-	"ahbcc/cmd/api/corpus/cleaner/rules"
-	"ahbcc/cmd/api/middleware"
-	"ahbcc/cmd/api/migrations"
-	"ahbcc/cmd/api/ping"
-	"ahbcc/cmd/api/search/criteria"
-	"ahbcc/cmd/api/search/criteria/executions"
-	"ahbcc/cmd/api/search/criteria/executions/summary"
-	"ahbcc/cmd/api/tweets"
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/tweets/quotes"
-	"ahbcc/cmd/api/user"
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/database"
-	_http "ahbcc/internal/http"
-	"ahbcc/internal/log"
-	"ahbcc/internal/scrapper"
-	"ahbcc/internal/setup"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/auth"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner/rules"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/middleware"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/migrations"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/ping"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions/summary"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/quotes"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	_http "github.com/lhbelfanti/corpus-creator/internal/http"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/scrapper"
+	"github.com/lhbelfanti/corpus-creator/internal/setup"
 )
 
 var prodEnv bool
@@ -187,6 +187,6 @@ func main() {
 
 	/* --- Server --- */
 	port := fmt.Sprintf(":%s", os.Getenv("API_PORT"))
-	log.Info(ctx, fmt.Sprintf("AHBCC server is ready to receive request on port %s", port))
+	log.Info(ctx, fmt.Sprintf("github.com/lhbelfanti/corpus-creator server is ready to receive request on port %s", port))
 	setup.Must(http.ListenAndServe(port, handler))
 }

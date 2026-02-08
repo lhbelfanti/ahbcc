@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"ahbcc/cmd/api/tweets"
-	"ahbcc/cmd/api/user/session"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/user/session"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // InsertCategorizedTweet inserts a categorized tweet

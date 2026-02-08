@@ -25,8 +25,8 @@ COPY cmd/ ./cmd
 COPY internal/ ./internal
 COPY migrations/ ./migrations
 
-# Build the application and output the binary as 'ahbcc'
-RUN CGO_ENABLED=0 GOOS=linux go build -o /ahbcc ./cmd/api
+# Build the application and output the binary as 'corpus-creator'
+RUN CGO_ENABLED=0 GOOS=linux go build -o /corpus-creator ./cmd/api
 
 # Run Stage
 FROM alpine:3.21.0 AS runner
@@ -44,11 +44,11 @@ ENV TZ=America/Argentina/Buenos_Aires
 WORKDIR /app
 
 # Copy the built image from builder stage
-COPY --from=builder /ahbcc /ahbcc
+COPY --from=builder /corpus-creator /corpus-creator
 
 # Expose port
 EXPOSE ${API_PORT}
 
 # Run application
-CMD [ "/ahbcc" ]
+CMD [ "/corpus-creator" ]
 

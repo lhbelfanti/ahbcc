@@ -3,7 +3,7 @@ package corpus
 import (
 	"net/http"
 
-	"ahbcc/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
 )
 
 // CreateCorpusHandlerV1 HTTP Handler of the endpoint /corpus/v1

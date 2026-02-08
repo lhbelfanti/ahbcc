@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Send writes a standardized JSON response to the client.

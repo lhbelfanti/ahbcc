@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"ahbcc/internal/http/response"
+	"github.com/lhbelfanti/corpus-creator/internal/http/response"
 )
 
 func TestSend_success(t *testing.T) {

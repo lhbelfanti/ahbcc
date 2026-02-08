@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Run executes the migrations after the database is initialized

@@ -3,8 +3,8 @@ package corpus
 import (
 	"context"
 
-	"ahbcc/internal/database"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // DeleteAll deletes all entries from the corpus table

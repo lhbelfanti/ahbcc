@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"ahbcc/cmd/api/corpus"
-	"ahbcc/internal/database"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus"
+	"github.com/lhbelfanti/corpus-creator/internal/database"
 )
 
 func TestDeleteAll_success(t *testing.T) {

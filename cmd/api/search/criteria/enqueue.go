@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"ahbcc/cmd/api/search/criteria/executions"
-	"ahbcc/internal/log"
-	"ahbcc/internal/scrapper"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/search/criteria/executions"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
+	"github.com/lhbelfanti/corpus-creator/internal/scrapper"
 )
 
 type (

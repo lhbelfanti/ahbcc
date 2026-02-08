@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"ahbcc/cmd/api/corpus/cleaner"
-	"ahbcc/cmd/api/tweets"
-	"ahbcc/cmd/api/tweets/categorized"
-	"ahbcc/cmd/api/tweets/quotes"
-	"ahbcc/internal/log"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/corpus/cleaner"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/categorized"
+	"github.com/lhbelfanti/corpus-creator/cmd/api/tweets/quotes"
+	"github.com/lhbelfanti/corpus-creator/internal/log"
 )
 
 // Create retrieves the information from the categorized_tweets table and inserts the tweets with all their information
