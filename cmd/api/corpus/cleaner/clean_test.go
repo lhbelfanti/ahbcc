@@ -46,6 +46,24 @@ func TestCleanTweet_successWithRuleDeleteWithRegex(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
+func TestCleanTweet_successWithRuleBadWordWithCustomTag(t *testing.T) {
+	textContent := "Hello badword123 World"
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	target := "[OFFENSIVE]"
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleBadWord, `badword\d+`, &target, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
+
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
+
+	want := "Hello [OFFENSIVE] World"
+	got := *mockTweet.TweetText
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+}
+
 func TestCleanTweet_successWithRuleBadWordWithRegex(t *testing.T) {
 	textContent := "Hello badword123 World"
 	mockTweet := cleaner.MockTweetToClean(textContent)
@@ -56,7 +74,7 @@ func TestCleanTweet_successWithRuleBadWordWithRegex(t *testing.T) {
 
 	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
 
-	want := "Hello *** World"
+	want := "Hello [BAD_WORD] World"
 	got := *mockTweet.TweetText
 
 	assert.Nil(t, err)

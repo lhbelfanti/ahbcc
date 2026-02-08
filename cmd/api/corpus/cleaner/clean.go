@@ -42,7 +42,11 @@ func MakeCleanTweets(selectCleaningRulesByPriority rules.SelectAllByPriority) Cl
 				case rules.RuleDelete:
 					textContent = re.ReplaceAllString(textContent, "")
 				case rules.RuleBadWord:
-					textContent = re.ReplaceAllString(textContent, "***")
+					defaultBadWordTag := "[BAD_WORD]"
+					if rule.TargetText != nil {
+						defaultBadWordTag = *rule.TargetText
+					}
+					textContent = re.ReplaceAllString(textContent, defaultBadWordTag)
 				}
 
 				*tweet.TweetText = textContent
