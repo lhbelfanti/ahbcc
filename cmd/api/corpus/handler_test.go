@@ -33,6 +33,21 @@ func TestCreateCorpusHandlerV1(t *testing.T) {
 			url:        "/corpus/v1",
 			wantStatus: http.StatusOK,
 		},
+		{
+			name:       "success with applyCleaningRules false",
+			url:        "/corpus/v1?applyCleaningRules=false",
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "success with applyCleaningRules true",
+			url:        "/corpus/v1?applyCleaningRules=true",
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "success without applyCleaningRules query string",
+			url:        "/corpus/v1",
+			wantStatus: http.StatusOK,
+		},
 	}
 
 	for _, tt := range tests {

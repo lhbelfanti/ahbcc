@@ -17,7 +17,13 @@ func CreateCorpusHandlerV1(createCorpus Create) http.HandlerFunc {
 			perfectlyBalancedCorpus = true
 		}
 
-		err := createCorpus(ctx, perfectlyBalancedCorpus)
+		var applyCleaningRules bool
+		applyCleaningRulesQueryString := r.URL.Query().Get("applyCleaningRules")
+		if r.URL.Query().Has("applyCleaningRules") && applyCleaningRulesQueryString != "false" {
+			applyCleaningRules = true
+		}
+
+		err := createCorpus(ctx, perfectlyBalancedCorpus, applyCleaningRules)
 		if err != nil {
 			response.Send(ctx, w, http.StatusInternalServerError, FailedToCreateCorpus, nil, err)
 			return

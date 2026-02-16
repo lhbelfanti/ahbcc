@@ -13,13 +13,13 @@ import (
 
 // Create retrieves the information from the categorized_tweets table and inserts the tweets with all their information
 // into the corpus table. It only considers the 'POSITIVE' and 'NEGATIVE' categorizations.
-type Create func(ctx context.Context, perfectlyBalanced bool) error
+type Create func(ctx context.Context, perfectlyBalanced bool, applyCleaningRules bool) error
 
 // MakeCreate creates a new Create function
 func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, selectTweetByID tweets.SelectByID, selectTweetQuoteByID quotes.SelectByID, deleteAllCorpusRows DeleteAll, cleanTweets cleaner.CleanTweets, insertCorpusRow Insert) Create {
 	var categorizations = []string{categorized.VerdictPositive, categorized.VerdictNegative}
 
-	return func(ctx context.Context, perfectlyBalanced bool) error {
+	return func(ctx context.Context, perfectlyBalanced bool, applyCleaningRules bool) error {
 		categorizedTweets, err := selectByCategorizations(ctx, categorizations)
 		if err != nil {
 			log.Error(ctx, err.Error())
@@ -97,10 +97,12 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			corpusRows = append(corpusRows, categorizedPositive[:lenPositive]...)
 		}
 
-		err = cleanTweets(ctx, corpusRows)
-		if err != nil {
-			log.Error(ctx, err.Error())
-			return FailedToCleanTweets
+		if applyCleaningRules {
+			err = cleanTweets(ctx, corpusRows)
+			if err != nil {
+				log.Error(ctx, err.Error())
+				return FailedToCleanTweets
+			}
 		}
 
 		corpusDTORows := convertTweetsToCleanToDTOs(corpusRows)
