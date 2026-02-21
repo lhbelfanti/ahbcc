@@ -206,4 +206,4 @@ This generates a 256-bit (32-byte) key encoded in Base64, which is suitable for 
 
 ## Logo License
 
-Created with Gemini Nano Banana Pro. 
+Created with AI. 
