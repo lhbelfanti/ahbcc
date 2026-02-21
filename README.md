@@ -198,4 +198,12 @@ openssl rand -base64 32
 ```
 This generates a 256-bit (32-byte) key encoded in Base64, which is suitable for HMAC-SHA256.
 
+---
 
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
+
+## Logo License
+
+Created with Gemini Nano Banana Pro. 
