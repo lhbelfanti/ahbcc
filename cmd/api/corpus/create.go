@@ -40,12 +40,13 @@ func MakeCreate(selectByCategorizations categorized.SelectByCategorizations, sel
 			}
 
 			row := cleaner.TweetToClean{
-				TweetAuthor:    tweetData.Author,
-				TweetAvatar:    tweetData.Avatar,
-				TweetText:      tweetData.TextContent,
-				TweetImages:    tweetData.Images,
-				IsTweetAReply:  tweetData.IsAReply,
-				Categorization: categorizedTweet.Categorization,
+				TweetAuthor:      tweetData.Author,
+				TweetAvatar:      tweetData.Avatar,
+				TweetText:        tweetData.TextContent,
+				TweetImages:      tweetData.Images,
+				IsTweetAReply:    tweetData.IsAReply,
+				Categorization:   categorizedTweet.Categorization,
+				SearchCriteriaID: tweetData.SearchCriteriaID,
 			}
 
 			if tweetData.QuoteID != nil {

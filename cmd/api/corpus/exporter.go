@@ -87,6 +87,7 @@ func MakeExportDataToCSV() ExportDataToCSV {
 		header := []string{
 			"ID", "TweetAuthor", "TweetAvatar", "TweetText", "TweetImages", "IsTweetAReply",
 			"QuoteAuthor", "QuoteAvatar", "QuoteText", "QuoteImages", "IsQuoteAReply", "Categorization",
+			"SearchCriteriaID",
 		}
 
 		err := writer.Write(header)
@@ -149,6 +150,7 @@ func MakeExportDataToCSV() ExportDataToCSV {
 				quoteImages,
 				isQuoteAReply,
 				entry.Categorization,
+				strconv.Itoa(entry.SearchCriteriaID),
 			}
 
 			err = writer.Write(row)

@@ -79,17 +79,18 @@ func MockDTO() DTO {
 	isQuoteAReply := true
 
 	return DTO{
-		TweetAuthor:    "test_author",
-		TweetAvatar:    &tweetAvatar,
-		TweetText:      &tweetText,
-		TweetImages:    []string{"image1.jpg", "image2.jpg"},
-		IsTweetAReply:  false,
-		QuoteAuthor:    &quoteAuthor,
-		QuoteAvatar:    &quoteAvatar,
-		QuoteText:      &quoteText,
-		QuoteImages:    []string{"quote_image1.jpg"},
-		IsQuoteAReply:  &isQuoteAReply,
-		Categorization: "POSITIVE",
+		TweetAuthor:      "test_author",
+		TweetAvatar:      &tweetAvatar,
+		TweetText:        &tweetText,
+		TweetImages:      []string{"image1.jpg", "image2.jpg"},
+		IsTweetAReply:    false,
+		QuoteAuthor:      &quoteAuthor,
+		QuoteAvatar:      &quoteAvatar,
+		QuoteText:        &quoteText,
+		QuoteImages:      []string{"quote_image1.jpg"},
+		IsQuoteAReply:    &isQuoteAReply,
+		Categorization:   "POSITIVE",
+		SearchCriteriaID: 1,
 	}
 }
 
@@ -103,25 +104,26 @@ func MockDAO() DAO {
 	isQuoteAReply := true
 
 	return DAO{
-		ID:             1,
-		TweetAuthor:    "test_author",
-		TweetAvatar:    &tweetAvatar,
-		TweetText:      &tweetText,
-		TweetImages:    []string{"image1.jpg"},
-		IsTweetAReply:  false,
-		QuoteAuthor:    &quoteAuthor,
-		QuoteAvatar:    &quoteAvatar,
-		QuoteText:      &quoteText,
-		QuoteImages:    []string{"quote_image1.jpg"},
-		IsQuoteAReply:  &isQuoteAReply,
-		Categorization: "POSITIVE",
+		ID:               1,
+		TweetAuthor:      "test_author",
+		TweetAvatar:      &tweetAvatar,
+		TweetText:        &tweetText,
+		TweetImages:      []string{"image1.jpg"},
+		IsTweetAReply:    false,
+		QuoteAuthor:      &quoteAuthor,
+		QuoteAvatar:      &quoteAvatar,
+		QuoteText:        &quoteText,
+		QuoteImages:      []string{"quote_image1.jpg"},
+		IsQuoteAReply:    &isQuoteAReply,
+		Categorization:   "POSITIVE",
+		SearchCriteriaID: 1,
 	}
 }
 
 // MockCSVData mocks the string result of a CSV file
 func MockCSVData() string {
-	return "ID,TweetAuthor,TweetAvatar,TweetText,TweetImages,IsTweetAReply,QuoteAuthor,QuoteAvatar,QuoteText,QuoteImages,IsQuoteAReply,Categorization\n" +
-		"1,test_author,test_avatar,test_text,image1.jpg,false,quote_author,quote_avatar,quote_text,quote_image1.jpg,true,POSITIVE\n"
+	return "ID,TweetAuthor,TweetAvatar,TweetText,TweetImages,IsTweetAReply,QuoteAuthor,QuoteAvatar,QuoteText,QuoteImages,IsQuoteAReply,Categorization,SearchCriteriaID\n" +
+		"1,test_author,test_avatar,test_text,image1.jpg,false,quote_author,quote_avatar,quote_text,quote_image1.jpg,true,POSITIVE,1\n"
 }
 
 // MockJSONData mocks the string result of a JSON file
@@ -139,7 +141,8 @@ func MockJSONData() string {
 		"QuoteText": "quote_text",
 		"QuoteImages": ["quote_image1.jpg"],
 		"IsQuoteAReply": true,
-		"Categorization": "POSITIVE"
+		"Categorization": "POSITIVE",
+		"SearchCriteriaID": 1
 	  }
 	]`
 }

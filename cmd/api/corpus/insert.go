@@ -12,8 +12,8 @@ type Insert func(ctx context.Context, entry DTO) (int, error)
 
 // MakeInsert creates a new Insert function
 func MakeInsert(db database.Connection) Insert {
-	const query string = `INSERT INTO corpus(tweet_author, tweet_avatar, tweet_text, tweet_images, is_tweet_a_reply, quote_author, quote_avatar, quote_text, quote_images, is_quote_a_reply, categorization) 
-						  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	const query string = `INSERT INTO corpus(tweet_author, tweet_avatar, tweet_text, tweet_images, is_tweet_a_reply, quote_author, quote_avatar, quote_text, quote_images, is_quote_a_reply, categorization, search_criteria_id)
+						  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 						  RETURNING id;`
 
 	return func(ctx context.Context, entry DTO) (int, error) {
@@ -33,6 +33,7 @@ func MakeInsert(db database.Connection) Insert {
 			entry.QuoteImages,
 			entry.IsQuoteAReply,
 			entry.Categorization,
+			entry.SearchCriteriaID,
 		).Scan(&rowID)
 		if err != nil {
 			log.Error(ctx, err.Error())

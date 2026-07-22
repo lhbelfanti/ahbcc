@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS corpus (
     quote_text          TEXT NULL,
     quote_images        TEXT[] NULL,
     is_quote_a_reply    BOOLEAN NULL,
-    categorization      verdict NOT NULL
+    categorization      verdict NOT NULL,
+    search_criteria_id  INTEGER NOT NULL
 );
 
 -- Table comments
@@ -31,4 +32,5 @@ COMMENT ON COLUMN corpus.quote_text         IS 'The quote''s text content, if an
 COMMENT ON COLUMN corpus.quote_images       IS 'Array of image URLs associated with the quote, if any';
 COMMENT ON COLUMN corpus.is_quote_a_reply   IS 'Boolean indicating if the quote is a reply to another tweet, if the quote exists';
 COMMENT ON COLUMN corpus.categorization     IS 'Indicates the categorization verdict. It can be POSITIVE, INDETERMINATE or NEGATIVE';
+COMMENT ON COLUMN corpus.search_criteria_id IS 'The search criteria that originated the tweet, inherited from tweets.search_criteria_id';
 
