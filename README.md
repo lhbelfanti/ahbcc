@@ -161,6 +161,13 @@ erDiagram
 > tweets and quotes tables, the denormalized design reduces query complexity and improves efficiency at the cost of 
 > some data redundancy, which is considered acceptable in this context due to the read-heavy nature of the task.
 
+> **Note on `corpus_cleaning_rules`**: rules using `\b` word boundaries (e.g. `\bm\b -> me`) used to corrupt words that
+> start with an accented vowel — Go's `regexp` package (RE2) treats `\b`/`\w` as ASCII-only, so it doesn't recognize
+> á/é/í/ó/ú as word characters, and would match a lone `m` inside `más` as if it were the standalone abbreviation
+> (turning it into `meás`). `cmd/api/corpus/cleaner/clean.go` now maps accented characters to reversible ASCII
+> placeholders before applying any rule, so `\b` behaves correctly regardless of the rule's pattern. Existing rules did
+> not need to change.
+
 
 ## Setup
 
