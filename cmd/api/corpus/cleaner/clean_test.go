@@ -132,6 +132,46 @@ func TestCleanTweet_failsWhenSelectCleaningRulesByPriorityThrowsError(t *testing
 	assert.Equal(t, want, got)
 }
 
+func TestCleanTweet_wordBoundaryRuleDoesNotBreakOnAccentedVowel(t *testing.T) {
+	textContent := "quiero tomarme una línea, pero no es la de siempre. buenos días, tú y yo lo sabemos."
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	targetM := "me"
+	targetD := "de"
+	targetT := "te"
+	mockRuleM := rules.MockRuleDAO(rules.RuleReplacement, `(?i)\bm\b`, &targetM, 1)
+	mockRuleD := rules.MockRuleDAO(rules.RuleReplacement, `(?i)\bd\b`, &targetD, 1)
+	mockRuleT := rules.MockRuleDAO(rules.RuleReplacement, `(?i)\bt\b`, &targetT, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockRuleM, mockRuleD, mockRuleT}, nil)
+
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
+
+	want := "quiero tomarme una línea, pero no es la de siempre. buenos días, tú y yo lo sabemos."
+	got := *mockTweet.TweetText
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+}
+
+func TestCleanTweet_ruleWithAccentedCharacterInPatternStillMatches(t *testing.T) {
+	textContent := "no seas tan tóxica conmigo"
+	mockTweet := cleaner.MockTweetToClean(textContent)
+	target := "[TAG]"
+	mockCleaningRule := rules.MockRuleDAO(rules.RuleReplacement, `(?i)\btóxica\b`, &target, 1)
+	mockSelectAllByPriority := rules.MockSelectAllByPriority([]rules.DAO{mockCleaningRule}, nil)
+
+	cleanTweet := cleaner.MakeCleanTweets(mockSelectAllByPriority)
+
+	err := cleanTweet(context.Background(), []cleaner.TweetToClean{mockTweet})
+
+	want := "no seas tan [TAG] conmigo"
+	got := *mockTweet.TweetText
+
+	assert.Nil(t, err)
+	assert.Equal(t, want, got)
+}
+
 func TestCleanTweet_failsWhenRegexCompileThrowsError(t *testing.T) {
 	textContent := "Hello World"
 	mockTweet := cleaner.MockTweetToClean(textContent)
